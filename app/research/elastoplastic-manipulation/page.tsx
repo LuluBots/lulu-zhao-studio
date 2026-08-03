@@ -21,7 +21,10 @@ export default function ResearchProject() {
 
       <article>
         <header className="case-hero shell">
-          <p className="eyebrow">Robot learning · Deformable object manipulation</p>
+          <div className="case-labels">
+            <p className="eyebrow">Robot learning · Deformable object manipulation</p>
+            <p className="transfer-badge">✦ {publication.conference}</p>
+          </div>
           <h1>{publication.title}</h1>
           <div className="case-meta">
             <div><span>Role</span><p>Researcher</p></div>
@@ -32,7 +35,12 @@ export default function ResearchProject() {
         </header>
 
         <section className="research-video shell" aria-label="Research demonstration">
-          <video controls playsInline preload="metadata">
+          <video
+            controls
+            playsInline
+            preload="metadata"
+            poster={publication.videoPoster}
+          >
             <source src={publication.videoUrl} type="video/mp4" />
             Your browser does not support embedded video. You can view it on the paper page.
           </video>
@@ -80,6 +88,7 @@ export default function ResearchProject() {
           <h2>{publication.title}</h2>
           <p>{publication.authors}</p>
           <p>{publication.venue} · {publication.citation}</p>
+          <p><strong>{publication.conference}</strong></p>
           <p>DOI: {publication.doi}</p>
         </section>
       </article>

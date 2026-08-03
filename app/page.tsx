@@ -1,161 +1,109 @@
-import { publication, site } from "./site";
+import Link from "next/link";
+import { SiteFooter } from "./components/SiteFooter";
+import { SiteHeader } from "./components/SiteHeader";
+import { publication, researchProjects, site } from "./site";
 
 export default function Home() {
+  const recentProjects = researchProjects.slice(0, 2);
+
   return (
     <main>
-      <header className="site-header shell">
-        <a className="wordmark" href="#top" aria-label="Lulu Zhao, home">
-          Lulu Zhao<span aria-hidden="true">.</span>
-        </a>
-        <nav aria-label="Main navigation">
-          <a href="#research">Field notes</a>
-          <a href="#about">My story</a>
-          <a href="#journey">Flight log</a>
-          <a className="nav-contact" href={`mailto:${site.email}`}>
-            Send a note
-          </a>
-        </nav>
-      </header>
+      <SiteHeader />
 
       <section className="hero shell" id="top">
         <div className="cloud cloud-one" aria-hidden="true" />
         <div className="cloud cloud-two" aria-hidden="true" />
         <div className="magic-sparkles" aria-hidden="true">✦ · ✧</div>
-        <p className="eyebrow">Human–AI Interaction · Embodied Intelligence</p>
+        <p className="eyebrow">Human–AI Interaction · Design · Embodied Intelligence</p>
+        <div className="seasonal-photos" aria-label="Lulu through winter and summer">
+          <figure className="season-photo season-photo-winter">
+            <img src="/photos/lulu-winter.jpg" alt="Lulu Zhao beneath snow-covered trees in winter" />
+            <figcaption>snow keeps the quiet</figcaption>
+          </figure>
+          <figure className="season-photo season-photo-summer">
+            <img src="/photos/lulu-summer.jpg" alt="Lulu Zhao by the sea on a bright summer day" />
+            <figcaption>sunlight answers back</figcaption>
+          </figure>
+        </div>
         <h1>
-          Designing with AI
+          Making intelligence
           <br />
-          <span>as a material.</span>
+          <span>tangible.</span>
         </h1>
         <div className="hero-footer">
           <p>
-            I’m {site.name} ({site.chineseName}), a first-year Robotics PhD
-            student in Computer Science at Cornell University, exploring how
-            embodied intelligence can become a material for design.
+            I’m {site.name} ({site.chineseName}), a Robotics PhD student in
+            Cornell Computer Science, exploring human–AI interaction and AI as
+            a material for design in embodied intelligence.
           </p>
-          <a className="round-link" href="#research" aria-label="View research">
-            <span>Research</span>
-            <b aria-hidden="true">↓</b>
-          </a>
+          <div className="hero-action">
+            <p className="hand-note action-note">curiosity,<br />made physical</p>
+            <Link className="round-link" href="/research" aria-label="View research">
+              <span>Research</span><b aria-hidden="true">→</b>
+            </Link>
+          </div>
         </div>
-        <div className="hero-mark" aria-hidden="true">
-          <span>L</span>
-          <i />
-        </div>
-        <p className="hand-note hero-note" aria-hidden="true">curious things<br />are taking flight!</p>
       </section>
 
-      <section className="work-section" id="research">
+      <section className="journey-section home-journey">
+        <div className="journey-grid shell">
+          <div><p className="eyebrow">Journey</p><h2>Places that shaped the work.</h2></div>
+          <div className="journey-stack">
+            <ol className="timeline">
+              <li className="cornell-stop"><span>Now</span><div><h3>Cornell University</h3><p>PhD student in Robotics · Computer Science</p><strong className="fellowship-note"><i aria-hidden="true">✦</i> Cornell Fellowship · 2025</strong></div></li>
+              <li><span>2024</span><div><h3>Carnegie Mellon University</h3><p>Summer research at the Robotics Institute</p></div></li>
+              <li><span>2024–25</span><div><h3>The Chinese University of Hong Kong</h3><p>Exchange at New Asia College</p></div></li>
+              <li><span>Earlier</span><div><h3>Beijing Normal University</h3><p>Bachelor of Engineering · Artificial Intelligence</p></div></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section className="home-research" id="research">
         <div className="shell">
           <div className="section-heading">
-            <p className="eyebrow">Field note № 01</p>
-            <p className="section-note">Robots that understand, predict, and shape ✦</p>
-          </div>
-
-          <article className="project featured-project">
-            <a
-              className="project-visual coral"
-              href={`/research/${publication.slug}`}
-              aria-label={`Read about ${publication.title}`}
-            >
-              <span className="project-number">01 / RA-L 2025</span>
-              <span className="visual-label">soft things,<br />smart robots</span>
-              <div className="occupancy-grid" aria-hidden="true">
-                {Array.from({ length: 24 }).map((_, index) => <i key={index} />)}
-              </div>
-              <div className="shape shape-two" />
-            </a>
-            <div className="project-copy">
-              <p className="project-type">Robot learning · Deformable objects</p>
-              <h2>{publication.shortTitle}</h2>
-              <p>
-                A learning-based predictive control framework using a novel 3D
-                occupancy representation to model and manipulate complex
-                elasto-plastic objects.
-              </p>
-              <p className="project-role">
-                Researcher · The Chinese University of Hong Kong
-              </p>
-              <a className="text-link" href={`/research/${publication.slug}`}>
-                Open field note →
-              </a>
+            <div>
+              <p className="eyebrow">Selected research</p>
+              <h2>Technical paths that brought me here.</h2>
             </div>
-          </article>
-        </div>
-      </section>
+            <Link className="section-link" href="/research">View all research →</Link>
+          </div>
 
-      <section className="about-section shell" id="about">
-        <p className="eyebrow">A pocketful of questions</p>
-        <div className="about-grid">
-          <h2>Between technology and the humanities.</h2>
-          <div className="about-copy">
-            <p>
-              My research sits at the intersection of embodied intelligence,
-              human–AI interaction, and design. I’m interested not only in what
-              intelligent systems can do, but in how people can think and create
-              with AI as a material.
-            </p>
-            <p>
-              My path here has never been linear. I grew up publishing poetry
-              and essays, studied the humanities in high school, began college
-              in Politics, Philosophy and Economics, and later moved into
-              Artificial Intelligence and robotics research.
-            </p>
+          <div className="home-projects">
+            <article className="home-featured-card">
+              <div className="home-featured-art" aria-hidden="true">
+                <span>RA-L 2025 · ICRA 2026 Transfer</span>
+                <div className="occupancy-grid">{Array.from({ length: 24 }).map((_, i) => <i key={i} />)}</div>
+              </div>
+              <div>
+                <p className="project-type">Robot learning · Deformable objects</p>
+                <h3>{publication.shortTitle}</h3>
+                <p>A 3D occupancy-based predictive control framework for complex deformable objects.</p>
+                <Link href={`/research/${publication.slug}`}>Open project →</Link>
+              </div>
+            </article>
+
+            <div className="home-small-projects">
+              {recentProjects.map((project) => (
+                <article className="home-small-card" key={project.slug}>
+                  <p className="project-type">{project.tags.slice(0, 2).join(" · ")}</p>
+                  <h3>{project.shortTitle}</h3>
+                  <p>{project.summary}</p>
+                  <Link href={`/research/${project.slug}`}>Open project →</Link>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="principles" aria-label="Research interests">
-          <div><span>✦</span><strong>Embodied intelligence</strong></div>
-          <div><span>✿</span><strong>Human–AI interaction</strong></div>
-          <div><span>☀</span><strong>AI as a design material</strong></div>
-        </div>
-        <p className="hand-note about-note" aria-hidden="true">poems → people → robots</p>
       </section>
 
-      <section className="journey-section" id="journey">
-        <div className="shell journey-grid">
-          <div className="journey-intro">
-            <p className="eyebrow">My flight log</p>
-            <h2>One question,<br />many ways of seeing.</h2>
-          </div>
-          <ol className="timeline">
-            <li>
-              <span>Now</span>
-              <div><h3>Cornell University</h3><p>PhD student in Robotics · Computer Science</p></div>
-            </li>
-            <li>
-              <span>Research</span>
-              <div><h3>Carnegie Mellon University</h3><p>Summer research intern · Robotics Institute</p></div>
-            </li>
-            <li>
-              <span>Exchange</span>
-              <div><h3>The Chinese University of Hong Kong</h3><p>New Asia College · One-semester exchange</p></div>
-            </li>
-            <li>
-              <span>B.Eng.</span>
-              <div><h3>Beijing Normal University</h3><p>Artificial Intelligence · Engineering</p></div>
-            </li>
-            <li>
-              <span>Earlier</span>
-              <div><h3>Words before robots</h3><p>Poetry, essays, humanities, and PPE</p></div>
-            </li>
-          </ol>
+      <section className="home-closing">
+        <div className="home-portals shell">
+          <Link href="/publications"><span>01</span><h2>Publications</h2><p>Peer-reviewed papers and research outputs.</p><b>Explore →</b></Link>
+          <Link href="/about"><span>02</span><h2>About</h2><p>The path from poetry and PPE to HAI and embodied intelligence.</p><b>Read my story →</b></Link>
         </div>
+        <SiteFooter />
       </section>
-
-      <footer className="site-footer shell">
-        <div className="footer-star" aria-hidden="true">✦</div>
-        <p className="eyebrow">Have an idea, a question, or a little magic?</p>
-        <h2>Send a letter my way.</h2>
-        <a href={`mailto:${site.email}`}>{site.email} ↗</a>
-        <div className="social-links" aria-label="Social profiles">
-          <a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a href={site.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a>
-        </div>
-        <div className="footer-meta">
-          <span>© {new Date().getFullYear()} Lulu Zhao</span>
-          <span>Ithaca, New York</span>
-        </div>
-      </footer>
     </main>
   );
 }

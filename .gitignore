@@ -40,3 +40,10 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# Local high-resolution source photos; optimized copies live in public/photos.
+/source-media/
+
+# Private working files; public-facing assets belong in public/.
+/inprogresscv/
+/tmp/

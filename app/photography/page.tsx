@@ -61,10 +61,7 @@ export default function PhotographyPage() {
           <p className="eyebrow">A visual notebook</p>
           <h1>Light, weather,<br />and passing things.</h1>
         </div>
-        <p>
-          A first collection from Puerto Rico—stone, wind, salt, and tropical
-          light, held together as a small record of looking.
-        </p>
+        <p>A first collection from Puerto Rico.</p>
       </header>
 
       <section className="photo-rail" aria-label="Photography collection">

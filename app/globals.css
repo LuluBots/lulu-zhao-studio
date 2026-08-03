@@ -740,6 +740,8 @@ h1, h2, h3, p { overflow-wrap: break-word; }
 .home-projects { align-items: stretch; }
 .home-featured-card,
 .home-small-projects { height: 100%; }
+.home-featured-card > div:last-child { display: flex; flex-direction: column; }
+.home-featured-card > div:last-child > a { width: fit-content; margin-top: auto; padding-top: 26px; }
 .home-small-projects { grid-template-rows: repeat(2, minmax(0, 1fr)); }
 .home-small-card { height: 100%; }
 .home-portals > a:nth-child(2),
@@ -748,6 +750,9 @@ h1, h2, h3, p { overflow-wrap: break-word; }
   transform: none;
 }
 .home-portals > a { height: 100%; }
+.home-portals > a:hover,
+.home-portals > a.about-portal:hover { transform: translateY(-5px) rotate(1deg); }
+.timeline li { grid-template-columns: 118px minmax(0, 1fr); }
 
 .photo-frame img { aspect-ratio: auto; }
 
@@ -774,7 +779,7 @@ h1, h2, h3, p { overflow-wrap: break-word; }
   .journey-section,
   .home-research,
   .toolkit-section { min-height: auto; padding: 125px 0; }
-  .timeline li { grid-template-columns: 84px 1fr; }
+  .timeline li { grid-template-columns: 105px minmax(0, 1fr); }
 
   .home-projects { grid-template-columns: 1fr; gap: 38px; }
   .home-featured-card { min-height: 570px; }
@@ -847,7 +852,7 @@ h1, h2, h3, p { overflow-wrap: break-word; }
   .home-journey .journey-grid { grid-template-columns: 1fr; gap: 46px; }
   .home-journey .journey-grid > div:first-child { padding: 0; }
   .timeline { width: 100%; padding: 8px 18px; transform: none; }
-  .timeline li { grid-template-columns: 68px minmax(0, 1fr); gap: 14px; }
+  .timeline li { grid-template-columns: 82px minmax(0, 1fr); gap: 14px; }
   .timeline > li > span { font-size: .92rem; }
   .timeline h3 { font-size: 1.02rem; }
 
@@ -923,7 +928,7 @@ h1, h2, h3, p { overflow-wrap: break-word; }
   .seasonal-photos { height: 260px; }
   .season-photo { width: 145px; }
   .season-photo img { height: 202px; }
-  .timeline li { grid-template-columns: 58px minmax(0, 1fr); gap: 10px; }
+  .timeline li { grid-template-columns: 72px minmax(0, 1fr); gap: 10px; }
   .case-study .wordmark { max-width: 82px; }
   .case-study .site-header nav a:first-child { display: none; }
 }

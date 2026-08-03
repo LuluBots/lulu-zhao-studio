@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { DM_Mono, Manrope } from "next/font/google";
+import { Caveat, Nunito } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
+const nunito = Nunito({
   variable: "--font-sans",
   subsets: ["latin"],
 });
 
-const mono = DM_Mono({
-  variable: "--font-mono",
+const caveat = Caveat({
+  variable: "--font-hand",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     title: "Lulu Zhao — Human–AI Interaction Researcher",
     description: "Designing with AI as a material.",
     type: "website",
-    images: [{ url: "/og.png", width: 1536, height: 1024, alt: "Lulu Zhao — Designing with AI as a material." }],
+    images: [{ url: "/og-magic.png", width: 1536, height: 1024, alt: "Lulu Zhao — Designing with AI as a material." }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Lulu Zhao — Human–AI Interaction Researcher",
     description: "Designing with AI as a material.",
-    images: ["/og.png"],
+    images: ["/og-magic.png"],
   },
 };
 
@@ -36,7 +36,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} ${mono.variable}`}>{children}</body>
+      <body className={`${nunito.variable} ${caveat.variable}`}>{children}</body>
     </html>
   );
 }

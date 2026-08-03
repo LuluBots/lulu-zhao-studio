@@ -8,16 +8,19 @@ export default function Home() {
           Lulu Zhao<span aria-hidden="true">.</span>
         </a>
         <nav aria-label="Main navigation">
-          <a href="#research">Research</a>
-          <a href="#about">About</a>
-          <a href="#journey">Journey</a>
+          <a href="#research">Field notes</a>
+          <a href="#about">My story</a>
+          <a href="#journey">Flight log</a>
           <a className="nav-contact" href={`mailto:${site.email}`}>
-            Say hello
+            Send a note
           </a>
         </nav>
       </header>
 
       <section className="hero shell" id="top">
+        <div className="cloud cloud-one" aria-hidden="true" />
+        <div className="cloud cloud-two" aria-hidden="true" />
+        <div className="magic-sparkles" aria-hidden="true">✦ · ✧</div>
         <p className="eyebrow">Human–AI Interaction · Embodied Intelligence</p>
         <h1>
           Designing with AI
@@ -39,13 +42,14 @@ export default function Home() {
           <span>L</span>
           <i />
         </div>
+        <p className="hand-note hero-note" aria-hidden="true">curious things<br />are taking flight!</p>
       </section>
 
       <section className="work-section" id="research">
         <div className="shell">
           <div className="section-heading">
-            <p className="eyebrow">Selected research</p>
-            <p className="section-note">Robots that understand, predict, and shape.</p>
+            <p className="eyebrow">Field note № 01</p>
+            <p className="section-note">Robots that understand, predict, and shape ✦</p>
           </div>
 
           <article className="project featured-project">
@@ -55,6 +59,7 @@ export default function Home() {
               aria-label={`Read about ${publication.title}`}
             >
               <span className="project-number">01 / RA-L 2025</span>
+              <span className="visual-label">soft things,<br />smart robots</span>
               <div className="occupancy-grid" aria-hidden="true">
                 {Array.from({ length: 24 }).map((_, index) => <i key={index} />)}
               </div>
@@ -72,7 +77,7 @@ export default function Home() {
                 Researcher · The Chinese University of Hong Kong
               </p>
               <a className="text-link" href={`/research/${publication.slug}`}>
-                Explore research ↗
+                Open field note →
               </a>
             </div>
           </article>
@@ -80,7 +85,7 @@ export default function Home() {
       </section>
 
       <section className="about-section shell" id="about">
-        <p className="eyebrow">Research perspective</p>
+        <p className="eyebrow">A pocketful of questions</p>
         <div className="about-grid">
           <h2>Between technology and the humanities.</h2>
           <div className="about-copy">
@@ -99,16 +104,17 @@ export default function Home() {
           </div>
         </div>
         <div className="principles" aria-label="Research interests">
-          <div><span>01</span><strong>Embodied intelligence</strong></div>
-          <div><span>02</span><strong>Human–AI interaction</strong></div>
-          <div><span>03</span><strong>AI as a design material</strong></div>
+          <div><span>✦</span><strong>Embodied intelligence</strong></div>
+          <div><span>✿</span><strong>Human–AI interaction</strong></div>
+          <div><span>☀</span><strong>AI as a design material</strong></div>
         </div>
+        <p className="hand-note about-note" aria-hidden="true">poems → people → robots</p>
       </section>
 
       <section className="journey-section" id="journey">
         <div className="shell journey-grid">
           <div className="journey-intro">
-            <p className="eyebrow">A multidisciplinary journey</p>
+            <p className="eyebrow">My flight log</p>
             <h2>One question,<br />many ways of seeing.</h2>
           </div>
           <ol className="timeline">
@@ -137,8 +143,9 @@ export default function Home() {
       </section>
 
       <footer className="site-footer shell">
-        <p className="eyebrow">Ideas, research, or collaboration?</p>
-        <h2>Let’s start a conversation.</h2>
+        <div className="footer-star" aria-hidden="true">✦</div>
+        <p className="eyebrow">Have an idea, a question, or a little magic?</p>
+        <h2>Send a letter my way.</h2>
         <a href={`mailto:${site.email}`}>{site.email} ↗</a>
         <div className="social-links" aria-label="Social profiles">
           <a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a>

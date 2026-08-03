@@ -51,9 +51,9 @@ export default function Home() {
           <div className="journey-stack">
             <ol className="timeline">
               <li className="cornell-stop"><span>Now</span><div><h3>Cornell University</h3><p>PhD student in Robotics · Computer Science</p><strong className="fellowship-note"><i aria-hidden="true">✦</i> Cornell Fellowship · 2025</strong></div></li>
+              <li><span>2021–2025</span><div><h3>Beijing Normal University</h3><p>Bachelor of Engineering · Artificial Intelligence</p></div></li>
               <li><span>2024</span><div><h3>Carnegie Mellon University</h3><p>Summer research at the Robotics Institute</p></div></li>
               <li><span>2024–25</span><div><h3>The Chinese University of Hong Kong</h3><p>Exchange at New Asia College</p></div></li>
-              <li><span>Earlier</span><div><h3>Beijing Normal University</h3><p>Bachelor of Engineering · Artificial Intelligence</p></div></li>
             </ol>
           </div>
         </div>

@@ -7,7 +7,7 @@ export function SiteHeader() {
       <Link className="wordmark" href="/" aria-label="Lulu Zhao, home">
         Lulu Zhao<span aria-hidden="true">.</span>
       </Link>
-      <nav aria-label="Main navigation">
+      <nav className="primary-nav" aria-label="Main navigation">
         <Link href="/research">Research</Link>
         <Link href="/publications">Publications</Link>
         <Link href="/blog">Blog</Link>

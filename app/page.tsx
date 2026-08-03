@@ -47,13 +47,13 @@ export default function Home() {
 
       <section className="journey-section home-journey">
         <div className="journey-grid shell">
-          <div><p className="eyebrow">Journey</p><h2>Places that shaped the work.</h2></div>
+          <div><p className="eyebrow">Journey</p></div>
           <div className="journey-stack">
             <ol className="timeline">
               <li className="cornell-stop"><span>2025–Present</span><div><h3>Cornell University</h3><p>PhD student in Robotics · Computer Science</p><strong className="fellowship-note"><i aria-hidden="true">✦</i> Cornell Fellowship · 2025</strong></div></li>
+              <li><span>2024–25</span><div><h3>The Chinese University of Hong Kong</h3><p>Exchange at New Asia College</p></div></li>
               <li><span>2021-25</span><div><h3>Beijing Normal University</h3><p>Bachelor of Engineering · Artificial Intelligence</p></div></li>
               <li><span>2024</span><div><h3>Carnegie Mellon University</h3><p>Summer research at the Robotics Institute</p></div></li>
-              <li><span>2024–25</span><div><h3>The Chinese University of Hong Kong</h3><p>Exchange at New Asia College</p></div></li>
             </ol>
           </div>
         </div>
@@ -62,10 +62,7 @@ export default function Home() {
       <section className="home-research" id="research">
         <div className="shell">
           <div className="section-heading">
-            <div>
-              <p className="eyebrow">Selected research</p>
-              <h2>Technical paths that brought me here.</h2>
-            </div>
+            <p className="eyebrow">Selected research</p>
             <Link className="section-link" href="/research">View all research →</Link>
           </div>
 
@@ -100,7 +97,7 @@ export default function Home() {
       <section className="home-closing">
         <div className="home-portals shell">
           <Link href="/publications"><span>01</span><h2>Publications</h2><p>Peer-reviewed papers and research outputs.</p><b>Explore →</b></Link>
-          <Link href="/about"><span>02</span><h2>About</h2><p>The path from poetry and PPE to HAI and embodied intelligence.</p><b>Read my story →</b></Link>
+          <Link className="about-portal" href="/about"><span>02</span><h2>About</h2><p>The path from poetry and PPE to HAI and embodied intelligence.</p><b>Read my story →</b></Link>
         </div>
         <SiteFooter />
       </section>

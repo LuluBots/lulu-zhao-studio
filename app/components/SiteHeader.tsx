@@ -10,6 +10,8 @@ export function SiteHeader() {
       <nav aria-label="Main navigation">
         <Link href="/research">Research</Link>
         <Link href="/publications">Publications</Link>
+        <Link href="/blog">Blog</Link>
+        <Link href="/photography">Photography</Link>
         <Link href="/about">About</Link>
         <a className="nav-contact" href={`mailto:${site.email}`}>Send a note</a>
       </nav>

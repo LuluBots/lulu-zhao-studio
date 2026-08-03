@@ -11,7 +11,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const project = researchProjects.find((item) => item.slug === slug);
   return project
-    ? { title: `${project.shortTitle} — ${site.name}`, description: project.summary }
+    ? {
+        title: `${project.shortTitle} — ${site.name}`,
+        description: project.summary,
+        alternates: { canonical: `/research/${project.slug}` },
+      }
     : { title: `Research — ${site.name}` };
 }
 

@@ -4,7 +4,11 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { publication, researchProjects } from "../site";
 
-export const metadata: Metadata = { title: "Research — Lulu Zhao", description: "Selected robotics, HAI, and embodied intelligence research by Lulu Zhao." };
+export const metadata: Metadata = {
+  title: "Research — Lulu Zhao",
+  description: "Selected robotics, human–AI interaction, robot learning, and embodied intelligence research by Lulu Zhao.",
+  alternates: { canonical: "/research" },
+};
 
 export default function ResearchPage() {
   return (

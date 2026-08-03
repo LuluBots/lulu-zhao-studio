@@ -5,6 +5,7 @@ import { SiteHeader } from "../components/SiteHeader";
 export const metadata: Metadata = {
   title: "About — Lulu Zhao",
   description: "Lulu Zhao's path from poetry and PPE to human–AI interaction, design, and embodied intelligence.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

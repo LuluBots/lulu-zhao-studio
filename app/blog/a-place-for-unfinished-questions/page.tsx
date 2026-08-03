@@ -6,6 +6,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 export const metadata: Metadata = {
   title: "A Place for Unfinished Questions — Lulu Zhao",
   description: "An opening note for Lulu Zhao's notebook on research, design, and the humanities.",
+  alternates: { canonical: "/blog/a-place-for-unfinished-questions" },
 };
 
 export default function OpeningNotePage() {

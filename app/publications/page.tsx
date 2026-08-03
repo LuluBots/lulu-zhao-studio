@@ -3,7 +3,11 @@ import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { publications } from "../site";
 
-export const metadata: Metadata = { title: "Publications — Lulu Zhao", description: "Selected publications by Lulu Zhao." };
+export const metadata: Metadata = {
+  title: "Publications — Lulu Zhao",
+  description: "Selected publications by Lulu Zhao in robot learning, manipulation, medical imaging, and embodied intelligence.",
+  alternates: { canonical: "/publications" },
+};
 
 export default function PublicationsPage() {
   return (

@@ -1,16 +1,45 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { StructuredData } from "../../components/StructuredData";
 import { publication, site } from "../../site";
 
 export const metadata: Metadata = {
   title: `${publication.shortTitle} — ${site.name}`,
   description:
     "A learning-based predictive control framework for manipulating elasto-plastic objects with a 3D occupancy state representation.",
+  alternates: { canonical: `/research/${publication.slug}` },
+};
+
+const articleStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "ScholarlyArticle",
+  headline: publication.title,
+  name: publication.title,
+  url: `https://luluzhao.me/research/${publication.slug}`,
+  datePublished: "2025",
+  identifier: `https://doi.org/${publication.doi}`,
+  sameAs: `https://doi.org/${publication.doi}`,
+  author: publication.authors.split(", ").map((name) => ({
+    "@type": "Person",
+    name: name.replace(/^and /, ""),
+  })),
+  contributor: { "@id": "https://luluzhao.me/#person" },
+  publisher: {
+    "@type": "Organization",
+    name: "IEEE",
+  },
+  about: [
+    "Robot learning",
+    "Deformable object manipulation",
+    "Predictive control",
+    "3D occupancy",
+  ],
 };
 
 export default function ResearchProject() {
   return (
     <main className="case-study">
+      <StructuredData data={articleStructuredData} />
       <header className="site-header shell">
         <Link className="wordmark" href="/">Lulu Zhao<span>.</span></Link>
         <nav aria-label="Project navigation">

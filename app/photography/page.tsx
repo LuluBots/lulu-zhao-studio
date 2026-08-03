@@ -5,6 +5,7 @@ import { SiteHeader } from "../components/SiteHeader";
 export const metadata: Metadata = {
   title: "Photography — Lulu Zhao",
   description: "A visual notebook of seasons, movement, and passing moments by Lulu Zhao.",
+  alternates: { canonical: "/photography" },
 };
 
 const photographs = [

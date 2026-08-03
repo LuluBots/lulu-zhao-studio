@@ -17,6 +17,7 @@ const notes = [
 export const metadata: Metadata = {
   title: "Blog — Lulu Zhao",
   description: "Field notes and essays on human–AI interaction, design, embodied intelligence, and the humanities.",
+  alternates: { canonical: "/blog" },
 };
 
 export default function BlogPage() {

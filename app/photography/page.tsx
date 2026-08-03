@@ -10,31 +10,58 @@ export const metadata: Metadata = {
 
 const photographs = [
   {
-    src: "/photos/lulu-winter.jpg",
-    alt: "Lulu Zhao beneath snow-covered trees in winter",
-    season: "Winter",
-    caption: "Snow keeps the quiet.",
+    src: "/photos/puerto-rico-01.jpg",
+    alt: "A stone sentry box above the sea in Puerto Rico",
+    season: "Old San Juan",
+    caption: "Where stone meets blue.",
     shape: "portrait",
-    width: 900,
+    width: 1600,
+    height: 2400,
+  },
+  {
+    src: "/photos/puerto-rico-04.jpg",
+    alt: "Old San Juan and its fortifications beside the Atlantic Ocean",
+    season: "The coast",
+    caption: "The city leans toward the sea.",
+    shape: "landscape",
+    width: 2400,
     height: 1600,
   },
   {
-    src: "/photos/lulu-summer.jpg",
-    alt: "Lulu Zhao by the sea on a bright summer day",
-    season: "Summer",
-    caption: "Sunlight answers back.",
+    src: "/photos/puerto-rico-06.jpg",
+    alt: "Flowering branches above colorful buildings under a blue sky",
+    season: "A side street",
+    caption: "Spring writes in the margins.",
     shape: "landscape",
-    width: 1600,
-    height: 1066,
+    width: 2400,
+    height: 1600,
   },
   {
-    src: "/photos/lulu-portrait.jpg",
-    alt: "Portrait of Lulu Zhao",
-    season: "In between",
-    caption: "A small pause between places.",
-    shape: "portrait",
-    width: 1200,
-    height: 1800,
+    src: "/photos/puerto-rico-02.jpg",
+    alt: "Waves breaking beside a Puerto Rican flag on a rocky coast",
+    season: "Atlantic wind",
+    caption: "The wind raises its own flag.",
+    shape: "landscape",
+    width: 2400,
+    height: 1600,
+  },
+  {
+    src: "/photos/puerto-rico-05.jpg",
+    alt: "A solitary cargo ship crossing a blue horizon",
+    season: "Far offshore",
+    caption: "A ship, keeping the horizon.",
+    shape: "landscape",
+    width: 2400,
+    height: 1600,
+  },
+  {
+    src: "/photos/puerto-rico-03.jpg",
+    alt: "Ocean waves beneath warm evening clouds in Puerto Rico",
+    season: "Toward evening",
+    caption: "Evening gathers in the clouds.",
+    shape: "landscape",
+    width: 2400,
+    height: 1600,
   },
 ];
 
@@ -48,8 +75,8 @@ export default function PhotographyPage() {
           <h1>Light, weather,<br />and passing things.</h1>
         </div>
         <p>
-          Photographs from the spaces between research and everyday life—an
-          archive of seasons, movement, and the moments that ask to be kept.
+          A first collection from Puerto Rico—stone, wind, salt, and tropical
+          light, held together as a small record of looking.
         </p>
       </header>
 

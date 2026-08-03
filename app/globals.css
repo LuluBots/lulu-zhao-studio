@@ -348,10 +348,11 @@ nav a:not(.nav-contact):hover::after { right: 0; }
 .photo-frame { padding: 11px; position: relative; background: var(--paper); border: 1px solid var(--ink); box-shadow: 6px 7px 0 var(--ink); }
 .gallery-photo:nth-child(1) .photo-frame { transform: rotate(-1.7deg); }
 .gallery-photo:nth-child(2) .photo-frame { transform: rotate(1.2deg); }
-.gallery-photo:nth-child(3) .photo-frame { transform: rotate(-.8deg); }
-.photo-frame img { display: block; object-fit: cover; filter: saturate(.92) contrast(.97); }
-.gallery-photo-portrait .photo-frame img { width: min(56vw, 430px); height: min(70vw, 600px); }
-.gallery-photo-landscape .photo-frame img { width: min(75vw, 680px); height: min(48vw, 440px); }
+.gallery-photo:nth-child(3n) .photo-frame { transform: rotate(-.8deg); }
+.gallery-photo:nth-child(4n) .photo-frame { transform: rotate(.7deg); }
+.photo-frame img { display: block; height: auto; object-fit: contain; filter: saturate(.92) contrast(.97); }
+.gallery-photo-portrait .photo-frame img { width: min(52vw, 400px); }
+.gallery-photo-landscape .photo-frame img { width: min(73vw, 660px); }
 .photo-frame > span { position: absolute; right: 16px; bottom: 13px; padding: 5px 9px; background: rgba(255,253,245,.88); border-radius: 999px; font-size: .68rem; font-weight: 900; }
 .gallery-photo figcaption { margin-top: 20px; display: flex; justify-content: space-between; gap: 20px; }
 .gallery-photo figcaption b { font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
@@ -464,8 +465,8 @@ nav a:not(.nav-contact):hover::after { right: 0; }
   .photo-intro { min-height: 72svh; padding: 95px 0 80px; grid-template-columns: 1fr; gap: 45px; align-content: center; }
   .photo-intro h1 { font-size: 3.3rem; }
   .photo-track { padding-inline: 28px; gap: 42px; }
-  .gallery-photo-portrait .photo-frame img { width: 70vw; height: 98vw; }
-  .gallery-photo-landscape .photo-frame img { width: 82vw; height: 54vw; }
+  .gallery-photo-portrait .photo-frame img { width: 70vw; }
+  .gallery-photo-landscape .photo-frame img { width: 82vw; }
   .photo-end { width: 220px; min-height: 285px; }
 }
 

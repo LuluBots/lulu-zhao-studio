@@ -8,6 +8,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://luluzhao.me"),
   title: "Lulu Zhao — Human–AI Interaction Researcher",
   description:
     "Lulu Zhao is a Robotics PhD student at Cornell University exploring embodied intelligence and AI as a material for design.",
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     title: "Lulu Zhao — Human–AI Interaction Researcher",
     description: "Making intelligence tangible.",
     type: "website",
+    url: "https://luluzhao.me",
     images: [{ url: "/og-magic.png", width: 1536, height: 1024, alt: "Lulu Zhao — Human–AI Interaction Researcher" }],
   },
   twitter: {
@@ -23,6 +25,7 @@ export const metadata: Metadata = {
     description: "Making intelligence tangible.",
     images: ["/og-magic.png"],
   },
+  alternates: { canonical: "https://luluzhao.me" },
 };
 
 export default function RootLayout({

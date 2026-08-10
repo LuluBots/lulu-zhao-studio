@@ -32,9 +32,10 @@ export default function Home() {
         </h1>
         <div className="hero-footer">
           <p>
-            I’m {site.name} ({site.chineseName}), a Robotics PhD student in
-            Cornell Computer Science, exploring human–AI interaction and AI as
-            a material for design in embodied intelligence.
+            I’m {site.name} <span className="chinese-name">{site.chineseName}</span>, a
+            Robotics PhD student in Cornell Computer Science, exploring new forms
+            and roles for embodied AI and how they shape human–AI relationships in
+            everyday life.
           </p>
           <div className="hero-action">
             <p className="hand-note action-note">curiosity,<br />made physical</p>

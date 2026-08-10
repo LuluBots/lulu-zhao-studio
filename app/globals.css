@@ -127,6 +127,21 @@ nav a:not(.nav-contact):hover::after { right: 0; }
 .season-photo-summer:hover { z-index: 3; transform: translate(14px, -12px) rotate(1deg); }
 .hero-footer { display: flex; align-items: flex-end; justify-content: space-between; }
 .hero-footer > p { max-width: 540px; margin: 0; font-size: clamp(1.12rem, 1.7vw, 1.3rem); font-weight: 650; line-height: 1.58; }
+.chinese-name {
+  display: inline-block;
+  padding-inline: .08em;
+  color: transparent;
+  background: linear-gradient(110deg, var(--red) 5%, #d58a43 36%, var(--green) 64%, #4c8ca1 94%);
+  background-size: 220% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-shadow: 1px 2px 0 rgba(201, 85, 73, .12);
+  transform: rotate(-2deg);
+  animation: name-shimmer 6s ease-in-out infinite alternate;
+}
+@keyframes name-shimmer { to { background-position: 100% 50%; } }
 .hero-action { width: 292px; min-height: 148px; position: relative; display: flex; justify-content: flex-end; align-items: flex-end; }
 .action-note { width: 118px; position: absolute; left: 0; bottom: 18px; color: var(--green); font-size: .92rem; text-align: right; transform: rotate(-5deg); transition: transform 180ms ease; }
 .action-note::after { content: ""; width: 28px; height: 21px; position: absolute; left: calc(100% + 7px); top: 2px; border-top: 2px solid var(--green); border-right: 2px solid var(--green); border-radius: 0 100% 0 0; transform: rotate(13deg); }
@@ -469,7 +484,7 @@ nav a:not(.nav-contact):hover::after { right: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: .01ms !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
 :focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }

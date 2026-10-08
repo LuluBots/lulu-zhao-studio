@@ -461,7 +461,7 @@ export function LuluBot({
       </button>
 
       {/* Accessible button focus outline */}
-      <style jsx>{`
+      <style>{`
         .lulubot-button:focus-visible {
           outline: 2px dashed #345d9d;
           outline-offset: 4px;

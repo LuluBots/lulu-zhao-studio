@@ -1,60 +1,174 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import React from "react";
+import { LuluBot } from "../components/LuluBot";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { publication, researchProjects } from "../site";
 
 export const metadata: Metadata = {
   title: "Research — Lulu Zhao",
-  description: "Selected robotics, human–AI interaction, robot learning, and embodied intelligence research by Lulu Zhao.",
+  description:
+    "Research in human–AI interaction, design, and embodied intelligence by Lulu Zhao at Cornell University.",
   alternates: { canonical: "/research" },
 };
 
 export default function ResearchPage() {
-  return (
-    <main>
-      <SiteHeader />
-      <header className="subpage-hero shell">
-        <p className="eyebrow">Research</p>
-        <h1>Questions explored<br />through making.</h1>
-        <p>My current focus is human–AI interaction and design for embodied intelligence. These projects trace the technical work that shaped that direction.</p>
-      </header>
-      <section className="work-section research-archive">
-        <div className="shell">
-          <article className="featured-research">
-            <Link className="project-visual coral" href={`/research/${publication.slug}`}>
-              <span className="visual-label">soft things,<br />smart robots</span>
-              <div className="occupancy-grid" aria-hidden="true">{Array.from({ length: 24 }).map((_, i) => <i key={i} />)}</div>
-              <div className="shape-two" />
-            </Link>
-            <div className="featured-research-copy">
-              <div className="research-card-top"><span>01</span><p>{publication.date}</p></div>
-              <p className="project-type">Robot learning · Deformable objects</p>
-              <h2>{publication.shortTitle}</h2>
-              <p>A learning-based predictive control framework using a novel 3D occupancy representation.</p>
-              <div className="research-card-footer"><small>IEEE RA-L 2025 · ICRA 2026 Transfer</small><Link href={`/research/${publication.slug}`}>Open note →</Link></div>
-            </div>
-          </article>
+  const selectedWorks = [
+    {
+      id: "elastoplastic",
+      title: publication.title,
+      dates: publication.date,
+      venue: "IEEE RA-L 2025 · ICRA 2026 Transfer",
+      institution: "CUHK",
+      summary:
+        "A 3D occupancy-based predictive control framework enabling robots to shape and manipulate elasto-plastic materials such as clay.",
+      link: `/research/${publication.slug}`,
+      paperUrl: publication.paperUrl,
+      tags: ["Robot learning", "Deformable objects", "Predictive control"],
+    },
+    {
+      id: "anchorit",
+      title: researchProjects[0].title,
+      dates: researchProjects[0].dates,
+      venue: "Beijing Normal University",
+      institution: "BNU",
+      summary: researchProjects[0].summary,
+      link: `/research/${researchProjects[0].slug}`,
+      tags: researchProjects[0].tags,
+    },
+    {
+      id: "foam-hand",
+      title: researchProjects[1].title,
+      dates: researchProjects[1].dates,
+      venue: "Carnegie Mellon University",
+      institution: "CMU",
+      summary: researchProjects[1].summary,
+      link: `/research/${researchProjects[1].slug}`,
+      tags: researchProjects[1].tags,
+    },
+  ];
 
-          <div className="archive-heading">
-            <p className="eyebrow">Research archive</p>
-            <p>Other technical paths, experiments, and prototypes.</p>
+  const earlierWork = researchProjects[2]; // anxiety-detection-robot
+
+  return (
+    <div className="site-canvas">
+      <SiteHeader />
+
+      <main className="shell inner-page-main">
+        {/* Research Page Header with compact companion */}
+        <header className="page-header-row">
+          <div className="page-header-copy">
+            <span className="page-category">Research</span>
+            <h1 className="page-heading">Questions explored through making.</h1>
+            <p className="page-lead">
+              My current research centers on human–AI interaction and design. My background in
+              robotics and embodied intelligence serves as a foundation for asking how intelligent
+              systems can feel legible, tangible, and expressive in everyday life.
+            </p>
           </div>
-          <div className="research-grid">
-            {researchProjects.map((project, index) => {
-              const number = index < 3 ? index + 2 : index + 3;
-              return (
-              <article className={`research-card card-${number}`} key={project.slug}>
-                <div className="research-card-top"><span>0{number}</span><p>{project.dates}</p></div>
-                <p className="project-type">{project.tags.slice(0, 2).join(" · ")}</p>
-                <h3>{project.shortTitle}</h3><p>{project.summary}</p>
-                <div className="research-card-footer"><small>{project.institution}</small><Link href={`/research/${project.slug}`}>Open note →</Link></div>
+          <div className="page-header-companion" aria-hidden="true">
+            <LuluBot size="compact" />
+          </div>
+        </header>
+
+        {/* Selected Work */}
+        <section className="research-section" aria-labelledby="selected-research-title">
+          <div className="section-label-bar">
+            <h2 id="selected-research-title" className="section-subheading">
+              Selected Work
+            </h2>
+          </div>
+
+          <div className="research-cards-grid">
+            {selectedWorks.map((item, idx) => (
+              <article key={item.id} className="research-item-card">
+                <div className="research-item-meta">
+                  <span className="research-index">0{idx + 1}</span>
+                  <span className="research-dates">{item.dates}</span>
+                  <span className="research-institution">{item.institution}</span>
+                </div>
+
+                <h3 className="research-item-title">
+                  <Link href={item.link}>{item.title}</Link>
+                </h3>
+
+                <p className="research-item-summary">{item.summary}</p>
+
+                <div className="research-item-tags">
+                  {item.tags.map((tag) => (
+                    <span key={tag} className="tag-pill">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="research-item-actions">
+                  <Link href={item.link} className="action-link-primary">
+                    View project note →
+                  </Link>
+                  {item.paperUrl && (
+                    <a
+                      href={item.paperUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="action-link-secondary"
+                    >
+                      IEEE Paper ↗
+                    </a>
+                  )}
+                </div>
               </article>
-            )})}
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* Earlier Work / Foundations */}
+        {earlierWork && (
+          <section className="research-section" aria-labelledby="earlier-research-title">
+            <div className="section-label-bar">
+              <h2 id="earlier-research-title" className="section-subheading">
+                Earlier Foundations
+              </h2>
+            </div>
+
+            <div className="research-cards-grid">
+              <article className="research-item-card">
+                <div className="research-item-meta">
+                  <span className="research-index">04</span>
+                  <span className="research-dates">{earlierWork.dates}</span>
+                  <span className="research-institution">{earlierWork.institution}</span>
+                </div>
+
+                <h3 className="research-item-title">
+                  <Link href={`/research/${earlierWork.slug}`}>{earlierWork.title}</Link>
+                </h3>
+
+                <p className="research-item-summary">{earlierWork.summary}</p>
+
+                <div className="research-item-tags">
+                  {earlierWork.tags.map((tag) => (
+                    <span key={tag} className="tag-pill">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="research-item-actions">
+                  <Link
+                    href={`/research/${earlierWork.slug}`}
+                    className="action-link-primary"
+                  >
+                    View project note →
+                  </Link>
+                </div>
+              </article>
+            </div>
+          </section>
+        )}
+      </main>
+
       <SiteFooter />
-    </main>
+    </div>
   );
 }

@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import React from "react";
+import { SiteFooter } from "../../components/SiteFooter";
+import { SiteHeader } from "../../components/SiteHeader";
 import { researchProjects, site } from "../../site";
 
 export function generateStaticParams() {
   return researchProjects.map((project) => ({ slug: project.slug }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const project = researchProjects.find((item) => item.slug === slug);
   return project
@@ -19,61 +26,94 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     : { title: `Research — ${site.name}` };
 }
 
-export default async function ResearchNote({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ResearchNote({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const project = researchProjects.find((item) => item.slug === slug);
   if (!project) notFound();
 
   return (
-    <main className="case-study simple-note">
-      <header className="site-header shell">
-        <Link className="wordmark" href="/">Lulu Zhao<span>.</span></Link>
-        <nav aria-label="Project navigation">
-          <Link href="/#research">All field notes</Link>
-          <a className="nav-contact" href={`mailto:${site.email}`}>Send a note</a>
-        </nav>
-      </header>
+    <div className="site-canvas">
+      <SiteHeader />
 
-      <article>
-        <header className="case-hero shell">
-          <p className="eyebrow">{project.tags.join(" · ")}</p>
-          <h1>{project.title}</h1>
-          <div className="case-meta three-up">
-            <div><span>Institution</span><p>{project.institution}</p></div>
-            <div><span>Period</span><p>{project.dates}</p></div>
-            <div><span>Mentorship</span><p>{project.advisors}</p></div>
-          </div>
-        </header>
+      <main className="shell inner-page-main">
+        <div className="detail-nav-bar">
+          <Link href="/research" className="back-link">
+            ← All research
+          </Link>
+        </div>
 
-        <section className="note-visual shell" aria-hidden="true">
-          <div className="note-orbit" />
-          <div className="note-spark">✦</div>
-          <p>{project.shortTitle}</p>
-        </section>
+        <article className="project-detail-article">
+          <header className="detail-header">
+            <div className="detail-meta-pill-row">
+              {project.tags.map((tag) => (
+                <span key={tag} className="meta-tag">
+                  {tag}
+                </span>
+              ))}
+            </div>
 
-        <section className="case-body shell">
-          <aside><p className="eyebrow">Research note</p></aside>
-          <div>
-            <h2>{project.summary}</h2>
-            <p>{project.contribution}</p>
-            {project.links && (
-              <div className="project-links">
-                {project.links.map((link) => <a href={link.url} target="_blank" rel="noreferrer" key={link.label}>{link.label} ↗</a>)}
+            <h1 className="detail-title">{project.title}</h1>
+
+            <div className="detail-meta-grid">
+              <div className="meta-col">
+                <span className="meta-col-label">Institution</span>
+                <p className="meta-col-val">{project.institution}</p>
+              </div>
+              <div className="meta-col">
+                <span className="meta-col-label">Timeline</span>
+                <p className="meta-col-val">{project.dates}</p>
+              </div>
+              <div className="meta-col">
+                <span className="meta-col-label">Mentorship</span>
+                <p className="meta-col-val">{project.advisors}</p>
+              </div>
+            </div>
+
+            {project.links && project.links.length > 0 && (
+              <div className="detail-actions-row">
+                {project.links.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="action-btn action-copy-btn"
+                  >
+                    {link.label} ↗
+                  </a>
+                ))}
               </div>
             )}
-          </div>
-        </section>
+          </header>
 
-        <section className="tags-section shell">
-          <p className="eyebrow">Keywords</p>
-          <div>{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-        </section>
-      </article>
+          <section className="detail-narrative">
+            <div className="narrative-block">
+              <h2>Research Question &amp; Approach</h2>
+              <p>{project.summary}</p>
+            </div>
 
-      <footer className="case-footer shell">
-        <Link href="/#research">← Back to all research</Link>
-        <a href={`mailto:${site.email}`}>Discuss this work ↗</a>
-      </footer>
-    </main>
+            <div className="narrative-block">
+              <h2>My Contribution</h2>
+              <p>{project.contribution}</p>
+            </div>
+          </section>
+
+          <footer className="detail-footer">
+            <Link href="/research" className="back-link">
+              ← Return to all research
+            </Link>
+            <a href={`mailto:${site.email}`} className="action-link-secondary">
+              Discuss this project with Lulu ↗
+            </a>
+          </footer>
+        </article>
+      </main>
+
+      <SiteFooter />
+    </div>
   );
 }

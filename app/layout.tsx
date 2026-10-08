@@ -1,29 +1,30 @@
-import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { MotionProvider } from "./components/MotionContext";
 import { StructuredData } from "./components/StructuredData";
 import "./globals.css";
 
-const nunito = Nunito({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
+export const viewport: Viewport = {
+  themeColor: "#FFFEFB",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://luluzhao.me"),
-  title: "Lulu Zhao — Human–AI Interaction Researcher",
+  title: "Lulu Zhao — Human–AI Interaction & Design",
   description:
-    "Lulu Zhao is a Robotics PhD student at Cornell University exploring embodied intelligence and AI as a material for design.",
+    "Lulu Zhao is a PhD student in Computer Science at Cornell University, interested in human–AI interaction and design.",
   openGraph: {
-    title: "Lulu Zhao — Human–AI Interaction Researcher",
-    description: "Making intelligence tangible.",
+    title: "Lulu Zhao — Human–AI Interaction & Design",
+    description: "CS PhD student at Cornell University. Human–AI interaction and design.",
     type: "website",
     url: "https://luluzhao.me",
-    images: [{ url: "/og-magic.png", width: 1536, height: 1024, alt: "Lulu Zhao — Human–AI Interaction Researcher" }],
+    images: [{ url: "/og-magic.png", width: 1536, height: 1024, alt: "Lulu Zhao" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lulu Zhao — Human–AI Interaction Researcher",
-    description: "Making intelligence tangible.",
+    title: "Lulu Zhao — Human–AI Interaction & Design",
+    description: "CS PhD student at Cornell University. Human–AI interaction and design.",
     images: ["/og-magic.png"],
   },
   alternates: { canonical: "/" },
@@ -38,7 +39,7 @@ const structuredData = [
     alternateName: "赵璐璐",
     url: "https://luluzhao.me",
     image: "https://luluzhao.me/photos/lulu-portrait.jpg",
-    jobTitle: "Human–AI Interaction Researcher",
+    jobTitle: "PhD Student in Computer Science",
     affiliation: {
       "@type": "CollegeOrUniversity",
       name: "Cornell University",
@@ -51,9 +52,9 @@ const structuredData = [
     ],
     knowsAbout: [
       "Human–AI interaction",
+      "Design",
       "Embodied intelligence",
       "Robot learning",
-      "Interaction design",
     ],
   },
   {
@@ -63,7 +64,7 @@ const structuredData = [
     url: "https://luluzhao.me",
     name: "Lulu Zhao",
     description:
-      "Research and writing on human–AI interaction, embodied intelligence, and robot learning.",
+      "Research, publications, and writing on human–AI interaction, design, and embodied intelligence.",
     author: { "@id": "https://luluzhao.me/#person" },
     inLanguage: "en",
   },
@@ -74,9 +75,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={nunito.variable}>
+      <body>
         <StructuredData data={structuredData} />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

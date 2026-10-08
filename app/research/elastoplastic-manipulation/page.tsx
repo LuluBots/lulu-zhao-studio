@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import React from "react";
+import { SiteFooter } from "../../components/SiteFooter";
+import { SiteHeader } from "../../components/SiteHeader";
 import { StructuredData } from "../../components/StructuredData";
 import { publication, site } from "../../site";
 
@@ -36,96 +39,144 @@ const articleStructuredData = {
   ],
 };
 
-export default function ResearchProject() {
+export default function ElastoPlasticProjectPage() {
   return (
-    <main className="case-study">
+    <div className="site-canvas">
+      <SiteHeader />
       <StructuredData data={articleStructuredData} />
-      <header className="site-header shell">
-        <Link className="wordmark" href="/">Lulu Zhao<span>.</span></Link>
-        <nav aria-label="Project navigation">
-          <Link href="/#research">All research</Link>
-          <a className="nav-contact" href={publication.paperUrl} target="_blank" rel="noreferrer">Read paper</a>
-        </nav>
-      </header>
 
-      <article>
-        <header className="case-hero shell">
-          <div className="case-labels">
-            <p className="eyebrow">Robot learning · Deformable object manipulation</p>
-            <p className="transfer-badge">✦ {publication.conference}</p>
-          </div>
-          <h1>{publication.title}</h1>
-          <div className="case-meta">
-            <div><span>Role</span><p>Researcher</p></div>
-            <div><span>Institution</span><p>The Chinese University of Hong Kong</p></div>
-            <div><span>Period</span><p>{publication.date}</p></div>
-            <div><span>Advisors</span><p>Prof. K. W. Samuel Au<br />Prof. Xiangyu Chu</p></div>
-          </div>
-        </header>
+      <main className="shell inner-page-main">
+        {/* Project Breadcrumb / Back Link */}
+        <div className="detail-nav-bar">
+          <Link href="/research" className="back-link">
+            ← All research
+          </Link>
+        </div>
 
-        <section className="research-video shell" aria-label="Research demonstration">
-          <video
-            controls
-            playsInline
-            preload="metadata"
-            poster={publication.videoPoster}
-          >
-            <source src={publication.videoUrl} type="video/mp4" />
-            Your browser does not support embedded video. You can view it on the paper page.
-          </video>
-        </section>
-
-        <section className="case-body shell">
-          <aside><p className="eyebrow">The challenge</p></aside>
-          <div>
-            <h2>Teaching robots to shape objects that are hard to see and predict.</h2>
-            <p>
-              Elasto-plastic objects such as clay can bend, stretch, and retain
-              new forms. Severe self-occlusion and complex deformation dynamics
-              make their state difficult to represent—and their motion difficult
-              for a robot to plan.
-            </p>
-          </div>
-        </section>
-
-        <section className="method-section">
-          <div className="shell">
-            <p className="eyebrow">The framework</p>
-            <div className="method-grid">
-              <article><span>01</span><h3>3D occupancy</h3><p>A volumetric state representation inferred from multiple RGB views captures the object beyond partial surface observations.</p></article>
-              <article><span>02</span><h3>Learned dynamics</h3><p>A model combining 3D convolutional and graph neural networks predicts complex object deformation.</p></article>
-              <article><span>03</span><h3>Predictive control</h3><p>A shape-aware action initialization module improves planning efficiency toward a desired goal shape.</p></article>
+        <article className="project-detail-article">
+          <header className="detail-header">
+            <div className="detail-meta-pill-row">
+              <span className="meta-tag">Robot learning · Deformable manipulation</span>
+              <span className="meta-badge">{publication.conference}</span>
             </div>
-          </div>
-        </section>
 
-        <section className="case-body shell contribution-section">
-          <aside><p className="eyebrow">My contribution</p></aside>
-          <div>
-            <h2>Architecting a learning-based predictive control framework.</h2>
-            <p>
-              I contributed to the architecture of the predictive control
-              framework and its 3D occupancy-based state representation during
-              my research at CUHK.
+            <h1 className="detail-title">{publication.title}</h1>
+
+            <div className="detail-meta-grid">
+              <div className="meta-col">
+                <span className="meta-col-label">Institution</span>
+                <p className="meta-col-val">The Chinese University of Hong Kong</p>
+              </div>
+              <div className="meta-col">
+                <span className="meta-col-label">Timeline</span>
+                <p className="meta-col-val">{publication.date}</p>
+              </div>
+              <div className="meta-col">
+                <span className="meta-col-label">Publication</span>
+                <p className="meta-col-val">{publication.venue}</p>
+              </div>
+              <div className="meta-col">
+                <span className="meta-col-label">Advisors</span>
+                <p className="meta-col-val">
+                  Prof. K. W. Samuel Au &amp; Prof. Xiangyu Chu
+                </p>
+              </div>
+            </div>
+
+            {/* Quick resource links */}
+            <div className="detail-actions-row">
+              <a
+                href={publication.paperUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="action-btn action-email-primary"
+              >
+                IEEE Paper (PDF) ↗
+              </a>
+              <a
+                href={`https://doi.org/${publication.doi}`}
+                target="_blank"
+                rel="noreferrer"
+                className="action-btn action-copy-btn"
+              >
+                DOI: {publication.doi} ↗
+              </a>
+            </div>
+          </header>
+
+          {/* Demonstration Video (User clicks to play, no autoplay, poster provided) */}
+          <section className="detail-media-section" aria-label="Experiment demonstration video">
+            <div className="video-player-container">
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                poster={publication.videoPoster}
+                className="detail-video-element"
+              >
+                <source src={publication.videoUrl} type="video/mp4" />
+                Your browser does not support embedded video.
+              </video>
+            </div>
+            <p className="media-caption">
+              Robot manipulating elasto-plastic materials using 3D occupancy prediction and model predictive control.
             </p>
-            <a className="paper-link" href={publication.paperUrl} target="_blank" rel="noreferrer">Read the publication ↗</a>
-          </div>
-        </section>
+          </section>
 
-        <section className="publication shell">
-          <p className="eyebrow">Publication</p>
-          <h2>{publication.title}</h2>
-          <p>{publication.authors}</p>
-          <p>{publication.venue} · {publication.citation}</p>
-          <p><strong>{publication.conference}</strong></p>
-          <p>DOI: {publication.doi}</p>
-        </section>
-      </article>
+          {/* Narrative sections following spec */}
+          <section className="detail-narrative">
+            <div className="narrative-block">
+              <h2>Research Question</h2>
+              <p>
+                How can robots perceive, model, and manipulate elasto-plastic objects (like clay) that
+                undergo complex, history-dependent plastic deformation and heavy self-occlusion?
+                Traditional point-cloud or mesh tracking methods struggle when objects change shape
+                irreversibly and conceal internal or rear contours.
+              </p>
+            </div>
 
-      <footer className="case-footer shell">
-        <Link href="/">← Back to Lulu’s home</Link>
-        <a href={`mailto:${site.email}`}>Discuss this work ↗</a>
-      </footer>
-    </main>
+            <div className="narrative-block">
+              <h2>What We Built</h2>
+              <p>
+                We introduced a learning-based predictive control framework leveraging a volumetric
+                3D occupancy state representation. By inferring a complete 3D occupancy grid from
+                multi-view RGB cameras, our model represents both visible surfaces and occluded volume.
+                Coupled with a deformation prediction model and shape-aware action initialization,
+                the robot plans manipulation actions efficiently toward target shapes.
+              </p>
+            </div>
+
+            <div className="narrative-block">
+              <h2>My Contribution</h2>
+              <p>
+                Contributed to the formulation of the learning-based model predictive control framework,
+                experimental validation on the physical robot platform, and analysis of multi-view
+                representation accuracy during deformation tasks.
+              </p>
+            </div>
+
+            <div className="narrative-block">
+              <h2>Collaborators &amp; Credits</h2>
+              <p className="credits-text">
+                <strong>Authors:</strong> {publication.authors}
+                <br />
+                <strong>Published in:</strong> {publication.venue} ({publication.citation}).
+              </p>
+            </div>
+          </section>
+
+          <footer className="detail-footer">
+            <Link href="/research" className="back-link">
+              ← Return to all research
+            </Link>
+            <a href={`mailto:${site.email}`} className="action-link-secondary">
+              Discuss this work with Lulu ↗
+            </a>
+          </footer>
+        </article>
+      </main>
+
+      <SiteFooter />
+    </div>
   );
 }

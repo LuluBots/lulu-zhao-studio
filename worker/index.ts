@@ -29,7 +29,13 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
-    if (url.protocol === "http:") {
+    const isLocalhost =
+      url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "[::1]" ||
+      url.hostname.endsWith(".local");
+
+    if (url.protocol === "http:" && !isLocalhost) {
       url.protocol = "https:";
       return Response.redirect(url.toString(), 301);
     }

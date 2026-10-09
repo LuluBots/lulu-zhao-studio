@@ -31,7 +31,7 @@ Run `npm ci`, `npm run dev`, or `npm run deploy:v2` at the repository root. All 
 ## Preservation and rollback
 
 Original V1 version: `505254d0-92a0-45d1-bb2d-d04299882ab1` on `lulu-zhao-personal-website`.
-Current V3 production version: `f39c68ff-c505-4acf-b696-711a1040d3ac` on `lulu-zhao-rally-v3`.
+Current V3 production version: `3fd6b8f8-02f7-4099-ac6d-f426c89d640a` on `lulu-zhao-rally-v3`.
 To restore the old homepage, reassign only the `luluzhao.me` custom domain to the original worker; keep both archive domains. Avoid deploying V2 over the original worker.
 
 Full backup archives are saved with the task's `outputs/site-versions/` deliverables.
@@ -74,3 +74,7 @@ The site is built with React, Next.js-compatible routing, vinext, and Vite.
 
 Original high-resolution photos and working CV files are intentionally excluded
 from the public repository.
+
+## V0 source archive
+
+`versions/v0/` preserves the original ChatGPT Sites source and public assets at commit `b8309a05b65a691fd79ad40e198d3c7ad5130ba4`. Its Sites version number (6) is separate from this website’s V0 label. Provenance is recorded in `versions/v0-archive.json`. Runtime credentials are excluded. To run locally: `cd versions/v0`, `npm ci`, then `npm run dev`. Do not redeploy it over the original V1 Worker: the archived package retains its original name.

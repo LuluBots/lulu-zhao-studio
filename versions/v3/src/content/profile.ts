@@ -33,3 +33,11 @@ export const sides = {
   },
 } as const;
 export const interests = { technology: sides.technology.interests, humanities: sides.humanities.interests };
+
+// Contact destinations verified against the preserved V1 site.
+export const socialLinks = [
+  { label: 'Email', href: 'mailto:lz625@cornell.edu', detail: 'lz625@cornell.edu' },
+  { label: 'GitHub', href: 'https://github.com/LuluBots', detail: '@LuluBots' },
+  { label: 'Google Scholar', href: 'https://scholar.google.com/citations?user=9eMU41cAAAAJ&hl=en', detail: 'Papers & citations' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/lulubotszhao/', detail: 'Let’s connect' },
+] as const;

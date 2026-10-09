@@ -4,6 +4,7 @@
 - **Version history:** https://luluzhao.me/versions/
 - **V2:** https://v2.luluzhao.me/ — LuluBot Studio
 - **V1:** https://v1.luluzhao.me/ — original research site
+- **V0:** https://lulu-zhao-research.jasminelu1.chatgpt.site/ — preserved at its original ChatGPT Sites address
 
 ## Source layout
 
@@ -30,7 +31,7 @@ Run `npm ci`, `npm run dev`, or `npm run deploy:v2` at the repository root. All 
 ## Preservation and rollback
 
 Original V1 version: `505254d0-92a0-45d1-bb2d-d04299882ab1` on `lulu-zhao-personal-website`.
-Current V3 production version: `36f6f789-f0fc-4246-a683-411c07b69acb` on `lulu-zhao-rally-v3`.
+Current V3 production version: `f39c68ff-c505-4acf-b696-711a1040d3ac` on `lulu-zhao-rally-v3`.
 To restore the old homepage, reassign only the `luluzhao.me` custom domain to the original worker; keep both archive domains. Avoid deploying V2 over the original worker.
 
 Full backup archives are saved with the task's `outputs/site-versions/` deliverables.

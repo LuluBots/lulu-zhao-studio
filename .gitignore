@@ -47,3 +47,8 @@ next-env.d.ts
 # Private working files; public-facing assets belong in public/.
 /inprogresscv/
 /tmp/
+
+# Nested preserved release build state
+versions/**/node_modules/
+versions/**/dist/
+versions/**/.wrangler/

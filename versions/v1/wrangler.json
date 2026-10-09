@@ -1,0 +1,1 @@
+{"name":"lulu-zhao-v1-archive","main":"worker.js","compatibility_date":"2026-10-08","workers_dev":true,"routes":[{"pattern":"v1.luluzhao.me","custom_domain":true}],"services":[{"binding":"ORIGINAL","service":"lulu-zhao-personal-website"}]}

@@ -9,6 +9,7 @@ export function SiteFooter() {
 
   return (
     <footer className="site-footer">
+      <div style={{textAlign:"center",padding:"18px",fontSize:"13px"}}>Version 2 · LuluBot Studio · <a href="https://luluzhao.me/versions/">Version history ↗</a></div>
       <div className="shell site-footer-inner">
         {/* Contact Invitation Section */}
         <section className="footer-contact-box" aria-labelledby="footer-contact-title">

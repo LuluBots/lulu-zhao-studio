@@ -162,4 +162,20 @@ html, body, #root {
 
 .version-history-link{position:absolute;right:16px;bottom:12px;z-index:20;font:11px Arial,sans-serif;color:#315665;background:#f5f5eddd;padding:7px 11px;border:1px solid #bed0c7;border-radius:20px;text-decoration:none}.version-history-link:hover{background:#fff}.court-world[data-started="true"] .version-history-link{bottom:86px}@media(max-width:640px){.version-history-link{right:10px;font-size:10px}}
 
-.profile-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0 24px}.profile-links a{display:flex;flex-direction:column;justify-content:center;gap:6px;min-height:72px;padding:13px 14px;border:1px solid #b5cbc7;border-radius:6px;background:#f9fbf2;color:#245c74;text-decoration:none}.profile-links strong{font-size:14px;font-weight:600}.profile-links a>span{font-size:11px;overflow-wrap:anywhere;color:#526e74}.profile-links a:hover{background:#e5edcf;border-color:#799b80}.profile-links a:focus-visible{outline:3px solid #245c74;outline-offset:3px}@media(max-width:360px){.profile-links{grid-template-columns:1fr}}
+/* Compact editorial hierarchy for profile and content cards. */
+.content-card::before{content:none;display:none}
+.about-card{width:min(440px,calc(100vw - 32px));padding:24px 28px}
+.about-card .card-top{margin-bottom:8px}
+.about-card .card-eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.about-card h2{font-family:inherit;font-size:34px;font-weight:600;font-style:normal;letter-spacing:-1.2px;margin:0 0 6px;line-height:1.15}
+.about-affiliation{font-size:13px;color:#526e74;margin:0 0 24px;line-height:1.5}
+.about-body{display:grid;gap:20px;border-top:1px solid #b5cbc7;padding:22px 0}
+.about-body h3{font:600 11px/1.4 system-ui;letter-spacing:.08em;text-transform:uppercase;color:#245c74;margin:0 0 7px}
+.about-body p{font-size:14px;line-height:1.7;color:#405d66;margin:0}
+.profile-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px;border-top:1px solid #b5cbc7;padding-top:12px;margin:0 0 8px}
+.profile-links a{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;color:#245c74;font-size:13px;font-weight:600;text-decoration:none}
+.profile-links a span{font-weight:400;color:#6c8b82}
+.profile-links a:hover{text-decoration:underline;text-underline-offset:4px}
+.profile-links a:focus-visible{outline:2px solid #245c74;outline-offset:2px}
+.about-card>.card-secondary{margin-top:4px}
+@media(max-width:600px){.about-card{padding:20px 22px}.about-card h2{font-size:30px}.about-body{gap:18px;padding:18px 0}.about-affiliation{margin-bottom:18px}}

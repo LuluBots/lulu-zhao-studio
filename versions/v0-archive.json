@@ -1,7 +1,8 @@
 {
-  "url": "https://lulu-zhao-research.jasminelu1.chatgpt.site/",
+  "url": "https://v0.luluzhao.me/",
   "source_commit": "b8309a05b65a691fd79ad40e198d3c7ad5130ba4",
   "sites_version": 6,
   "files": 59,
-  "note": "Exact source snapshot, including public assets. Runtime secrets are not exported. Earlier Git history is incomplete upstream; this archive preserves the selected version."
+  "note": "Original snapshot preserved in v0-source.tar.gz; this working copy uses independent Cloudflare deployment, local canonical URLs and a version-history footer. Runtime secrets are not included.",
+  "original_url": "https://lulu-zhao-research.jasminelu1.chatgpt.site/"
 }

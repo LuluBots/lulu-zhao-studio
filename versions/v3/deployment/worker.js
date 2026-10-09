@@ -1,6 +1,6 @@
 export default {async fetch(request,env){
  const url=new URL(request.url);
- if(url.pathname==='/versions/v0'||url.pathname==='/versions/v0/')return Response.redirect('https://lulu-zhao-research.jasminelu1.chatgpt.site/',302);
+ if(url.pathname==='/versions/v0'||url.pathname==='/versions/v0/')return Response.redirect('https://v0.luluzhao.me/',302);
  if(/^\/(research|publications|about|blog|photography)(\/|$)/.test(url.pathname))return Response.redirect('https://v1.luluzhao.me'+url.pathname+url.search,302);
  if(url.pathname==='/versions/v1'||url.pathname==='/versions/v1/')return Response.redirect('https://v1.luluzhao.me/',302);
  if(url.pathname==='/versions/v2'||url.pathname==='/versions/v2/')return Response.redirect('https://v2.luluzhao.me/',302);

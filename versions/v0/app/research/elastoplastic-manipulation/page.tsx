@@ -15,7 +15,7 @@ const articleStructuredData = {
   "@type": "ScholarlyArticle",
   headline: publication.title,
   name: publication.title,
-  url: `https://luluzhao.me/research/${publication.slug}`,
+  url: `https://v0.luluzhao.me/research/${publication.slug}`,
   datePublished: "2025",
   identifier: `https://doi.org/${publication.doi}`,
   sameAs: `https://doi.org/${publication.doi}`,
@@ -23,7 +23,7 @@ const articleStructuredData = {
     "@type": "Person",
     name: name.replace(/^and /, ""),
   })),
-  contributor: { "@id": "https://luluzhao.me/#person" },
+  contributor: { "@id": "https://v0.luluzhao.me/#person" },
   publisher: {
     "@type": "Organization",
     name: "IEEE",

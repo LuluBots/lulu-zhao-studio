@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://luluzhao.me/sitemap.xml
-Host: https://luluzhao.me
+Sitemap: https://v0.luluzhao.me/sitemap.xml
+Host: https://v0.luluzhao.me

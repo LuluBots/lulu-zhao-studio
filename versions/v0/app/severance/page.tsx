@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "What Crosses?",
     description: "Provisions for a Divided Life.",
-    url: "https://luluzhao.me/severance",
+    url: "https://v0.luluzhao.me/severance",
   },
 };
 

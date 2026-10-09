@@ -15,6 +15,7 @@ export function SiteFooter() {
       <div className="footer-meta">
         <span>© {new Date().getFullYear()} Lulu Zhao</span>
         <span>Ithaca, New York</span>
+        <a href="https://luluzhao.me/versions/">V0 · Version history ↗</a>
       </div>
     </footer>
   );

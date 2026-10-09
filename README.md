@@ -4,7 +4,7 @@
 - **Version history:** https://luluzhao.me/versions/
 - **V2:** https://v2.luluzhao.me/ — LuluBot Studio
 - **V1:** https://v1.luluzhao.me/ — original research site
-- **V0:** https://lulu-zhao-research.jasminelu1.chatgpt.site/ — preserved at its original ChatGPT Sites address
+- **V0:** https://v0.luluzhao.me/ — independently hosted research portfolio
 
 ## Source layout
 
@@ -31,7 +31,7 @@ Run `npm ci`, `npm run dev`, or `npm run deploy:v2` at the repository root. All 
 ## Preservation and rollback
 
 Original V1 version: `505254d0-92a0-45d1-bb2d-d04299882ab1` on `lulu-zhao-personal-website`.
-Current V3 production version: `3fd6b8f8-02f7-4099-ac6d-f426c89d640a` on `lulu-zhao-rally-v3`.
+Current V3 production version: `5e6a8921-193e-45c9-9bb5-9692a3eee0b2` on `lulu-zhao-rally-v3`.
 To restore the old homepage, reassign only the `luluzhao.me` custom domain to the original worker; keep both archive domains. Avoid deploying V2 over the original worker.
 
 Full backup archives are saved with the task's `outputs/site-versions/` deliverables.
@@ -75,6 +75,6 @@ The site is built with React, Next.js-compatible routing, vinext, and Vite.
 Original high-resolution photos and working CV files are intentionally excluded
 from the public repository.
 
-## V0 source archive
+## Independent V0 hosting
 
-`versions/v0/` preserves the original ChatGPT Sites source and public assets at commit `b8309a05b65a691fd79ad40e198d3c7ad5130ba4`. Its Sites version number (6) is separate from this website’s V0 label. Provenance is recorded in `versions/v0-archive.json`. Runtime credentials are excluded. To run locally: `cd versions/v0`, `npm ci`, then `npm run dev`. Do not redeploy it over the original V1 Worker: the archived package retains its original name.
+V0 is deployed to `v0.luluzhao.me` on Cloudflare Worker `lulu-zhao-v0-archive`. It does not use Sites for builds, hosting, or publication. Its source and assets are in `versions/v0/`. Run `npm ci`, `npm run build`, then `npx wrangler deploy --config dist/server/wrangler.json` in that directory. The original snapshot is retained separately; the deployable copy uses its own domain and version-history footer. V1 archive responses omit the inherited X-Frame-Options: DENY header so public embedded previews can render.

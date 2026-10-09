@@ -9,7 +9,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://luluzhao.me"),
+  metadataBase: new URL("https://v0.luluzhao.me"),
   title: "Lulu Zhao — Human–AI Interaction Researcher",
   description:
     "Lulu Zhao is a Robotics PhD student at Cornell University exploring embodied intelligence and AI as a material for design.",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     title: "Lulu Zhao — Human–AI Interaction Researcher",
     description: "Making intelligence tangible.",
     type: "website",
-    url: "https://luluzhao.me",
+    url: "https://v0.luluzhao.me",
     images: [{ url: "/og-magic.png", width: 1536, height: 1024, alt: "Lulu Zhao — Human–AI Interaction Researcher" }],
   },
   twitter: {
@@ -33,11 +33,11 @@ const structuredData = [
   {
     "@context": "https://schema.org",
     "@type": "Person",
-    "@id": "https://luluzhao.me/#person",
+    "@id": "https://v0.luluzhao.me/#person",
     name: "Lulu Zhao",
     alternateName: "赵璐璐",
-    url: "https://luluzhao.me",
-    image: "https://luluzhao.me/photos/lulu-portrait.jpg",
+    url: "https://v0.luluzhao.me",
+    image: "https://v0.luluzhao.me/photos/lulu-portrait.jpg",
     jobTitle: "Human–AI Interaction Researcher",
     affiliation: {
       "@type": "CollegeOrUniversity",
@@ -59,12 +59,12 @@ const structuredData = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": "https://luluzhao.me/#website",
-    url: "https://luluzhao.me",
+    "@id": "https://v0.luluzhao.me/#website",
+    url: "https://v0.luluzhao.me",
     name: "Lulu Zhao",
     description:
       "Research and writing on human–AI interaction, embodied intelligence, and robot learning.",
-    author: { "@id": "https://luluzhao.me/#person" },
+    author: { "@id": "https://v0.luluzhao.me/#person" },
     inLanguage: "en",
   },
 ];

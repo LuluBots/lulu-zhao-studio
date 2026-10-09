@@ -179,3 +179,5 @@ html, body, #root {
 .profile-links a:focus-visible{outline:2px solid #245c74;outline-offset:2px}
 .about-card>.card-secondary{margin-top:4px}
 @media(max-width:600px){.about-card{padding:20px 22px}.about-card h2{font-size:30px}.about-body{gap:18px;padding:18px 0}.about-affiliation{margin-bottom:18px}}
+
+.education-timeline{list-style:none;margin:24px 0 16px;padding:0 0 0 18px;border-left:1px solid #abc1b8}.education-timeline li{position:relative;padding:0 0 26px 10px}.education-timeline li:last-child{padding-bottom:6px}.education-timeline li::before{content:'';position:absolute;left:-23px;top:4px;width:8px;height:8px;border-radius:50%;background:#729283;box-shadow:0 0 0 4px #edf2e8}.education-timeline .education-date{font-size:11px;letter-spacing:.04em;color:#617f80;margin:0 0 7px}.education-timeline h3{font-size:17px;font-weight:600;line-height:1.35;margin:0 0 5px}.education-timeline p{font-size:13px;line-height:1.6;margin:0;color:#45616b}.education-award{display:inline-block;margin-top:9px;padding:5px 9px;background:#e2eacc;border-radius:3px;color:#435e44;font-size:12px;font-weight:500}

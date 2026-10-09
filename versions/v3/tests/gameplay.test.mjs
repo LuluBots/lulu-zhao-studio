@@ -27,7 +27,7 @@ test('launch follows the moved racket; launch and return out-balls are rejected'
  assert.equal(inBounds(returnLanding([0,-4],{yaw:.5,pitch:0})),false);assert.equal(inBounds(returnLanding([0,-4],{yaw:0,pitch:0})),true);
 });
 test('full craft footprint stays outside court airspace through entire day/night routes',()=>{
- for(const night of [false,true])for(let i=0;i<3;i++)for(let t=0;t<160;t+=.1){const [x,,z]=airRoute(i,t,night);assert.ok(Math.abs(x)-3>6.2||Math.abs(z)-3>11.85)}
+ for(const night of [false,true])for(let i=0;i<4;i++)for(let t=0;t<160;t+=.1){const [x,,z]=airRoute(i,t,night);assert.ok(Math.abs(x)-3>6.2||Math.abs(z)-3>11.85)}
 });
 test('signature faces inward from the external baseline at either end',()=>{assert.equal(baselineRotation(1),0);assert.equal(baselineRotation(-1),Math.PI)});
 

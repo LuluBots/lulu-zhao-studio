@@ -1,40 +1,56 @@
 import { useIndirectLight } from './useIndirectLight';
 import { RoundedBox } from '@react-three/drei';
 import { useMemo, useEffect, useRef } from 'react';
-import { Group, Mesh, MeshStandardMaterial, Vector3, Quaternion, BufferGeometry, Float32BufferAttribute } from 'three';
+import { Group, Mesh, MeshStandardMaterial, Vector3, Quaternion, BufferGeometry, Float32BufferAttribute, CatmullRomCurve3, TubeGeometry } from 'three';
 import {surfaceTexture} from './surfaceTextures';
 const ivory='#f2ead8',sage='#779c93',wood='#c9aa86';
 function Bar({a,b,r=.035,color=sage}:{a:[number,number,number];b:[number,number,number];r?:number;color?:string}){
  const {mid,q,length}=useMemo(()=>{const start=new Vector3(...a),end=new Vector3(...b),d=end.clone().sub(start);return {mid:start.add(end).multiplyScalar(.5),q:new Quaternion().setFromUnitVectors(new Vector3(0,1,0),d.clone().normalize()),length:d.length()}},[a,b]);
  return <mesh position={mid} quaternion={q} castShadow><cylinderGeometry args={[r,r,length,16]}/><meshStandardMaterial color={color}/></mesh>;
 }
-function Bench(){return <group name="Rest_Bench">
- {[-.78,.78].flatMap(x=>[-.21,.22].map(z=><mesh key={`${x}-${z}`} name="Bench_Support_Leg" position={[x,.215,z]} castShadow><boxGeometry args={[.17,.55,.17]}/><meshStandardMaterial color="#54786f" metalness={.2} roughness={.65}/></mesh>))}
- {[-.78,.78].flatMap(x=>[-.21,.22].map(z=><mesh key={`foot-${x}-${z}`} name="Bench_Foot_Plate" position={[x,-.035,z]} receiveShadow><boxGeometry args={[.25,.05,.25]}/><meshStandardMaterial color="#54786f"/></mesh>))}
- {[-.78,.78].map(x=><Bar key={x} a={[x,.15,-.27]} b={[x,.15,.28]} r={.045}/>)}
- <Bar a={[-.8,.23,0]} b={[.8,.23,0]} r={.035}/>
-
- {[-.75,.75].map(x=><group key={x}><Bar a={[x,.04,-.22]} b={[x,.48,-.22]} r={.045}/><Bar a={[x,.04,.25]} b={[x,.48,.25]} r={.045}/><Bar a={[x,.42,-.25]} b={[x,1.02,-.32]} r={.04}/></group>)}
- {[0,1,2,3].map(i=><RoundedBox key={i} args={[2.05,.09,.115]} radius={.025} position={[0,.49,-.20+i*.14]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>)}
- {[.72,.91].map(y=><RoundedBox key={y} args={[2.05,.15,.075]} radius={.03} position={[0,y,-.31]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>)}
- <RoundedBox args={[.65,.055,.36]} radius={.025} position={[-.37,.56,0]} castShadow><meshStandardMaterial color="#e8d7ce"/></RoundedBox>
- <mesh position={[-.52,.43,.26]}><boxGeometry args={[.36,.28,.018]}/><meshStandardMaterial color="#e8d7ce"/></mesh>
+function Piping({points,color=ivory,r=.009}:{points:[number,number,number][];color?:string;r?:number}){
+ const geometry=useMemo(()=>new TubeGeometry(new CatmullRomCurve3(points.map(p=>new Vector3(...p))),24,r,6,false),[JSON.stringify(points),r]);
+ useEffect(()=>()=>geometry.dispose(),[geometry]);return <mesh geometry={geometry}><meshStandardMaterial color={color} roughness={.65}/></mesh>;
+}
+export function Bench(){return <group name="Rest_Bench">
+ {[-.78,.78].map(x=><group key={x}>
+  {[-.21,.22].map(z=><group key={z}><RoundedBox name="Bench_Support_Leg" args={[.10,.49,.10]} radius={.018} position={[x,.215,z]} castShadow><meshStandardMaterial color={sage} metalness={.18} roughness={.48}/></RoundedBox><RoundedBox args={[.18,.035,.18]} radius={.012} position={[x,-.015,z]}><meshStandardMaterial color="#526b65"/></RoundedBox></group>)}
+  <Bar a={[x,.35,-.26]} b={[x,.35,.28]} r={.038}/><Bar a={[x,.42,-.26]} b={[x,1.03,-.35]} r={.035}/>
+  <Piping points={[[x,.46,.25],[x,.68,.24],[x,.73,.10],[x,.73,-.17],[x,.65,-.3]]} color={sage} r={.028}/>
+  <RoundedBox args={[.09,.055,.40]} radius={.025} position={[x,.735,-.005]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>
+ </group>)}
+ <Bar a={[-.8,.21,0]} b={[.8,.21,0]} r={.028}/>
+ {[0,1,2,3].map(i=><RoundedBox key={i} args={[2.05,.065,.12]} radius={.018} position={[0,.48,-.20+i*.14]} castShadow receiveShadow><meshStandardMaterial color={wood} roughness={.57}/></RoundedBox>)}
+ {[.70,.86,1.02].map(y=><group key={y}><RoundedBox args={[2.05,.125,.06]} radius={.018} position={[0,y,-.29-(y-.7)*.12]} rotation={[-.12,0,0]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>{[-.78,.78].map(x=><mesh name="Bench_Recessed_Fastener" key={x} position={[x,y,-.252-(y-.7)*.12]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.012,.012,.008,12]}/><meshStandardMaterial color="#71857c" metalness={.5} roughness={.4}/></mesh>)}</group>)}
+ <RoundedBox args={[.66,.07,.38]} radius={.03} position={[-.34,.55,0]} castShadow><meshStandardMaterial color="#e9dccc"/></RoundedBox>
+ <Piping points={[[-.65,.57,-.17],[-.65,.57,.16],[-.03,.57,.16],[-.03,.57,-.17],[-.65,.57,-.17]]} color="#c4aa8e" r={.0035}/>
  </group>}
-function Parasol(){
+export function Parasol(){
  const panels=useMemo(()=>Array.from({length:12},(_,i)=>{
   const vertices:number[]=[],indices:number[]=[];
-  for(let r=0;r<=6;r++)for(let j=0;j<=4;j++){
-   const t=r/6,a=(i+j/4)*Math.PI/6,radius=1.55*t;
-   const y=3.65-.24*t-.18*t*t-.045*Math.sin(Math.PI*j/4)*t*t;
+  for(let r=0;r<=8;r++)for(let j=0;j<=6;j++){
+   const t=r/8,a=(i+j/6)*Math.PI/6,radius=1.55*t;
+   const y=3.65-.24*t-.18*t*t-.07*Math.sin(Math.PI*j/6)*t*t;
    vertices.push(radius*Math.cos(a),y,radius*Math.sin(a));
   }
-  for(let r=0;r<6;r++)for(let j=0;j<4;j++){const k=r*5+j;indices.push(k,k+5,k+1,k+1,k+5,k+6)}
+  for(let r=0;r<8;r++)for(let j=0;j<6;j++){const k=r*7+j;indices.push(k,k+7,k+1,k+1,k+7,k+8)}
   const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(vertices,3));g.setIndex(indices);g.computeVertexNormals();return g;
  }),[]);
- useEffect(()=>()=>panels.forEach(g=>g.dispose()),[panels]);
- return <group name="Linen_Parasol"><Bar a={[0,0,0]} b={[0,3.68,0]} r={.045} color={wood}/><mesh position={[0,.06,0]}><cylinderGeometry args={[.33,.4,.12,16]}/><meshStandardMaterial color={ivory}/></mesh>
- <mesh position={[0,3.68,0]} castShadow><sphereGeometry args={[.075,16,12]}/><meshStandardMaterial color={wood} roughness={.5}/></mesh>
- {panels.map((array,i)=><group key={i}><mesh castShadow geometry={array}><meshStandardMaterial color={i%2===0?ivory:'#9bb5a2'} side={2} roughness={1}/></mesh><Bar a={[0,3.62,0]} b={[Math.cos(i*Math.PI/6)*1.55,3.21,Math.sin(i*Math.PI/6)*1.55]} color={ivory} r={.013}/></group>)}
+ const valances=useMemo(()=>Array.from({length:12},(_,i)=>{const v:number[]=[],ix:number[]=[];for(let j=0;j<=12;j++){const t=j/12,a=(i+t)*Math.PI/6,y=3.23-.07*Math.sin(Math.PI*t);v.push(1.55*Math.cos(a),y,1.55*Math.sin(a),1.55*Math.cos(a),y-.08-.07*Math.sin(Math.PI*t),1.55*Math.sin(a));if(j<12){const k=j*2;ix.push(k,k+1,k+2,k+1,k+3,k+2)}}const g=new BufferGeometry();g.setAttribute('position',new Float32BufferAttribute(v,3));g.setIndex(ix);g.computeVertexNormals();return g}),[]);
+ useEffect(()=>()=>[...panels,...valances].forEach(g=>g.dispose()),[panels,valances]);
+ return <group name="Linen_Parasol"><Bar a={[0,0,0]} b={[0,3.68,0]} r={.04} color={wood}/>
+ <mesh position={[0,.06,0]} castShadow><cylinderGeometry args={[.32,.38,.12,48]}/><meshStandardMaterial color="#d8d2bc" roughness={.85}/></mesh><mesh position={[0,.15,0]}><cylinderGeometry args={[.085,.105,.17,24]}/><meshStandardMaterial color={sage} metalness={.3}/></mesh>
+ <mesh name="Parasol_Sliding_Hub" position={[0,2.53,0]}><cylinderGeometry args={[.075,.075,.16,24]}/><meshStandardMaterial color={sage}/></mesh>
+ <mesh position={[0,3.66,0]} castShadow><coneGeometry args={[.24,.12,36]}/><meshStandardMaterial color={ivory}/></mesh>
+ <mesh position={[0,3.74,0]}><sphereGeometry args={[.045,16,12]}/><meshStandardMaterial color={wood}/></mesh>
+ {panels.map((array,i)=>{const a=i*Math.PI/6;return <group key={i}>
+ <mesh castShadow geometry={array}><meshStandardMaterial color={i%3===0?'#9bb5a2':ivory} side={2} roughness={.88}/></mesh>
+ <mesh name="Scalloped_Linen_Valance" castShadow geometry={valances[i]}><meshStandardMaterial color={i%3===0?'#9bb5a2':ivory} side={2} roughness={.88}/></mesh>
+ <Piping points={Array.from({length:9},(_,j)=>{const t=j/8;return [1.55*t*Math.cos(a),3.655-.24*t-.18*t*t,1.55*t*Math.sin(a)] as [number,number,number]})} r={.007}/>
+ <Piping points={Array.from({length:7},(_,j)=>{const t=j/6;return [1.55*t*Math.cos(a),3.615-.24*t-.18*t*t,1.55*t*Math.sin(a)] as [number,number,number]})} color={wood} r={.012}/>
+ <Bar a={[0,2.56,0]} b={[.85*Math.cos(a),3.40,.85*Math.sin(a)]} r={.014} color={wood}/>
+ <mesh position={[.85*Math.cos(a),3.40,.85*Math.sin(a)]}><sphereGeometry args={[.023,8,6]}/><meshStandardMaterial color={sage}/></mesh>
+ </group>})}
  </group>;
 }
 function Planter({tree=false}:{tree?:boolean}){return <group>

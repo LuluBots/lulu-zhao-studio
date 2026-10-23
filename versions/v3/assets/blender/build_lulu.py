@@ -16,9 +16,9 @@ def mat(name,hex,rough=.8):
  m=bpy.data.materials.new(name); m.diffuse_color=(*c,1); m.use_nodes=True
  bs=m.node_tree.nodes.get('Principled BSDF'); bs.inputs['Base Color'].default_value=(*c,1);bs.inputs['Roughness'].default_value=rough
  return m
-skin=mat('Skin_WarmPeach','dcae91');hair=mat('Hair_Cocoa','40332f');eye=mat('Eyes','302c2b');shoe=mat('Shoes_Ivory','f4f0df');sole=mat('Soles_Sage','9ca99c');string=mat('Strings','c7d2c4');frame=mat('Racket_Sage','789b92');grip=mat('Grip_Cream','e7d9b4');cream=mat('Humanities_Cream','efe5cb');leaf=mat('Humanities_Leaf','8eaa85');navy=mat('Technology_ScholarBlue','567386');blue=mat('Technology_Ice','66d5dc')
+skin=mat('Skin_WarmPeach','dcae91');hair=mat('Hair_Cocoa','40332f');eye=mat('Eyes','302c2b');shoe=mat('Shoes_Ivory','f4f0df');sole=mat('Soles_Sage','9ca99c');string=mat('Strings','c7d2c4');frame=mat('Racket_Sage','789b92');grip=mat('Grip_Cream','e7d9b4');cream=mat('Humanities_Cream','efe5cb');leaf=mat('Humanities_Leaf','8eaa85');navy=mat('Technology_ScholarBlue','567386');blue=mat('Technology_Ice','92b7b4')
 rose=mat('Humanities_DustyRose','c78b99');gold=mat('Humanities_Champagne','c6ad7b');dark=mat('Technology_Graphite','26303f');pink=mat('Technology_Orchid','e88bc2');glow=mat('Technology_CircuitLight','7aebdf')
-bs=glow.node_tree.nodes.get('Principled BSDF');bs.inputs['Emission Color'].default_value=(.12,.7,.58,1);bs.inputs['Emission Strength'].default_value=.65
+bs=glow.node_tree.nodes.get('Principled BSDF');bs.inputs['Emission Color'].default_value=(.12,.7,.58,1);bs.inputs['Emission Strength'].default_value=.12
 silver=mat('Scientist_Titanium','aabdc5',.38);linen=mat('Scientist_Linen','e2e8e5');hairline=mat('Hair_Highlight','665044');blush=mat('Cheek_Rose','cf9d8b');ink=mat('Stitch_Ink','607e89')
 # Separate fabric, skin, satin hair and anodized metal instead of a uniform matte finish.
 for material,roughness,metallic in [(skin,.5,0),(hair,.32,0),(shoe,.65,0),(sole,.88,0),(frame,.3,.35),(gold,.28,.6),(silver,.27,.65),(cream,.76,0),(navy,.72,0),(rose,.58,0)]:
@@ -144,9 +144,8 @@ for side,a,b,c in [('L',(-.26,0,1.35),(-.38,-.01,1.09),(-.38,-.16,.97)),('R',(.2
 CENTER=Vector((.75,-.47,1.18));U=Vector((.64,0,.7684)).normalized();V=Vector((U.z,0,-U.x))
 def racketpoint(u,v=0,depth=0):return CENTER+U*u+V*v+Vector((0,depth,0))
 rod('GripCore',racketpoint(-.75),racketpoint(-.43),.027,grip,'Hand.R')
-for i in range(14):
- point=racketpoint(-.74+i*.023)
- curve('GripWrap',[point+V*(math.cos(a)*.028)+Vector((0,math.sin(a)*.028,0)) for a in [j*math.tau/16 for j in range(16)]],.003,shoe,'Hand.R',closed=True)
+# A continuous helical overgrip with overlap, not independent rings.
+curve('HelicalOvergrip',[racketpoint(-.74+.30*i/240)+V*(math.cos(i/240*math.tau*11)*.028)+Vector((0,math.sin(i/240*math.tau*11)*.028,0)) for i in range(241)],.0022,shoe,'Hand.R')
 rod('ButtCap',racketpoint(-.77),racketpoint(-.735),.035,grip,'Hand.R')
 for sign in [-1,1]:rod('OpenThroat',racketpoint(-.43),racketpoint(-.20,sign*.09),.013,frame,'Hand.R')
 for value in [-.16,-.12,-.08,-.04,0,.04,.08,.12,.16]:
@@ -162,27 +161,48 @@ uv('Thumb',racketpoint(-.55, -.018, -.030),(.023,.024,.039),skin,'Hand.R')
 for variant,material in [('Humanities',rose),('Technology',silver)]:
  curve('RacketHoop',[racketpoint(.275*math.cos(a),.205*math.sin(a)) for a in [j*math.tau/64 for j in range(64)]],.019,material,'Hand.R',variant,True)
  curve('RimInlay',[racketpoint(.285*math.cos(a),.215*math.sin(a),-.014) for a in [j*math.tau/64 for j in range(64)]],.004,gold if variant=='Humanities' else ink,'Hand.R',variant,True)
+# Bumper strip, drilled grommet seats, and the throat bridge are real geometry.
+curve('ProtectiveBumper',[racketpoint(.282*math.cos(a),.212*math.sin(a),.006) for a in [(-math.pi/2+j*math.pi/40) for j in range(41)]],.009,frame,'Hand.R')
+rod('ThroatBridge',racketpoint(-.23,-.105),racketpoint(-.23,.105),.012,frame,'Hand.R')
+for i in range(32):
+ a=i*math.tau/32
+ uv('StringGrommet',racketpoint(.274*math.cos(a),.204*math.sin(a),-.016),(.006,.006,.006),dark,'Hand.R',segments=8,rings=6)
 # Same garment topology, alternate palette and small original motifs.
 for variant,cloth,accent in [('Humanities',cream,leaf),('Technology',navy,blue)]:
- uv('Polo',(0,0,1.16),(.27,.181,.285),cloth,variant=variant)
- for side,a,b in [('L',(-.26,0,1.35),(-.38,-.01,1.09)),('R',(.26,0,1.35),(.40,-.12,1.13))]:
-  end=Vector(a).lerp(Vector(b),.45)
-  rod('Sleeve'+side,a,end,.105,cloth,'UpperArm.'+side,variant,r2=.098)
-  uv('Shoulder'+side,a,(.105,.105,.105),cloth,'UpperArm.'+side,variant)
- # A restrained pleated hem; disconnected rigid skirt follows the hips.
+ # Tailored torso rings give a waist, shoulder line and actual armhole silhouette.
  verts=[];faces=[]
- for z,r in [(1.0,.25),(.76,.36)]:
-  for i in range(24):
-   angle=2*math.pi*i/24;rr=r*((1.07 if i%2 else .97) if variant=='Humanities' else (1.025 if i%2 else .975));zz=z
-   if z<.8:zz=z+(.028*math.cos(angle*6)-.025 if variant=='Humanities' else .06*math.sin(angle))
-   verts.append((rr*math.cos(angle),rr*.65*math.sin(angle),zz))
- for i in range(24):faces.append((i,(i+1)%24,(i+1)%24+24,i+24))
- faces.extend([tuple(range(23,-1,-1)),tuple(range(24,48))])
- mesh=bpy.data.meshes.new(variant+'Skirt');mesh.from_pydata(verts,[],faces);o=bpy.data.objects.new('Skirt',mesh);scene.collection.objects.link(o);bpy.context.view_layer.objects.active=o;finish(o,'Skirt',cloth,variant=variant)
+ for z,rx,ry in [(1.0,.248,.158),(1.08,.25,.166),(1.22,.269,.178),(1.34,.245,.15),(1.41,.102,.085)]:
+  for i in range(32):
+   a=i*math.tau/32;verts.append((rx*math.cos(a),ry*math.sin(a),z))
+ for j in range(4):
+  for i in range(32):k=j*32+i;n=j*32+(i+1)%32;faces.append((k,n,n+32,k+32))
+ mesh=bpy.data.meshes.new('TailoredPolo');mesh.from_pydata(verts,[],faces);o=bpy.data.objects.new('TailoredPolo',mesh);scene.collection.objects.link(o);finish(o,'TailoredPolo',cloth,variant=variant)
+ for sign in [-1,1]:curve('SideSeam',[(sign*.238,-.055,1.02),(sign*.25,-.055,1.2),(sign*.227,-.055,1.34)],.0025,accent,variant=variant)
+ for side,a,b in [('L',(-.26,0,1.35),(-.38,-.01,1.09)),('R',(.26,0,1.35),(.40,-.12,1.13))]:
+  end=Vector(a).lerp(Vector(b),.32)
+  rod('Sleeve'+side,a,end,.095,cloth,'UpperArm.'+side,variant,r2=.09)
+  uv('Shoulder'+side,a,(.095,.095,.095),cloth,'UpperArm.'+side,variant)
+ # Four rings, crisp folded panels and an open double-sided hem.
+ verts=[];faces=[]
+ for row,(z,r) in enumerate([(1.0,.25),(.94,.265),(.84,.31),(.75,.355)]):
+  for i in range(48):
+   angle=math.tau*i/48;fold=[1,.89,1.065,1.05][i%4];rr=r*(1+(fold-1)*row/3)
+   verts.append((rr*math.cos(angle),rr*.65*math.sin(angle),z))
+ for row in range(3):
+  for i in range(48):k=row*48+i;n=row*48+(i+1)%48;faces.append((k,n,n+48,k+48))
+ mesh=bpy.data.meshes.new(variant+'Skirt');mesh.from_pydata(verts,[],faces);o=bpy.data.objects.new('Skirt',mesh);scene.collection.objects.link(o);finish(o,'Skirt',cloth,variant=variant)
+ for polygon in o.data.polygons:polygon.use_smooth=False
+ solid=o.modifiers.new('Turned cloth hem','SOLIDIFY');solid.thickness=.006;bpy.context.view_layer.objects.active=o;bpy.ops.object.modifier_apply(modifier=solid.name)
+ curve('HemBinding',[(.355*[1,.89,1.065,1.05][i%4]*math.cos(i*math.tau/48),.355*.65*[1,.89,1.065,1.05][i%4]*math.sin(i*math.tau/48),.751) for i in range(48)],.0035,accent,variant=variant,closed=True)
  torus('Waist',(0,0,1.0),.255,.018,accent,variant=variant,scale=(1,.65,1))
  rod('PoloPlacket',(0,-.183,1.23),(0,-.164,1.36),.011,accent,variant=variant)
  if variant=='Humanities':
-  for x in [-.065,.065]:uv('Collar',(x,-.13,1.385),(.065,.045,.018),cream,variant=variant)
+  for sign in [-1,1]:
+   points=[(sign*.015,-.089,1.407),(sign*.095,-.071,1.407),(sign*.136,-.14,1.345),(sign*.061,-.184,1.316)]
+   mesh=bpy.data.meshes.new('FoldedCollar');mesh.from_pydata(points,[],[(0,1,2,3)]);o=bpy.data.objects.new('FoldedCollar',mesh);scene.collection.objects.link(o);finish(o,'FoldedCollar',cream,variant=variant)
+   solid=o.modifiers.new('Collar thickness','SOLIDIFY');solid.thickness=.008;bpy.context.view_layer.objects.active=o;bpy.ops.object.modifier_apply(modifier=solid.name)
+   curve('CollarPiping',points[1:],.0025,rose,variant=variant)
+  for z in [1.25,1.29,1.33]:uv('PearlButton',(0,-.184,z),(.007,.004,.007),shoe,variant=variant,segments=8,rings=6)
  else:torus('HighCollar',(0,0,1.40),.10,.023,dark,variant=variant,scale=(1,.8,1))
  if variant=='Humanities':
   rod('LeafStem',(-.12,-.179,1.19),(-.085,-.179,1.30),.009,accent,variant=variant)

@@ -22,7 +22,7 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
  const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,9.35]:[1.5,0,-9.35]);
  const entry=useRef<{from:Vector3;elapsed:number}|null>(null);
  const swap=useRef<{from:Vector3;elapsed:number}|null>(null);
- const gltf=useGLTF('/models/lulu.glb?v=sculpted-materials-4');
+ const gltf=useGLTF('/models/lulu.glb?v=tailored-court-5');
  // Clone skeletons, not cached geometries/materials: the two players animate independently.
  const model=useMemo(()=>{const copy=clone(gltf.scene);copy.updateMatrixWorld(true);for(const name of ['FootL','FootR']){const foot=copy.getObjectByName(name);if(foot)foot.userData.flatQuaternion=foot.getWorldQuaternion(new Quaternion());}return copy},[gltf.scene]);
  const cloth=useMemo(()=>surfaceTexture('fabric',12),[]);
@@ -130,4 +130,4 @@ export default function Player(props:Props){
  return <ModelBoundary fallback={fallback}><Suspense fallback={fallback}><Lulu {...props}/></Suspense></ModelBoundary>;
 }
 
-useGLTF.preload('/models/lulu.glb?v=sculpted-materials-4');
+useGLTF.preload('/models/lulu.glb?v=tailored-court-5');

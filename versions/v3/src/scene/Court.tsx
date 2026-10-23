@@ -1,3 +1,4 @@
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useIndirectLight } from './useIndirectLight';
 import { useThree } from '@react-three/fiber';
 import { RoundedBox } from '@react-three/drei';
@@ -8,19 +9,32 @@ import * as THREE from 'three';
 function Stripe({x=0,z=0,width=0.045,length=17.4}:{x?:number;z?:number;width?:number;length?:number}) {
   return <mesh position={[x,0.035,z]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[width,length]}/><meshStandardMaterial color="#fffdf8" roughness={1}/></mesh>;
 }
-function Net() {
+export function Net() {
   const geometry=useMemo(()=>{
-    const vertices:number[]=[];
-    for(let x=-4.95;x<=4.96;x+=0.19) vertices.push(x,0.12,0,x,1.05-.13*(1-(x/4.95)**2),0);
-    for(let y=0.12;y<1.06;y+=0.13) {for(let x=-4.95;x<4.95;x+=.25){const b=Math.min(x+.25,4.95);vertices.push(x,y-.13*(1-(x/4.95)**2)*(y/1.05),0,b,y-.13*(1-(b/4.95)**2)*(y/1.05),0)}};
-    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));return g;
+    const strands:THREE.BufferGeometry[]=[];
+    for(let x=-4.95;x<=4.96;x+=.15){const top=1.05-.13*(1-(x/4.95)**2);strands.push(new THREE.TubeGeometry(new THREE.LineCurve3(new THREE.Vector3(x,.12,0),new THREE.Vector3(x,top,0)),1,.0035,5,false))}
+    for(let row=0;row<=9;row++){const t=row/9;const points=Array.from({length:25},(_,i)=>{const x=-4.95+i*9.9/24;return new THREE.Vector3(x,.12+t*(.93-.13*(1-(x/4.95)**2)),0)});strands.push(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points),24,.0035,5,false))}
+    const g=mergeGeometries(strands);strands.forEach(s=>s.dispose());return g;
   },[]);
   const tape=useMemo(()=>{const v:number[]=[],indices:number[]=[];for(let i=0;i<=48;i++){const x=-5.025+i*10.05/48,y=1.07-.13*(1-(x/5.025)**2);v.push(x,y+.032,.018,x,y-.032,.018);if(i<48){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(indices);g.computeVertexNormals();return g},[]);
   useEffect(()=>()=>{geometry.dispose();tape.dispose()},[geometry,tape]);
   return <group name="Court_Net">
-    <lineSegments geometry={geometry}><lineBasicMaterial color="#647c86" transparent opacity={0.65}/></lineSegments>
+    <mesh name="Woven_Net_Cords" geometry={geometry} castShadow><meshStandardMaterial color="#516b69" roughness={.9}/></mesh>
     <mesh geometry={tape} castShadow><meshStandardMaterial color="#fffdf3" side={THREE.DoubleSide} roughness={.78}/></mesh><mesh position={[0,.48,.025]}><boxGeometry args={[.045,.96,.012]}/><meshStandardMaterial color="#f6f2e6" roughness={.8}/></mesh>
-    {[-5.05,5.05].map(x=><group key={x} position={[x,0,0]}><mesh position={[0,.6,0]} castShadow><cylinderGeometry args={[.07,.085,1.2,24]}/><meshStandardMaterial color="#51737a"/></mesh><mesh position={[0,.04,0]}><cylinderGeometry args={[.19,.22,.08,16]}/><meshStandardMaterial color="#73939a"/></mesh></group>)}
+    {[-1,1].map(sign=><group key={sign} position={[sign*5.05,0,0]}>
+      <mesh position={[0,.6,0]} castShadow><cylinderGeometry args={[.065,.08,1.2,32]}/><meshStandardMaterial color="#64877e" metalness={.25} roughness={.42}/></mesh>
+      <mesh position={[0,1.205,0]} scale={[1,.45,1]}><sphereGeometry args={[.073,24,12]}/><meshStandardMaterial color="#d8d3bb" metalness={.35}/></mesh>
+      <mesh position={[0,.035,0]}><cylinderGeometry args={[.16,.18,.07,32]}/><meshStandardMaterial color="#64877e"/></mesh>
+      {[0,1,2,3].map(i=><mesh key={i} position={[.12*Math.cos(i*Math.PI/2),.076,.12*Math.sin(i*Math.PI/2)]}><cylinderGeometry args={[.012,.012,.012,6]}/><meshStandardMaterial color="#bcc7bd" metalness={.6} roughness={.35}/></mesh>)}
+      <mesh name="Net_Tension_Winch" position={[sign*.09,.82,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.042,.042,.10,24]}/><meshStandardMaterial color="#d8d3bb" metalness={.4}/></mesh>
+      <mesh position={[sign*.15,.76,0]}><boxGeometry args={[.018,.13,.018]}/><meshStandardMaterial color="#71877f"/></mesh>
+      <mesh position={[sign*.18,.70,0]} rotation={[0,0,Math.PI/2]}><cylinderGeometry args={[.015,.015,.08,16]}/><meshStandardMaterial color="#d8d3bb"/></mesh>
+      <mesh name="Net_Side_Binding" position={[-sign*.10,.59,0]}><boxGeometry args={[.045,.96,.018]}/><meshStandardMaterial color="#e8e5d6" roughness={.85}/></mesh>
+      {[.22,.45,.68,.91,1.06].map(y=><mesh key={y} position={[-sign*.055,y,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.052,.003,5,16]}/><meshStandardMaterial color="#e8e5d6"/></mesh>)}
+    </group>)}
+    <mesh name="Center_Strap_Buckle" position={[0,.38,.045]}><boxGeometry args={[.063,.045,.014]}/><meshStandardMaterial color="#819387" metalness={.5} roughness={.3}/></mesh>
+    <mesh position={[0,.035,.04]}><cylinderGeometry args={[.06,.06,.025,20]}/><meshStandardMaterial color="#819387"/></mesh>
+
   </group>;
 }
 function GroundPrint({end,x,lines,signature=false}:{end:number;x:number;lines:string[];signature?:boolean}){

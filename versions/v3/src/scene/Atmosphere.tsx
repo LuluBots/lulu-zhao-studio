@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Color } from 'three';
 export default function Atmosphere({night=false}:{night?:boolean}){
  // Screen-space color layering stays visible in an orthographic, freely orbiting view.
- const uniforms=useMemo(()=>({upper:{value:new Color(night?'#111c38':'#709fc5')},middle:{value:new Color(night?'#485277':'#c8d5e5')},lower:{value:new Color(night?'#958399':'#f3ddc7')},glow:{value:new Color(night?'#8497bd':'#fff1d9')}}),[night]);
+ const uniforms=useMemo(()=>({upper:{value:new Color(night?'#111c38':'#99bfdc')},middle:{value:new Color(night?'#485277':'#dfdfdf')},lower:{value:new Color(night?'#958399':'#f6e4d0')},glow:{value:new Color(night?'#8497bd':'#fff1d9')}}),[night]);
  return <><fog attach="fog" args={[night?'#68718e':'#e1dce0',48,105]}/><group name={night?'Moonlit_Sky':'Daylight_Sky'}>
  <mesh renderOrder={-1000} frustumCulled={false}>
  <planeGeometry args={[2,2]}/><shaderMaterial depthWrite={false} depthTest={false} toneMapped={false} uniforms={uniforms}

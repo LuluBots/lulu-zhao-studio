@@ -9,7 +9,7 @@ test('both ends always have complementary identities through repeated swaps',()=
 test('stance remains grounded, the recovering foot clears the court, lateral steps cross',()=>{
  for(const direction of [new Vector3(1,0,0),new Vector3(-1,0,0),new Vector3(0,0,1)]){
   const a=stepTarget(.05,-1,direction),b=stepTarget(.55,-1,direction);
-  assert.equal(a.y,.17);assert.equal(b.y,.17);assert.ok(b.clone().sub(a).dot(direction)<0);
+  assert.equal(a.y,.1904);assert.equal(b.y,.1904);assert.ok(b.clone().sub(a).dot(direction)<0);
   assert.ok(stepTarget(.80,-1,direction).y>.30);
   assert.ok(stepTarget(0,-1,direction).distanceTo(stepTarget(1,-1,direction))<1e-8);
  }

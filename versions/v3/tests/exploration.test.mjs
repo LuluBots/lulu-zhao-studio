@@ -35,7 +35,7 @@ test('arbitrary court shots continue forward after bouncing and Lulu meets their
   const target=targetPoint([x,z]),contact=receptionPoint(target),player=samplePlayerPosition(CONTACT_AT,target);
   assert.ok(contact[2]<target[2]);assert.ok(contact[2]>=-9.4);
   assert.ok(Math.abs((contact[0]-target[0])*(target[2]-9.35)-(contact[2]-target[2])*(target[0]+1.5))<1e-8);
-  assert.ok(Math.abs(contact[0]-player[0]-.75)<1e-8);assert.ok(Math.abs(contact[2]-player[2]-.47)<1e-8);
+  assert.ok(Math.abs(contact[0]-player[0]-.66)<1e-8);assert.ok(Math.abs(contact[2]-player[2]-.4224)<1e-8);
   for(let i=0;i<=2000;i++){const p=sampleTargetFlight(i/2000,target);assert.ok(p.every(Number.isFinite));if(Math.abs(p[2])<.02)assert.ok(p[1]>1.1)}
  }
 });
@@ -50,7 +50,7 @@ test('hold duration controls power, flight speed, arc and receiver while keeping
  for(const power of [.25,.5,1])for(const x of [-4.3,0,4.3])for(const z of [-8.6,-3,-.2]){
   const t=targetPoint([x,z]);sampleTargetFlight(BOUNCE_AT,t,power).forEach((v,i)=>assert.ok(Math.abs(v-t[i])<1e-8));
   const contact=receptionPoint(t,power),player=samplePlayerPosition(CONTACT_AT,t,power);
-  assert.ok(Math.abs(contact[0]-player[0]-.75)<1e-8);assert.ok(Math.abs(contact[2]-player[2]-.47)<1e-8);
+  assert.ok(Math.abs(contact[0]-player[0]-.66)<1e-8);assert.ok(Math.abs(contact[2]-player[2]-.4224)<1e-8);
   for(let i=0;i<=2000;i++){const p=sampleTargetFlight(i/2000,t,power);assert.ok(p.every(Number.isFinite));if(Math.abs(p[2])<.02)assert.ok(p[1]>1.1)}
  }
 });

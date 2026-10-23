@@ -5,7 +5,7 @@ export function stepTarget(phase:number,side:number,direction:Vector3){
  const t=((phase+(side===1?.5:0))%1+1)%1;
  const stance=t<.60, u=stance?t/.60:(t-.60)/.40;
  const travel=stance?.32-.64*u:-.32+.64*(u*u*(3-2*u));
- return new Vector3(side*.16+direction.x*travel,.17+(stance?0:.17*Math.sin(Math.PI*u)),direction.z*travel+(stance?0:.10*Math.sin(Math.PI*u)));
+ return new Vector3(side*.1408+direction.x*travel,.1904+(stance?0:.17*Math.sin(Math.PI*u)),direction.z*travel+(stance?0:.10*Math.sin(Math.PI*u)));
 }
 function aim(bone:Object3D,child:Object3D,target:Vector3){
  const origin=bone.getWorldPosition(new Vector3());

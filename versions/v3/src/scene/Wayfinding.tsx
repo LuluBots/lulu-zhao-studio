@@ -25,8 +25,8 @@ function Board({end,state,score,onPlay,onSwitch,onReset}:Props&{end:number}){
   <div className="match-caption">RETURN IN = YOUR POINT · MISS / OUT = NPC POINT</div>
   <div className="match-actions"><button onClick={()=>{setExpanded(false);onPlay()}}>Play</button><button disabled={!['overview','ready'].includes(state.phase)} onClick={()=>{setExpanded(false);onSwitch()}}>Switch Ends</button><button onClick={()=>{setExpanded(false);onReset()}}>Reset view</button></div>
  </div>;
- return <group name={`Scoreboard_${end<0?'North':'South'}`} position={[end*6.5,0,end*11.4]} rotation={[0,end<0?0:Math.PI,0]}>
-  <RoundedBox args={[3.45,.14,1.0]} radius={.07} position={[0,-.06,0]} receiveShadow castShadow><meshStandardMaterial color="#93afb4"/></RoundedBox>
+ return <group name={`Scoreboard_${end<0?'North':'South'}`} position={[end*4.55,0,end*10.30]} rotation={[0,end<0?0:Math.PI,0]}>
+  {[-1.15,1.15].map(x=><RoundedBox key={x} args={[.22,.04,.38]} radius={.02} position={[x,.025,0]} receiveShadow><meshStandardMaterial color="#567783"/></RoundedBox>)}
   {[-1.15,1.15].map(x=><mesh key={x} position={[x,.67,0]} castShadow><boxGeometry args={[.055,1.34,.075]}/><meshStandardMaterial color="#567783" metalness={.6} roughness={.35}/></mesh>)}
   <group position={[0,1.4,0]} onClick={e=>{e.stopPropagation();if(e.delta<5)setExpanded(true)}} onPointerOver={e=>{e.stopPropagation();document.body.style.cursor='pointer'}} onPointerOut={()=>{document.body.style.cursor=''}}>
    <RoundedBox args={[3.25,1.63,.10]} radius={.035} castShadow><meshStandardMaterial color="#c2d7d5" metalness={.35} roughness={.4}/></RoundedBox>

@@ -26,11 +26,11 @@ export const BOUNCE_AT=.48, CONTACT_AT=.68;
 // Preserve the incoming horizontal direction after the bounce, rather than steering toward Lulu.
 export function receptionPoint(target:Point,power=.5,origin:Point=READY_BALL):Point {
  const carry=Math.min(.12+.24*power,(9.4-Math.abs(target[2]))/(origin[2]+Math.abs(target[2])),(5-Math.abs(target[0]))/(Math.abs(target[0]-origin[0])+.001));
- return [target[0]+(target[0]-origin[0])*carry,1.18,target[2]+(target[2]-origin[2])*carry];
+ return [target[0]+(target[0]-origin[0])*carry,1.21288,target[2]+(target[2]-origin[2])*carry];
 }
 export function samplePlayerPosition(progress:number,target:Point,power=.5,origin:Point=READY_BALL):Point {
  const contact=receptionPoint(target,power,origin), home:Point=[1.5,0,-9.35];
- const destination:Point=[contact[0]-.75,0,contact[2]-.47];
+ const destination:Point=[contact[0]-.66,0,contact[2]-.4224];
  const p=Math.max(0,Math.min(1,progress));
  const t=p<.62?Math.min(1,p/.60):1-Math.min(1,Math.max(0,(p-.73)/.27));
  const ease=t*t*(3-2*t);

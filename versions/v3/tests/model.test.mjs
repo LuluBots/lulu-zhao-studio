@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import { AnimationMixer, Box3, Vector3, SkinnedMesh } from 'three';
+globalThis.self=globalThis;
+globalThis.createImageBitmap=async()=>({width:1,height:1,close(){}});
 const data=await readFile(new URL('../public/models/lulu.glb',import.meta.url));
 const gltf=await new GLTFLoader().parseAsync(data.buffer.slice(data.byteOffset,data.byteOffset+data.byteLength),'');
 test('Blender asset provides shared body, both outfits, skin and five clips within size budget',()=>{
@@ -34,7 +36,7 @@ test('refined rig has independent wrists and ankles; swing contact matches the b
  const contact=model.getObjectByName('Racket_Contact');assert.ok(contact);
  for(const name of ['HandR','HandL','FootR','FootL'])assert.ok(model.getObjectByName(name));
  const clip=gltf.animations.find(c=>c.name==='Swing'),action=mixer.clipAction(clip);action.play();action.paused=true;action.time=clip.duration*.5;mixer.update(0);model.updateMatrixWorld(true);
- const point=contact.getWorldPosition(new Vector3());assert.ok(point.distanceTo(new Vector3(.75,1.18,.47))<.002);
+ const point=contact.getWorldPosition(new Vector3());assert.ok(point.distanceTo(new Vector3(.66,1.21288,.4224))<.002);
  const before=point.clone();action.time=clip.duration*.25;mixer.update(0);model.updateMatrixWorld(true);
  assert.ok(contact.getWorldPosition(new Vector3()).distanceTo(before)>.05);
 });
@@ -48,7 +50,7 @@ test('cross-step IK produces finite poses and planted ankle height on the export
   applyTennisSteps(model,root,phase,new Vector3(1,0,0));
   model.traverse(o=>assert.ok(o.matrixWorld.elements.every(Number.isFinite)));
   const left=model.getObjectByName('FootL').getWorldPosition(new Vector3());
-  if(phase<.6)assert.ok(Math.abs(left.y-.17)<.015,`planted ankle ${left.y}`);
+  if(phase<.6)assert.ok(Math.abs(left.y-.1904)<.015,`planted ankle ${left.y}`);
   else assert.ok(left.y>.25);
  }
 });

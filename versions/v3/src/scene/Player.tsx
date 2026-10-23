@@ -6,11 +6,11 @@ import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { RallyClock } from './Rally';
 import type { Side } from '../state/rally';
 import { samplePlayerPosition, targetPoint } from './trajectories';
-import { applyTennisSteps } from './tennisSteps';
+
 import type { VisitorInput } from '../state/gameplay';
 import {surfaceTexture} from './surfaceTextures';
 import {courtSound} from '../state/sound';
-import ProceduralPlayer from './ProceduralPlayer';
+
 
 type Props={preMatch?:boolean;entering?:boolean;input?:RefObject<VisitorInput>;switching?:boolean;hidden?:boolean;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void};
 class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{failed:boolean}>{
@@ -22,11 +22,11 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
  const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,9.35]:[1.5,0,-9.35]);
  const entry=useRef<{from:Vector3;elapsed:number}|null>(null);
  const swap=useRef<{from:Vector3;elapsed:number}|null>(null);
- const gltf=useGLTF('/models/lulu.glb?v=tailored-court-5');
+ const gltf=useGLTF('/models/tennis-sprites.glb?v=cloud-match-2');
  // Clone skeletons, not cached geometries/materials: the two players animate independently.
  const model=useMemo(()=>{const copy=clone(gltf.scene);copy.updateMatrixWorld(true);for(const name of ['FootL','FootR']){const foot=copy.getObjectByName(name);if(foot)foot.userData.flatQuaternion=foot.getWorldQuaternion(new Quaternion());}return copy},[gltf.scene]);
  const cloth=useMemo(()=>surfaceTexture('fabric',12),[]);
- useEffect(()=>{model.traverse(object=>{if(object instanceof Mesh){const source=Array.isArray(object.material)?object.material:[object.material];const materials=source.map(m=>{const copy=m.clone();if(copy instanceof MeshStandardMaterial){const textile=/Cream|Linen|ScholarBlue|Sock|Silk/i.test(copy.name);copy.bumpMap=textile?cloth:null;copy.bumpScale=textile?.0006:0;copy.roughness=/Hair/i.test(copy.name)?.38:/Skin/i.test(copy.name)?.52:/Titanium|Champagne|Racket/i.test(copy.name)?.32:.72;copy.metalness=/Titanium|Champagne/i.test(copy.name)?.55:0;}return copy});object.material=Array.isArray(object.material)?materials:materials[0]}});return ()=>{model.traverse(o=>{if(o instanceof Mesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())});cloth.dispose()}},[model,cloth]);
+ useEffect(()=>{model.traverse(object=>{if(object instanceof Mesh){const source=Array.isArray(object.material)?object.material:[object.material];const materials=source.map(m=>{const copy=m.clone();if(copy instanceof MeshStandardMaterial){const textile=/Felt|Headband|Ribbon|Seam/i.test(copy.name);copy.bumpMap=textile?cloth:null;copy.bumpScale=textile?.0018:0;copy.roughness=/Hair/i.test(copy.name)?.38:/Skin/i.test(copy.name)?.52:/Titanium|Champagne|Racket/i.test(copy.name)?.32:.72;copy.metalness=/Titanium|Champagne/i.test(copy.name)?.55:0;}return copy});object.material=Array.isArray(object.material)?materials:materials[0]}});return ()=>{model.traverse(o=>{if(o instanceof Mesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())});cloth.dispose()}},[model,cloth]);
  const footstep=useRef(0);
  const mixer=useMemo(()=>new AnimationMixer(model),[model]);
  const actions=useMemo(()=>Object.fromEntries(gltf.animations.map(clip=>{
@@ -115,7 +115,11 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
    action.time=reduced?0:name==='Swing'?(visitor?visitorSwing:MathUtils.clamp((p-.56)/.24,0,1))*duration:(name==='Run'||name==='Shuffle'?stride.current:time.current)%duration;
   }
   mixer.update(0);
-  if(!reduced&&moved>.0001&&clip!=='Swing')applyTennisSteps(model,root.current,stride.current,new Vector3(dx,0,dz).normalize());
+  // Ball sprites hop; human foot IK must never be applied to them.
+  const hopping=!reduced&&moved>.001&&clip!=='Swing';
+  const bounce=hopping?Math.abs(Math.sin(stride.current*Math.PI*2))*.15:0;
+  model.position.y=MathUtils.damp(model.position.y,bounce,20,Math.min(delta,.05));
+  if(clip==='Swing')model.position.y=0;
   if(visitor&&input){root.current.updateMatrixWorld(true);const contact=model.getObjectByName('Racket_Contact');if(contact){const position=contact.getWorldPosition(new Vector3());input.current.racket=[position.x,position.y,position.z]}}
   if(!reduced)invalidate();
  });
@@ -126,8 +130,8 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
  </group>;
 }
 export default function Player(props:Props){
- const fallback=<ProceduralPlayer {...props}/>;
+ const fallback=<group position={[props.visitor?-1.5:1.5,.73,props.visitor?9.35:-9.35]}><mesh castShadow><sphereGeometry args={[.59,24,16]}/><meshStandardMaterial color="#cbdc58" roughness={.9}/></mesh></group>;
  return <ModelBoundary fallback={fallback}><Suspense fallback={fallback}><Lulu {...props}/></Suspense></ModelBoundary>;
 }
 
-useGLTF.preload('/models/lulu.glb?v=tailored-court-5');
+useGLTF.preload('/models/tennis-sprites.glb?v=cloud-match-2');

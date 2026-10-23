@@ -227,3 +227,5 @@ html, body, #root {
 @media(max-width:600px){.world-controls button{font-size:12px!important;padding:7px 8px;gap:5px}.world-controls .sound-toggle span{display:none}.world-controls .sound-toggle{width:40px}.rally-wayfinding button{font-size:12px!important;padding:9px 10px}.controls-sheet{padding:22px}}
 .world-controls .sound-toggle[aria-pressed=false]{opacity:1;color:#42636b;background:#edf2e8}
 [data-light=night] .world-controls .sound-toggle[aria-pressed=false]{color:#e0eadf;background:#233e52ed}
+
+.role-options button img{width:150px;height:130px;object-fit:contain;display:block;margin:-12px auto 0}.role-options button{overflow:hidden}@media(max-width:600px){.role-options button img{width:110px;height:100px}}

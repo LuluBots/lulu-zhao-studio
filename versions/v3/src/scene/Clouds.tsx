@@ -1,3 +1,4 @@
+import CloudSea from './CloudSea';
 import { useFrame, useThree } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import { useEffect, useMemo, useRef } from 'react';
@@ -5,18 +6,18 @@ import { BufferGeometry, Mesh, MeshStandardMaterial, Plane, Raycaster, Vector2, 
 import { obscuresScoreboard } from './scoreboardVisibility';
 import { cloudEnvelope, sampleCloud, selectCloudVariant, type PointerSample } from './cloudMotion';
 // Deliberate clusters under the platform, then two distant banks; keep the navigation airspace clear.
-const banks=[[-5,-4.8,5,2.5],[3,-5.1,6,2.8],[-3,-5,-6,2.8],[4,-4.9,-4,2.4],[0,-5.5,0,3.1],[-23,-12,14,2.7],[25,-13,-18,3.0]];
+const banks=[[-5,-3.5,5,1.7],[4,-3.8,5,1.8],[-4,-3.7,-6,1.8],[5,-3.9,-4,1.7],[0,-4.5,0,2.0],...Array.from({length:12},(_,i)=>{const a=i*Math.PI*2/12;return [Math.cos(a)*(18+i%3*2),-5.5-(i%3)*.8,Math.sin(a)*(21+i%3*2),1.6+(i%3)*.2]})];
 type Wake={point:Vector3;born:number;variant:number;rotation:number;opacity:number;size:number};
-function Cloud({geometries,index,bank,wake}:{geometries:BufferGeometry[];index:number;bank?:number[];wake?:Wake}){
+function Cloud({geometries,index,bank,wake,night}:{night:boolean;geometries:BufferGeometry[];index:number;bank?:number[];wake?:Wake}){
  const mesh=useRef<Mesh>(null),material=useRef<MeshStandardMaterial>(null),visibility=useRef(1);
  const center=useMemo(()=>bank?new Vector3(...bank.slice(0,3) as [number,number,number]):new Vector3(),[bank]);
- const bankOpacity=useMemo(()=>(index<5?.62:.30)+Math.random()*.16,[]);
+ const bankOpacity=useMemo(()=>(index<5?.90:.72)+(index%3)*.035,[]);
  useFrame(({camera,invalidate},delta)=>{
   if(!mesh.current||!material.current)return;
   const age=wake?(performance.now()-wake.born)/1000:0;
   if(wake)center.copy(wake.point);
   const size=bank?.[3]??wake?.size??1.6;
-  const hidden=obscuresScoreboard(camera,center,2.6*size),target=hidden?0:1;
+  const hidden=!!wake&&obscuresScoreboard(camera,center,2.6*size),target=hidden?0:1;
   visibility.current+=(target-visibility.current)*(1-Math.exp(-Math.min(delta,.05)*(hidden?6:1.4)));
   const alpha=(wake?cloudEnvelope(age):1)*visibility.current;
   material.current.opacity=alpha*(wake?.opacity??bankOpacity);mesh.current.visible=alpha>.012;
@@ -26,11 +27,11 @@ function Cloud({geometries,index,bank,wake}:{geometries:BufferGeometry[];index:n
   if((wake&&age<5)||Math.abs(target-visibility.current)>.002)invalidate();
  });
  return <mesh ref={mesh} geometry={geometries[index%geometries.length]} frustumCulled={false}><meshStandardMaterial ref={material} onBeforeCompile={shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <alphatest_fragment>',`diffuseColor.a *= smoothstep(0.0, 0.72, abs(dot(normalize(vNormal), normalize(vViewPosition))));
-#include <alphatest_fragment>`);}} vertexColors roughness={.96} transparent depthWrite={false} color="#fffdf9" emissive="#b9cde0" emissiveIntensity={.055}/></mesh>;
+#include <alphatest_fragment>`);}} vertexColors roughness={.96} transparent depthWrite={false} color={night?'#8496bc':'#fff7ec'} emissive={night?'#7c94c9':'#b9cde0'} emissiveIntensity={night?.12:.08}/></mesh>;
 }
-export default function Clouds(){
+export default function Clouds({night=false}:{night?:boolean}){
  const {gl,camera,invalidate}=useThree();
- const {scene}=useGLTF('/models/clouds.glb?v=sculpted-2');
+ const {scene}=useGLTF('/models/cloud-match.glb?v=1');
  const geometries=useMemo(()=>{const result:BufferGeometry[]=[];scene.traverse(o=>{if(o instanceof Mesh)result.push(o.geometry)});return result},[scene]);
  const reduced=useMemo(()=>matchMedia('(prefers-reduced-motion: reduce)').matches,[]);
  const wake=useMemo(()=>Array.from({length:4},()=>({point:new Vector3(0,-6,0),born:-Infinity,variant:0,rotation:0,opacity:.35,size:1.6})),[]);
@@ -49,6 +50,6 @@ export default function Clouds(){
   };
   gl.domElement.addEventListener('pointermove',move);return ()=>gl.domElement.removeEventListener('pointermove',move);
  },[gl,camera,reduced,wake,invalidate,geometries.length]);
- return <group name="Blender_Cloud_Library">{banks.map((bank,i)=><Cloud key={i} geometries={geometries} index={i} bank={bank}/>)}{wake.map((w,i)=><Cloud key={`wake-${i}`} geometries={geometries} index={i} wake={w}/>)}</group>;
+ return <group name="Blender_Cloud_Library"><CloudSea night={night}/>{banks.map((bank,i)=><Cloud night={night} key={i} geometries={geometries} index={i} bank={bank}/>)}{wake.map((w,i)=><Cloud night={night} key={`wake-${i}`} geometries={geometries} index={i} wake={w}/>)}</group>;
 }
-useGLTF.preload('/models/clouds.glb?v=sculpted-2');
+useGLTF.preload('/models/cloud-match.glb?v=1');

@@ -1,6 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, type RefObject, type ReactNode } from 'react';
 import Court from './Court';
 import Player from './Player';
 import Clouds from './Clouds';
@@ -12,7 +12,8 @@ import VisitorControls from './VisitorControls';
 import { inBounds, type VisitorInput, type RallyResult } from '../state/gameplay';
 import type { ViewAction } from './CameraRig';
 import { type RallyState, type Side } from '../state/rally';
-import { Vector3 } from 'three';
+import { Vector3,Group } from 'three';
+function Arrival({children,reduced}:{children:ReactNode;reduced:boolean}){const group=useRef<Group>(null),time=useRef(0);const invalidate=useThree(s=>s.invalidate);useFrame((_,dt)=>{if(time.current>=1)return;time.current=reduced?1:Math.min(1,time.current+Math.min(dt,.05)/1.4);const t=1-Math.pow(1-time.current,3);if(group.current){group.current.position.y=-.8*(1-t);group.current.scale.setScalar(.82+.18*t)}invalidate()});return <group ref={group}>{children}</group>}
 import SkyVisitors, { type ScreenAnchor } from './SkyVisitors';
 import type { Score } from '../state/score';
 import ShotInput from './ShotInput';
@@ -37,18 +38,18 @@ function Scene({started,input,night,score,onContextLost,onAnchor,onNavigate,onRe
   <ContextWatch onLost={onContextLost}/>
   <ambientLight intensity={night?.42:.55}/><hemisphereLight args={[night?'#aac6ed':'#f0faff',night?'#34334b':'#c9c2de',night?.65:.8]}/>
   <directionalLight position={[-12,25,8]} intensity={night?1.15:2.1} color={night?'#bcd4ff':'#fff4dc'} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-18} shadow-camera-right={18} shadow-camera-top={18} shadow-camera-bottom={-18} shadow-normalBias={.035} shadow-bias={-.0002} shadow-radius={4}/>
-  <Atmosphere night={night}/><SkyVisitors visible={started&&state.phase==='overview'} night={night} reduced={reduced} onNavigate={onNavigate}/><Court/>{started&&<Courtside/>}<Clouds/>
+  <Atmosphere night={night}/><SkyVisitors visible={started&&state.phase==='overview'} night={night} reduced={reduced} onNavigate={onNavigate}/><Court/>{started&&<Arrival reduced={reduced}><Courtside/></Arrival>}<Clouds/>
   {started&&<Wayfinding score={score} state={state} onPlay={onBall} onSwitch={onSwitch} onReset={onReset}/>}
   <VisitorControls input={input} roaming={state.phase==='overview'} active={started&&['overview','ready','playing'].includes(state.phase)}/>
   <LandingAnchor clock={clock} target={target} shot={state.shot} onAnchor={onAnchor}/>
-  {started&&<group name="Fixed_Court_Interaction">
+  {started&&<Arrival reduced={reduced}><group name="Fixed_Court_Interaction">
    {started&&(state.phase==='overview'||state.phase==='ready')&&<ShotInput side={state.side} overview={state.phase==='overview'} onHit={onCourtHit}/> }
 
    {(['technology','humanities'] as const).map(identity=><Player input={input} key={identity} side={identity} visitor={identity!==state.side} switching={state.phase==='switching'}  power={power} target={target} playing={state.phase==='playing'&&identity===state.side&&inBounds(target)} clock={clock} reduced={reduced} onSwitch={onSwitch}/>)}
    <Rally input={input} onAnchor={onAnchor} power={power} target={target} phase={state.phase==='switching'?state.returnTo:state.phase} shot={state.shot} reduced={reduced} clock={clock} onBall={onBall} onFinished={onFinished}/>
-  </group>}
+  </group></Arrival>}
   <ContactShadows position={[0,-4.9,0]} opacity={.12} scale={40} blur={3.5} far={8} resolution={256} frames={1} color="#738b9b"/>
-  <CameraRig input={input} state={state} action={action} reduced={reduced} onArrived={onArrived}/>
+  <CameraRig started={started} input={input} state={state} action={action} reduced={reduced} onArrived={onArrived}/>
  </>;
 }
 export default function World(props:Props){

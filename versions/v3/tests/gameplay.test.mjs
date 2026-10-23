@@ -4,7 +4,7 @@ import { createVisitorInput,moveVisitor,caughtReturn,inBounds,returnLane,sampleI
 import { receptionPoint,sampleTargetFlight,targetPoint } from '../src/scene/trajectories.ts';
 test('WASD moves both court axes, normalizes diagonals and clamps movement without changing the view',()=>{
  const a=createVisitorInput(),b=createVisitorInput();a.keys.add('KeyD');b.keys.add('KeyD');b.keys.add('KeyW');moveVisitor(a,.05);moveVisitor(b,.05);
- assert.ok(Math.abs(Math.hypot(b.x-.45,b.z-6.5)-(a.x-.45))<1e-8);
+ assert.ok(Math.abs(Math.hypot(b.x+1.5,b.z-6.5)-(a.x+1.5))<1e-8);
  b.keys.add('ArrowRight');for(let i=0;i<1000;i++)moveVisitor(b,.05);assert.equal(b.x,4.1);assert.equal(b.z,2.4);assert.equal(b.yaw,0);
  b.keys.clear();b.keys.add('KeyS');moveVisitor(b,.05);assert.ok(b.z>2.4);
 });
@@ -39,3 +39,5 @@ test('idle exploration crosses the net and reaches both full-court ends',()=>{
  input.keys.clear();input.keys.add('KeyD');for(let i=0;i<100;i++)moveVisitor(input,.05);assert.equal(input.x,5.7);assert.equal(input.yaw,0);
  input.roaming=false;moveVisitor(input,0);assert.equal(input.x,4.1);assert.equal(input.z,8.25);
 });
+
+test('new visitor starts on the left with an explicit racket hand',()=>{const v=createVisitorInput();assert.equal(v.x,-1.5);assert.equal(v.hand,'right')});

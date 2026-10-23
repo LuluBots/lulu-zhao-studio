@@ -15,11 +15,11 @@ export default function Player({input,visitor=false,clock,reduced=false,side='te
  const swing=useRef<Group>(null),body=useRef<Group>(null),legs=useRef<Group>(null);
  const {gl}=useThree();
  useFrame(()=>{
- if(visitor&&input&&body.current){body.current.position.set(input.current.x,0,input.current.z);input.current.racket=[input.current.x-.66,1.2,input.current.z-.4]}
+ if(visitor&&input&&body.current){body.current.position.set(input.current.x,0,input.current.z);body.current.scale.x=input.current.hand==='left'?-1:1;input.current.racket=[input.current.x+(input.current.hand==='left'?.66:-.66),1.2,input.current.z-.4]}
  if(!visitor&&body.current){const p=playing?(clock?.current.progress??0):0;body.current.position.set(...samplePlayerPosition(p,targetPoint(target),power));if(legs.current)legs.current.rotation.x=reduced?0:Math.sin(p*Math.PI*32)*.15*(p<.6||p>.73?1:0);}
  if(swing.current){const p=clock?.current.progress??0;const t=Math.max(0,1-Math.abs(p-(clock?.current.returnAt??.5))/.08);swing.current.rotation.y=reduced?0:-Math.sin(t*Math.PI/2)*1.25;}});
  const clothing=visitor?'#dddce8':sides[side].color;
- return <group ref={body} onClick={e=>{if(onSwitch){e.stopPropagation();if(e.delta<=5)onSwitch()}}} onPointerOver={e=>{if(onSwitch){e.stopPropagation();gl.domElement.style.cursor='pointer'}}} onPointerOut={()=>{gl.domElement.style.cursor=''}} name={visitor?'Visitor_Placeholder':'Lulu_Placeholder'} position={visitor?[-1.5,0,6.5]:[.9,0,-6.7]} rotation={[0,visitor?Math.PI:0,0]}>
+ return <group ref={body} onClick={e=>{if(onSwitch){e.stopPropagation();if(e.delta<=5)onSwitch()}}} onPointerOver={e=>{if(onSwitch){e.stopPropagation();gl.domElement.style.cursor='pointer'}}} onPointerOut={()=>{gl.domElement.style.cursor=''}} name={visitor?'Visitor_Placeholder':'Lulu_Placeholder'} position={visitor?[-1.5,0,6.5]:[-1.5,0,-6.7]} rotation={[0,visitor?Math.PI:0,0]}>
   <group ref={legs}><Limb position={[-.17,.46,0]} length={.5}/><Limb position={[.17,.46,0]} length={.5}/>
   {[-.17,.17].map(x=><RoundedBox key={x} args={[.24,.19,.4]} radius={.065} smoothness={2} position={[x,.12,.065]} castShadow><meshStandardMaterial color="#fffdf3"/></RoundedBox>)}
   </group><mesh position={[0,1.14,0]} castShadow><cylinderGeometry args={[.25,.34,.66,12]}/><meshStandardMaterial color={clothing}/></mesh>

@@ -27,7 +27,7 @@ export function receptionPoint(target:Point,power=.5,origin:Point=READY_BALL):Po
  return [target[0]+(target[0]-origin[0])*carry,1.18,target[2]+(target[2]-origin[2])*carry];
 }
 export function samplePlayerPosition(progress:number,target:Point,power=.5,origin:Point=READY_BALL):Point {
- const contact=receptionPoint(target,power,origin), home:Point=[.9,0,-6.7];
+ const contact=receptionPoint(target,power,origin), home:Point=[-1.5,0,-6.7];
  const destination:Point=[contact[0]-.75,0,contact[2]-.47];
  const p=Math.max(0,Math.min(1,progress));
  const t=p<.62?Math.min(1,p/.60):1-Math.min(1,Math.max(0,(p-.73)/.27));

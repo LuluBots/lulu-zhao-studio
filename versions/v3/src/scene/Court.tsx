@@ -32,10 +32,11 @@ function GroundPrint({end,x,lines,signature=false}:{end:number;x:number;lines:st
 }
 function BaselineDeclaration(){return <>{[-1,1].map(end=><group key={end}><GroundPrint end={end} x={0} signature lines={['luluzhao']}/><GroundPrint end={end} x={-4.1} lines={end>0?["🛹 I'm into plenty of",'other sports too!']:["🏠 I literally live right",'next to the tennis courts.']}/><GroundPrint end={end} x={4.1} lines={end>0?['🐐 Team Djokovic','all the way. GOAT!']:["🎾 Want to hit sometime?","Let's rally!"]}/></group>)}</>}
 export default function Court(){
- const grit=useMemo(()=>{const c=document.createElement('canvas');c.width=c.height=128;const ctx=c.getContext('2d')!;const image=ctx.createImageData(128,128);let seed=42;for(let i=0;i<image.data.length;i+=4){seed=(1664525*seed+1013904223)>>>0;const v=222+(seed%34);image.data[i]=image.data[i+1]=image.data[i+2]=v;image.data[i+3]=255}ctx.putImageData(image,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(12,24);return t},[]);
+ const grit=useMemo(()=>{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;const image=ctx.createImageData(256,256);let seed=42;for(let i=0;i<image.data.length;i+=4){seed=(1664525*seed+1013904223)>>>0;const v=222+(seed%34);image.data[i]=image.data[i+1]=image.data[i+2]=v;image.data[i+3]=255}ctx.putImageData(image,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(12,24);return t},[]);
+ useEffect(()=>()=>grit.dispose(),[grit]);
  return <group name="Court">
-  <RoundedBox name="Court_Platform" args={[12.4,.65,21.7]} radius={.25} smoothness={3} position={[0,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#b0d3e3" roughness={.95}/></RoundedBox>
-  <mesh name="Court_PlayingSurface" position={[0,.004,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[8.7,17.4]}/><meshStandardMaterial color="#c5a6cd" bumpMap={grit} bumpScale={.012} roughnessMap={grit} roughness={.88} metalness={.025}/></mesh>
+  <RoundedBox name="Court_Platform" args={[12.4,.65,21.7]} radius={.25} smoothness={3} position={[0,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#b0d3e3" bumpMap={grit} bumpScale={.018} roughness={.95}/></RoundedBox>
+  <mesh name="Court_PlayingSurface" position={[0,.004,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[8.7,17.4]}/><meshStandardMaterial color="#c5a6cd" bumpMap={grit} bumpScale={.025} roughnessMap={grit} roughness={.88} metalness={.025}/></mesh>
   {[-4.35,-3.3,3.3,4.35].map(x=><Stripe key={x} x={x}/>)}
   {[-8.7,8.7].map(z=><Stripe key={z} z={z} width={8.73} length={.045}/>)}
   {[-4.5,4.5].map(z=><Stripe key={z} z={z} width={6.6} length={.045}/>)}

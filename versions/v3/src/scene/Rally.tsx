@@ -1,5 +1,6 @@
 import { useEffect, useRef, type RefObject } from 'react';
 import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
+import {courtSound} from '../state/sound';
 import { Group, Vector3 } from 'three';
 import type { Phase } from '../state/rally';
 import { shotDuration, sampleTargetFlight, targetPoint, receptionPoint, type Point } from './trajectories';
@@ -9,10 +10,11 @@ export type RallyClock = { progress: number; returnAt?:number };
 type Props={phase:Phase;shot:number;reduced:boolean;clock:RefObject<RallyClock>;input:RefObject<VisitorInput>;onBall:()=>void;onFinished:(r:RallyResult)=>void;onAnchor:(a:ScreenAnchor)=>void;target:[number,number];power:number};
 export default function Rally({phase,shot,clock,input,onBall,onFinished,onAnchor,target,power}:Props){
  const ball=useRef<Group>(null),marker=useRef<Group>(null);
+ const audioStage=useRef(0);
  const elapsed=useRef(0),complete=useRef(false),last=useRef<Point|null>(null),before=useRef<[number,number]>([.45,6.5]);
  const returned=useRef<{time:number;start:Point;landing:[number,number]}|null>(null);
  const {invalidate,gl,camera,size}=useThree();
- useEffect(()=>{elapsed.current=0;complete.current=false;returned.current=null;last.current=null;before.current=[input.current.x,input.current.z];clock.current.progress=0;clock.current.returnAt=.68;invalidate()},[phase,shot,clock,input,invalidate]);
+ useEffect(()=>{elapsed.current=0;audioStage.current=0;if(phase==='playing')courtSound('hit');complete.current=false;returned.current=null;last.current=null;before.current=[input.current.x,input.current.z];clock.current.progress=0;clock.current.returnAt=.68;invalidate()},[phase,shot,clock,input,invalidate]);
  useEffect(()=>()=>{gl.domElement.style.cursor=''},[gl]);
  useFrame((_,delta)=>{
   if(!ball.current)return;
@@ -30,12 +32,13 @@ export default function Rally({phase,shot,clock,input,onBall,onFinished,onAnchor
    v.swing=Math.min(1,.5+t*2);
    if(t===1){const screen=new Vector3(...point).project(camera);onAnchor({x:(screen.x+1)*size.width/2,y:(1-screen.y)*size.height/2});finish(inBounds(hit.landing)?{winner:'visitor',reason:'returned'}:{winner:'npc',reason:'out'})}
   }else if(elapsed.current<=outTime){
-   const p=elapsed.current/outTime*.68;v.swing=elapsed.current<.4?Math.min(1,.5+elapsed.current*1.25):0;clock.current.progress=p;point=sampleTargetFlight(p,targetPoint(target),power,v.launch);
+   const p=elapsed.current/outTime*.68;if(p>=.48&&audioStage.current===0){courtSound('bounce');audioStage.current=1;}v.swing=elapsed.current<.4?Math.min(1,.5+elapsed.current*1.25):0;clock.current.progress=p;point=sampleTargetFlight(p,targetPoint(target),power,v.launch);
    if(!inBounds(target)&&p>=.48)finish({winner:'npc',reason:'out'});
   }else{
-   const t=Math.min(1,(elapsed.current-outTime)/backTime);clock.current.progress=.68+t*.32;point=sampleIncoming(t,contact,lane);
+   if(audioStage.current<2){courtSound('hit',.7);audioStage.current=2;}
+   const t=Math.min(1,(elapsed.current-outTime)/backTime);if(t>=.64&&audioStage.current===2){courtSound('bounce',.7);audioStage.current=3;}clock.current.progress=.68+t*.32;point=sampleIncoming(t,contact,lane);
    v.swing=Math.abs(point[2]-hand[2])<1.4?.5:0;
-   if(last.current&&caughtReturn(last.current,point,before.current,[hand[0],hand[2]],hand[1]))returned.current={time:elapsed.current,start:[...hand],landing:returnLanding(target,v)};
+   if(last.current&&caughtReturn(last.current,point,before.current,[hand[0],hand[2]],hand[1])){courtSound('hit');returned.current={time:elapsed.current,start:[...hand],landing:returnLanding(target,v)};}
    else if(t===1)finish({winner:'npc',reason:'missed'});
   }
   if(marker.current){marker.current.visible=!returned.current;marker.current.position.set(lane,.055,v.z);}

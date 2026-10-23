@@ -1,13 +1,15 @@
 import { Component, Suspense, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
-import { AnimationMixer, Group, MathUtils, Mesh, Quaternion, Vector3 } from 'three';
+import { AnimationMixer, Group, MathUtils, Mesh, MeshStandardMaterial, Quaternion, Vector3 } from 'three';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
 import type { RallyClock } from './Rally';
 import type { Side } from '../state/rally';
 import { samplePlayerPosition, targetPoint } from './trajectories';
 import { applyTennisSteps } from './tennisSteps';
 import type { VisitorInput } from '../state/gameplay';
+import {surfaceTexture} from './surfaceTextures';
+import {courtSound} from '../state/sound';
 import ProceduralPlayer from './ProceduralPlayer';
 
 type Props={input?:RefObject<VisitorInput>;switching?:boolean;hidden?:boolean;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void};
@@ -17,16 +19,19 @@ class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{f
  render(){return this.state.failed?this.props.fallback:this.props.children}
 }
 function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:Props){
- const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,6.5]:[.9,0,-6.7]);
+ const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,6.5]:[-1.5,0,-6.7]);
  const swap=useRef<{from:Vector3;elapsed:number}|null>(null);
  const gltf=useGLTF('/models/lulu.glb?v=long-grip-crossstep-3');
  // Clone skeletons, not cached geometries/materials: the two players animate independently.
  const model=useMemo(()=>{const copy=clone(gltf.scene);copy.updateMatrixWorld(true);for(const name of ['FootL','FootR']){const foot=copy.getObjectByName(name);if(foot)foot.userData.flatQuaternion=foot.getWorldQuaternion(new Quaternion());}return copy},[gltf.scene]);
+ const cloth=useMemo(()=>surfaceTexture('fabric',12),[]);
+ useEffect(()=>{model.traverse(object=>{if(object instanceof Mesh){const source=Array.isArray(object.material)?object.material:[object.material];const materials=source.map(m=>{const copy=m.clone();if(copy instanceof MeshStandardMaterial){copy.roughness=Math.max(.4,copy.roughness);copy.bumpMap=cloth;copy.bumpScale=.006;}return copy});object.material=Array.isArray(object.material)?materials:materials[0]}});return ()=>{model.traverse(o=>{if(o instanceof Mesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())});cloth.dispose()}},[model,cloth]);
+ const footstep=useRef(0);
  const mixer=useMemo(()=>new AnimationMixer(model),[model]);
  const actions=useMemo(()=>Object.fromEntries(gltf.animations.map(clip=>{
   const action=mixer.clipAction(clip);action.play();action.paused=true;action.setEffectiveWeight(0);return [clip.name,action];
  })),[gltf.animations,mixer]);
- const root=useRef<Group>(null),time=useRef(0),stride=useRef(0),start=useRef(new Vector3(.9,0,-6.7));
+ const root=useRef<Group>(null),time=useRef(0),stride=useRef(0),start=useRef(new Vector3(-1.5,0,-6.7));
  const {gl,invalidate}=useThree();
  useEffect(()=>{
   model.traverse(object=>{if(object instanceof Mesh){object.castShadow=true;object.receiveShadow=true;object.frustumCulled=false;}});
@@ -44,9 +49,10 @@ function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=fa
  useFrame((_,delta)=>{
   if(!root.current)return;
   time.current+=Math.min(delta,.05);
+  model.scale.x=visitor&&input?.current.hand==='left'?-1:1;
   if(switching&&swap.current){
    const motion=swap.current;motion.elapsed+=Math.min(delta,.05);const t=reduced?1:Math.min(1,motion.elapsed/1.8);
-   const goal=new Vector3(...(visitor?[input?.current.x??.45,0,input?.current.z??6.5]:[.9,0,-6.7]));
+   const goal=new Vector3(...(visitor?[input?.current.x??.45,0,input?.current.z??6.5]:[-1.5,0,-6.7]));
    const edge=side==='humanities'?-5.7:5.7;
    const waypoints=[motion.from,new Vector3(edge,0,motion.from.z),new Vector3(edge,0,goal.z),goal];
    const segment=Math.min(2,Math.floor(t*3)),u=Math.min(1,t*3-segment);
@@ -68,6 +74,7 @@ function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=fa
   }
   const dx=root.current.position.x-previous.x,dz=root.current.position.z-previous.z,moved=Math.hypot(dx,dz);
   stride.current+=moved/1.4;
+  if(visitor&&moved>.002&&time.current-footstep.current>.23){courtSound('step',Math.min(1,moved*12));footstep.current=time.current;}
   const recovering=!visitor&&Math.hypot(root.current.position.x-home[0],root.current.position.z-home[2])>.025&&(!playing||p>.80);
   let clip='Ready';
   let yaw=0;
@@ -106,3 +113,5 @@ export default function Player(props:Props){
  const fallback=<ProceduralPlayer {...props}/>;
  return <ModelBoundary fallback={fallback}><Suspense fallback={fallback}><Lulu {...props}/></Suspense></ModelBoundary>;
 }
+
+useGLTF.preload('/models/lulu.glb?v=long-grip-crossstep-3');

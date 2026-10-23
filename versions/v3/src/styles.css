@@ -255,3 +255,17 @@ html, body, #root {
 @keyframes invitation-reveal{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
 @keyframes loading-breathe{50%{box-shadow:0 0 0 5px #b6c97d25}}
 @media(prefers-reduced-motion:reduce){.tennis-entrance *{animation:none!important;transition:none!important}.court-canvas,.tennis-entrance{transition:none}}
+
+@font-face{font-family:'Court Nunito';src:url('/fonts/Nunito-Variable.ttf') format('truetype');font-weight:200 1000;font-style:normal;font-display:swap}
+.tennis-entrance{width:min(680px,76vw)}
+.tennis-entrance h1{margin:22px 0 14px}
+.tennis-entrance h1>span{font:850 clamp(46px,8vw,88px)/1.02 'Court Nunito',sans-serif;letter-spacing:-.045em;text-transform:none}
+.tennis-entrance h1 em{font:650 clamp(19px,2.6vw,25px)/1.4 'Court Nunito',sans-serif;letter-spacing:.025em;text-transform:none;margin-top:5px}
+.tennis-entrance>p{font:500 13px/1.6 'Court Nunito',sans-serif;letter-spacing:0}
+.tennis-entrance .entrance-kicker{font-family:'Court Nunito',sans-serif;font-weight:750;letter-spacing:.16em}
+.tennis-entrance .match-loading-caption{font-family:'Court Nunito',sans-serif;font-size:11px}
+.tennis-entrance .loading-number{font:750 24px/1 'Court Nunito',sans-serif}
+.tennis-entrance .court-enter{font:800 16px/1.2 'Court Nunito',sans-serif;text-transform:none;letter-spacing:.01em;border-radius:30px;transform:none;padding:14px 23px;box-shadow:0 4px 0 #a7bc7b}
+.tennis-entrance .court-enter:hover{transform:translateY(-2px);box-shadow:0 6px 0 #a7bc7b}
+.court-world[data-light="night"] .tennis-entrance .court-enter{box-shadow:0 4px 0 #668880}
+@media(max-width:640px){.tennis-entrance h1>span{font-size:clamp(36px,9.8vw,62px)}.tennis-entrance h1 em{font-size:20px}.tennis-entrance .entrance-kicker{font-size:7px;letter-spacing:.12em;gap:7px}.tennis-entrance>p{font-size:12px}.tennis-entrance .match-loading{width:min(260px,70vw)}}

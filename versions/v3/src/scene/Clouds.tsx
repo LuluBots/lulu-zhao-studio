@@ -4,13 +4,13 @@ import { useEffect, useMemo, useRef } from 'react';
 import { BufferGeometry, Mesh, MeshStandardMaterial, Plane, Raycaster, Vector2, Vector3 } from 'three';
 import { obscuresScoreboard } from './scoreboardVisibility';
 import { cloudEnvelope, sampleCloud, selectCloudVariant, type PointerSample } from './cloudMotion';
-// Deliberate clusters under the platform, then two distant banks; keep the navigation airspace clear.
-const banks=[[-3,-3.8,3,2.1],[3,-4.1,-4,2.3],[-20,-7,-12,2.5],[23,-8,14,2.6]];
+// Four soft supporting banks and two peripheral clouds leave the court airspace open.
+const banks=[[-5,-5.2,5,2.2],[4,-5.4,5,2.3],[-4,-5.5,-6,2.2],[5,-5.6,-5,2.3],[-17,-7,-11,2.6],[19,-8,12,2.7]];
 type Wake={point:Vector3;born:number;variant:number;rotation:number;opacity:number;size:number};
 function Cloud({geometries,index,bank,wake,night}:{night:boolean;geometries:BufferGeometry[];index:number;bank?:number[];wake?:Wake}){
  const mesh=useRef<Mesh>(null),material=useRef<MeshStandardMaterial>(null),visibility=useRef(1);
  const center=useMemo(()=>bank?new Vector3(...bank.slice(0,3) as [number,number,number]):new Vector3(),[bank]);
- const bankOpacity=useMemo(()=>index<2?.38:.16,[]);
+ const bankOpacity=useMemo(()=>index<4?.64:.34,[]);
  useFrame(({camera,invalidate},delta)=>{
   if(!mesh.current||!material.current)return;
   const age=wake?(performance.now()-wake.born)/1000:0;

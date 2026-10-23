@@ -236,3 +236,22 @@ html, body, #root {
 .profile-links{display:flex;gap:12px;padding-top:20px;justify-content:flex-start}
 .profile-links a{width:46px;height:46px;min-height:46px;justify-content:center;border:1px solid #b5cbc7;border-radius:50%;background:#f4f6ef;transition:background .18s,transform .18s}
 .profile-links a:hover{background:#dce9e4;transform:translateY(-2px)}
+
+/* The invitation unfolds in order; scene loading does not freeze the presentation. */
+.court-world{background:linear-gradient(180deg,#a6bfd1 0%,#d8dcdd 55%,#f3e5d1 100%)}
+.court-world[data-light="night"]{background:linear-gradient(180deg,#172039,#414c6c 55%,#95889d 100%)}
+.court-canvas{opacity:0;transition:opacity 1.4s ease}
+.court-world[data-scene-ready="true"] .court-canvas{opacity:1}
+.tennis-entrance{animation:none;transition:opacity .4s ease,filter .4s ease}
+.tennis-entrance .entrance-kicker{animation:invitation-reveal .55s ease both}
+.tennis-entrance h1{animation:invitation-reveal .7s .12s ease both}
+.tennis-entrance>p{animation:invitation-reveal .6s .32s ease both}
+.tennis-entrance .match-loading{animation:invitation-reveal .6s .5s ease both}
+.tennis-entrance .loading-fill,.tennis-entrance .loading-tennis-ball{transition:none}
+.tennis-entrance:not([data-ready="true"]) .loading-tennis-ball{animation:loading-breathe 1.2s ease-in-out infinite}
+.tennis-entrance .court-enter{opacity:0;visibility:hidden;transition:opacity .5s ease,visibility .5s,background .2s,transform .2s}
+.tennis-entrance[data-ready="true"] .court-enter{opacity:1;visibility:visible}
+.tennis-entrance[data-leaving="true"]{opacity:0;filter:blur(3px);pointer-events:none}
+@keyframes invitation-reveal{from{opacity:0;translate:0 10px}to{opacity:1;translate:0 0}}
+@keyframes loading-breathe{50%{box-shadow:0 0 0 5px #b6c97d25}}
+@media(prefers-reduced-motion:reduce){.tennis-entrance *{animation:none!important;transition:none!important}.court-canvas,.tennis-entrance{transition:none}}

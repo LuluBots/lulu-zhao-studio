@@ -55,5 +55,5 @@ function Scene({preMatch,started,input,night,score,onContextLost,onAnchor,onNavi
 }
 export default function World(props:Props){
  const initialPosition=useRef<[number,number,number]>([23,25,30]);
- return <Canvas orthographic shadows dpr={[1,2]} frameloop="demand" camera={{position:initialPosition.current,zoom:22,near:.1,far:180}} gl={{antialias:true,alpha:true,powerPreference:'low-power'}} fallback={<div className="scene-error" role="alert"><p>This device cannot display the 3D court.</p><button onClick={props.onBrowse}>Explore the collection</button></div>}><Scene {...props}/></Canvas>;
+ return <Canvas className="court-canvas" orthographic shadows dpr={[1,2]} frameloop="demand" camera={{position:initialPosition.current,zoom:22,near:.1,far:180}} gl={{antialias:true,alpha:true,powerPreference:'low-power'}} fallback={<div className="scene-error" role="alert"><p>This device cannot display the 3D court.</p><button onClick={props.onBrowse}>Explore the collection</button></div>}><Scene {...props}/></Canvas>;
 }

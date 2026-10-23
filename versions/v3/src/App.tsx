@@ -121,7 +121,7 @@ export default function App(){
   const onReady=useCallback(()=>setReady(true),[]);
   const onContextLost=useCallback(()=>{setLost(true);explore({type:'close'})},[]);
   const command=(kind:ViewAction['kind'])=>setAction(previous=>({kind,id:previous.id+1}));
-  return <main ref={main} className="court-world" data-started={started} aria-label="Grand Slam with Lulu — cloud tennis court" aria-describedby="court-instructions" aria-busy={!ready&&!lost} data-light={night?'night':'day'} data-mode={state.phase} data-side={state.side} data-content={exploration.panel} data-shot-power={power.toFixed(3)} data-shot-target={target.join(",")} tabIndex={0}
+  return <main ref={main} className="court-world" data-started={started} data-scene-ready={ready} aria-label="Grand Slam with Lulu — cloud tennis court" aria-describedby="court-instructions" aria-busy={!ready&&!lost} data-light={night?'night':'day'} data-mode={state.phase} data-side={state.side} data-content={exploration.panel} data-shot-power={power.toFixed(3)} data-shot-target={target.join(",")} tabIndex={0}
     onDoubleClick={()=>state.phase==='overview'?command('reset'):onExit()}
     onKeyDown={event=>{
       if(event.target!==event.currentTarget)return;

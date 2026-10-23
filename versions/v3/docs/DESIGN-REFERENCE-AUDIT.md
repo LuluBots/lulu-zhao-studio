@@ -29,3 +29,10 @@ Both role choices enter directly without a preliminary side swap. Players that n
 Four original voxel-unified cloud sculptures are stored in assets/blender/clouds.blend and exported to public/models/clouds.glb. Pointer trails select a different random library member per accepted sample; no per-frame reshuffling. Sampling is limited to one cloud per 160 ms and 55 CSS pixels, with a 100 ms delay and 380 ms fade-in. The pool holds at most 12 clouds; motion-reduction users do not receive trails.
 
 The real Cycles AO bake uses furniture proxies aligned to the benches, umpire chair, planters and net posts. It supplies contact occlusion only; moving players and day/night directional lighting stay dynamic. The independent bake source is assets/blender/court-contact-bake.blend.
+
+## October 22 — controls and indirect-light bake
+- Sound joins Day/Night at the upper right; both bars use locally hosted Barlow Medium, with consistent SVG icons and focus states.
+- The help icon opens a native modal guide, with Escape/backdrop/close actions and focus restoration.
+- `assets/blender/bake_indirect.py` creates two 1024px Cycles diffuse-indirect atlases (96 samples, six bounces), with colored court/furniture proxies, linen canopies and foliage. Direct light and albedo are excluded from the bake. `filter_indirect.py` smooths Monte Carlo noise for web delivery.
+- `useIndirectLight.ts` assigns secondary UVs and the appropriate day/night light map to the playing surface, platform and courtside decks/planks. AO remains separate. No moving character is baked into the static lighting.
+- Scope: this advances static ground indirect lighting; furniture's own curved surfaces and character shading still use live lights/environment, not a complete per-object GI atlas. Those surfaces require individual unwrapped atlases in a subsequent asset pass.

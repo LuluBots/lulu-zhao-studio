@@ -9,6 +9,8 @@ import type { ScreenAnchor } from './scene/SkyVisitors';
 import MovementPad from './components/MovementPad';
 import { createVisitorInput, type RallyResult } from './state/gameplay';
 import RolePicker from './components/RolePicker';
+import ControlsHelp from './components/ControlsHelp';
+import {Volume2,VolumeX,Sun,Moon,CircleHelp} from 'lucide-react';
 import CourtEntrance from './components/CourtEntrance';
 import ContentCard from './components/ContentCard';
 import {unlockSound,courtSound,setSoundEnabled} from './state/sound';
@@ -31,6 +33,7 @@ export default function App(){
   const [mode,setMode]=useState<'day'|'night'>(()=>daylightAt(new Date().getHours())?'day':'night');
   const night=mode==='night';
   const [sound,setSound]=useState(true);
+  const [helpOpen,setHelpOpen]=useState(false);
   const [anchor,setAnchor]=useState<ScreenAnchor|null>(null);
   const [directoryAnchor,setDirectoryAnchor]=useState<ScreenAnchor|null>(null);
   const begin=()=>{void unlockSound().then(()=>courtSound('enter'));setStarted(true)};
@@ -131,16 +134,18 @@ export default function App(){
     <section className="sr-only" aria-label={`${activeProfile.title} profile`}><h1>{activeProfile.title} — Lulu Zhao</h1><p>{activeProfile.focus}</p><p>{activeProfile.biography}</p><ul>{activeProfile.entries.map(entry=><li key={entry.id}>{entry.title}</li>)}</ul></section>
     <p className="sr-only" role="status" aria-live="polite">{activeProfile.title}. {state.phase==='overview'?'Overview. Click the opposite court to hit.':state.phase==='ready'?'Rally ready. Click the opposite court to hit; Enter hits toward the center.':state.phase==='playing'?`Rally in progress. Meet the return with WASD to score and discover ${exploration.entry?.title??'the selected entry'}.`:'Changing view.'}</p>
     {lost?<div className="scene-error" role="alert"><p>The 3D view was interrupted.</p><button onClick={()=>location.reload()}>Reload court</button><button onClick={openPreview}>Browse</button></div>:<SceneBoundary onBrowse={openPreview}><Suspense fallback={null}><World atNet={!hasChosenRole} started={started} input={input} night={night} score={score} onAnchor={setAnchor} onNavigate={(d,a)=>{setDirectoryAnchor(a??null);setDestination(d)}} onReset={()=>command('reset')} onExit={onExit} power={power} target={target} onCourtHit={onCourtHit} onBrowse={openPreview} action={action} state={state} path={exploration.entry?.trajectory??'straight'} reduced={reduced} onReady={onReady} onContextLost={onContextLost} onArrived={onArrived} onBall={onBall} onFinished={onFinished} onSwitch={onSwitch} onSelect={onSelect}/></Suspense></SceneBoundary>}
-    {started&&<nav aria-label="Court navigation" className="rally-wayfinding" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}><button onClick={state.phase==='overview'?onBall:onExit}>{state.phase==='overview'?'Play Rally':'Back to Court'}</button><button disabled={!hasChosenRole||!['overview','ready'].includes(state.phase)} onClick={onSwitch}>Switch Ends</button><button onClick={openPreview}>Browse</button>{state.phase==='overview'&&<button onClick={()=>command('reset')}>Reset View</button>}<button aria-pressed={sound} onClick={()=>{setSound(!sound);setSoundEnabled(!sound)}}>{sound?'Sound on':'Sound off'}</button><details className="control-help"><summary aria-label="Controls">?</summary><div><p>Drag to orbit · Shift-drag to pan</p><p>Scroll / pinch to zoom</p><p>WASD / arrows to run</p><p>Click & hold the court to hit</p></div></details></nav>}
+    {started&&<nav aria-label="Court navigation" className="rally-wayfinding" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}><button onClick={state.phase==='overview'?onBall:onExit}>{state.phase==='overview'?'Play Rally':'Back to Court'}</button><button disabled={!hasChosenRole||!['overview','ready'].includes(state.phase)} onClick={onSwitch}>Switch Ends</button><button onClick={openPreview}>Browse</button>{state.phase==='overview'&&<button onClick={()=>command('reset')}>Reset View</button>}<button className="help-trigger" aria-label="How to play" aria-haspopup="dialog" aria-expanded={helpOpen} onClick={()=>setHelpOpen(true)}><CircleHelp size={18}/></button></nav>}
     {started&&hasChosenRole&&['overview','ready','playing'].includes(state.phase)&&<MovementPad input={input}/>}
     {(state.phase==='ready'||state.phase==='playing')&&<><div className="rally-live-score" aria-label="Live score"><span>VERSE <b>{pointLabel(score,'humanities')}</b></span><span>CODE <b>{pointLabel(score,'technology')}</b></span></div><div className="rally-result" role="status">{result?result.winner==='visitor'?'RETURN IN · YOUR POINT':result.reason==='out'?'OUT · NPC POINT':'MISSED · NPC POINT':`YOU: ${otherSide(state.side)==='humanities'?'VERSE':'CODE'} · NPC: ${state.side==='humanities'?'VERSE':'CODE'}`}</div></>}
     {!started&&<CourtEntrance ready={ready} onStart={begin}/>}
     <div className="world-controls" inert={!started} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')e.stopPropagation()}} onDoubleClick={e=>e.stopPropagation()}>
-     <div className="light-modes" role="group" aria-label="Lighting mode">{(['day','night'] as const).map(m=><button key={m} aria-pressed={mode===m} onClick={()=>setMode(m)}>{m==='day'?'☀ Day':'☾ Night'}</button>)}</div>
+     <div className="light-modes" role="group" aria-label="Lighting mode">{(['day','night'] as const).map(m=><button key={m} aria-pressed={mode===m} onClick={()=>setMode(m)}>{m==='day'?<Sun size={15}/>:<Moon size={15}/>}<span>{m==='day'?'Day':'Night'}</span></button>)}</div>
+     <button className="sound-toggle" aria-label={sound?'Mute sound':'Enable sound'} title={sound?'Mute sound':'Enable sound'} aria-pressed={sound} onClick={()=>{setSound(!sound);setSoundEnabled(!sound)}}>{sound?<Volume2 size={16}/>:<VolumeX size={16}/>}<span>{sound?'Sound on':'Sound off'}</span></button>
 
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>
     <p className="sr-only" aria-live="polite">Verse: {pointLabel(score,'humanities')}, {score.games.humanities} games. Code: {pointLabel(score,'technology')}, {score.games.technology} games.</p>
+    <ControlsHelp open={helpOpen} onClose={()=>setHelpOpen(false)}/>
     <RolePicker open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>
     <Directory anchor={directoryAnchor} destination={destination} onClose={()=>{setDestination(null);main.current?.focus()}}/>
     <ContentCard anchor={anchor} panel={exploration.panel} entry={exploration.entry} entries={activeProfile.entries} onChoose={onChoose} onHit={onHit} onRead={()=>explore({type:'read'})} onClose={onClose}/>

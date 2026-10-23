@@ -1,3 +1,4 @@
+import { useIndirectLight } from './useIndirectLight';
 import { RoundedBox } from '@react-three/drei';
 import { useMemo, useEffect, useRef } from 'react';
 import { Group, Mesh, MeshStandardMaterial, Vector3, Quaternion, BufferGeometry, Float32BufferAttribute } from 'three';
@@ -49,15 +50,16 @@ function UmpireChair(){return <group name="Umpire_Chair" position={[-7.25,0,0]} 
  <RoundedBox args={[1.6,.09,1.42]} radius={.04} smoothness={4} position={[0,3.13,-.1]} rotation={[.09,0,0]} castShadow><meshStandardMaterial color="#ddbbbd"/></RoundedBox>
  {[-.55,.55].map(x=><Bar key={x} a={[x,2.1,-.5]} b={[x,3.1,-.5]} color={ivory}/>)}
  </group>}
-export default function Courtside(){
+export default function Courtside({night}:{night:boolean}){
  const root=useRef<Group>(null);const fabric=useMemo(()=>surfaceTexture('fabric',5),[]),woodGrain=useMemo(()=>surfaceTexture('wood',2),[]);
  useEffect(()=>{const materials:MeshStandardMaterial[]=[];root.current?.traverse(o=>{if(o instanceof Mesh&&o.material instanceof MeshStandardMaterial){const m=o.material.clone();const timber=m.color.getHexString()===wood.slice(1);const textile=['f2ead8','9bb5a2','e8d7ce'].includes(m.color.getHexString());m.bumpMap=timber?woodGrain:textile?fabric:null;m.bumpScale=timber?.0015:.0007;m.roughness=timber?.56:textile?.83:.42;o.material=m;materials.push(m)}});return ()=>{materials.forEach(m=>m.dispose());fabric.dispose();woodGrain.dispose()}},[fabric,woodGrain]);
+ useIndirectLight(root,night);
  return <group ref={root} name="Courtside_Symmetric">
- <RoundedBox args={[2.2,.30,3.1]} radius={.35} position={[-7.25,-.19,0]} receiveShadow><meshStandardMaterial color="#d9d6c5"/></RoundedBox>
+ <RoundedBox name="Indirect_Deck" args={[2.2,.30,3.1]} radius={.35} position={[-7.25,-.19,0]} receiveShadow><meshStandardMaterial color="#d9d6c5"/></RoundedBox>
  <UmpireChair/>
- <RoundedBox args={[3.3,.32,12]} radius={.4} position={[6.65,-.21,0]} receiveShadow castShadow><meshStandardMaterial color="#d9d6c5"/></RoundedBox>
+ <RoundedBox name="Indirect_Deck" args={[3.3,.32,12]} radius={.4} position={[6.65,-.21,0]} receiveShadow castShadow><meshStandardMaterial color="#d9d6c5"/></RoundedBox>
  {[-1,1].map(end=><group key={end} name={end<0?'Rest_North':'Rest_South'} scale={[1,1,end]}>
-  {Array.from({length:13},(_,i)=><mesh key={i} position={[6.65,-.042,.2+i*.44]} receiveShadow><boxGeometry args={[3.04,.025,.40]}/><meshStandardMaterial color={i%3?'#e1d2bb':'#d9c8ad'}/></mesh>)}
+  {Array.from({length:13},(_,i)=><mesh name="Indirect_Plank" key={i} position={[6.65,-.042,.2+i*.44]} receiveShadow><boxGeometry args={[3.04,.025,.40]}/><meshStandardMaterial color={i%3?'#e1d2bb':'#d9c8ad'}/></mesh>)}
   <group position={[6.7,.02,2.8]} rotation={[0,-Math.PI/2,0]}><Bench/></group>
   <group position={[7.65,0,2.8]} scale={.82}><Parasol/></group>
   <group position={[7.5,0,5.35]}><Planter tree/></group>

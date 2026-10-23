@@ -20,6 +20,9 @@ skin=mat('Skin_WarmPeach','dcae91');hair=mat('Hair_Cocoa','40332f');eye=mat('Eye
 rose=mat('Humanities_DustyRose','c78b99');gold=mat('Humanities_Champagne','c6ad7b');dark=mat('Technology_Graphite','26303f');pink=mat('Technology_Orchid','e88bc2');glow=mat('Technology_CircuitLight','7aebdf')
 bs=glow.node_tree.nodes.get('Principled BSDF');bs.inputs['Emission Color'].default_value=(.12,.7,.58,1);bs.inputs['Emission Strength'].default_value=.65
 silver=mat('Scientist_Titanium','aabdc5',.38);linen=mat('Scientist_Linen','e2e8e5');hairline=mat('Hair_Highlight','665044');blush=mat('Cheek_Rose','cf9d8b');ink=mat('Stitch_Ink','607e89')
+# Separate fabric, skin, satin hair and anodized metal instead of a uniform matte finish.
+for material,roughness,metallic in [(skin,.5,0),(hair,.32,0),(shoe,.65,0),(sole,.88,0),(frame,.3,.35),(gold,.28,.6),(silver,.27,.65),(cream,.76,0),(navy,.72,0),(rose,.58,0)]:
+ node=material.node_tree.nodes.get('Principled BSDF');node.inputs['Roughness'].default_value=roughness;node.inputs['Metallic'].default_value=metallic
 parts=[]
 def finish(obj,name,material,bone='Spine',variant='Body'):
  obj.name=f'{variant}_{name}'; obj.data.materials.clear();obj.data.materials.append(material)
@@ -27,17 +30,17 @@ def finish(obj,name,material,bone='Spine',variant='Body'):
  for f in obj.data.polygons:f.use_smooth=len(f.vertices)<=4
  obj['bone']=bone;obj['variant']=variant;parts.append(obj);return obj
 
-def uv(name,loc,scale,material,bone='Spine',variant='Body',segments=12,rings=8):
+def uv(name,loc,scale,material,bone='Spine',variant='Body',segments=20,rings=12):
  bpy.ops.mesh.primitive_uv_sphere_add(segments=segments,ring_count=rings,location=loc)
  o=bpy.context.object;o.scale=scale;return finish(o,name,material,bone,variant)
 
 def rod(name,a,b,r,material,bone='Spine',variant='Body',r2=None):
  mid=(Vector(a)+Vector(b))/2;d=Vector(b)-Vector(a)
- bpy.ops.mesh.primitive_cone_add(vertices=10,radius1=r,radius2=r if r2 is None else r2,depth=d.length,location=mid)
+ bpy.ops.mesh.primitive_cone_add(vertices=16,radius1=r,radius2=r if r2 is None else r2,depth=d.length,location=mid)
  o=bpy.context.object;o.rotation_euler=d.to_track_quat('Z','Y').to_euler();return finish(o,name,material,bone,variant)
 
 def torus(name,loc,major,minor,material,bone='Head',variant='Body',scale=(1,1,1),rotation=(0,0,0)):
- bpy.ops.mesh.primitive_torus_add(major_segments=24,minor_segments=6,location=loc,major_radius=major,minor_radius=minor,rotation=rotation)
+ bpy.ops.mesh.primitive_torus_add(major_segments=36,minor_segments=8,location=loc,major_radius=major,minor_radius=minor,rotation=rotation)
  o=bpy.context.object;o.scale=scale;return finish(o,name,material,bone,variant)
 
 
@@ -91,7 +94,7 @@ def flexible_limb(name,a,b,c,radii,bones):
 # One body and one skeleton, shared by both outfits. Front is -Y.
 uv('Torso',(0,0,1.13),(.255,.16,.32),skin)
 rod('Neck',(0,0,1.37),(0,0,1.53),.09,skin)
-uv('Head',(0,-.005,1.73),(.285,.245,.29),skin,'Head',segments=16,rings=12)
+uv('Head',(0,-.005,1.73),(.285,.245,.29),skin,'Head',segments=32,rings=20)
 for x in [-.10,.10]:
  uv('Eye',(x,-.238,1.74),(.021,.012,.027),eye,'Head')
  uv('Ear',(math.copysign(.276,x),0,1.70),(.042,.052,.065),skin,'Head')
@@ -130,6 +133,9 @@ for side,x in [('L',-.16),('R',.16)]:
  rod('Sock'+side,(x,0,.16),(x,0,.28),.078,shoe,'Foot.'+side)
  uv('Shoe'+side,(x,-.055,.11),(.122,.22,.095),shoe,'Foot.'+side)
  uv('Sole'+side,(x,-.06,.055),(.124,.215,.035),sole,'Foot.'+side)
+ # Heel counters and stitched toe piping remain attached to the animated foot.
+ curve('ToePiping'+side,[(x+.108*math.cos(a),-.055+.19*math.sin(a),.10) for a in [math.pi+j*math.pi/20 for j in range(21)]],.0035,sole,'Foot.'+side)
+ uv('HeelCounter'+side,(x,.11,.13),(.095,.035,.065),sole,'Foot.'+side)
  for y in [-.12,-.075,-.03]:rod('Lace'+side,(x-.058,y,.184),(x+.058,y,.184),.009,string,'Foot.'+side)
 for side,a,b,c in [('L',(-.26,0,1.35),(-.38,-.01,1.09),(-.38,-.16,.97)),('R',(.26,0,1.35),(.40,-.12,1.13),(.372,-.44,.727))]:
  flexible_limb('Arm'+side,a,b,c,(.079,.068,.048),('UpperArm.'+side,'Forearm.'+side))

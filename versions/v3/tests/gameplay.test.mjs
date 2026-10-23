@@ -40,4 +40,4 @@ test('idle exploration crosses the net and reaches both full-court ends',()=>{
  input.roaming=false;moveVisitor(input,0);assert.equal(input.x,4.1);assert.equal(input.z,8.25);
 });
 
-test('new visitor starts on the left with an explicit racket hand',()=>{const v=createVisitorInput();assert.equal(v.x,-1.5);assert.equal(v.hand,'right')});
+test('new visitor starts on the left with no handedness setting',()=>{const v=createVisitorInput();assert.equal(v.x,-1.5);assert.equal('hand' in v,false)});

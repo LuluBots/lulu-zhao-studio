@@ -31,8 +31,6 @@ export default function App(){
   const [mode,setMode]=useState<'day'|'night'>(()=>daylightAt(new Date().getHours())?'day':'night');
   const night=mode==='night';
   const [sound,setSound]=useState(true);
-  const [hand,setHand]=useState<'left'|'right'>('right');
-  const chooseHand=(value:'left'|'right')=>{setHand(value);input.current.hand=value};
   const [anchor,setAnchor]=useState<ScreenAnchor|null>(null);
   const [directoryAnchor,setDirectoryAnchor]=useState<ScreenAnchor|null>(null);
   const begin=()=>{void unlockSound().then(()=>courtSound('enter'));setStarted(true)};
@@ -144,7 +142,7 @@ export default function App(){
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>
     <p className="sr-only" aria-live="polite">Verse: {pointLabel(score,'humanities')}, {score.games.humanities} games. Code: {pointLabel(score,'technology')}, {score.games.technology} games.</p>
-    <RolePicker hand={hand} onHand={chooseHand} open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>
+    <RolePicker open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>
     <Directory anchor={directoryAnchor} destination={destination} onClose={()=>{setDestination(null);main.current?.focus()}}/>
     <ContentCard anchor={anchor} panel={exploration.panel} entry={exploration.entry} entries={activeProfile.entries} onChoose={onChoose} onHit={onHit} onRead={()=>explore({type:'read'})} onClose={onClose}/>
   </main>;

@@ -64,10 +64,7 @@ test('visitor racket remains attached to the animated hand while the complete pl
  }
 });
 
-test('left-handed mirror preserves animated hand contact and reverses its lateral offset',()=>{
- const model=clone(gltf.scene),mixer=new AnimationMixer(model),contact=model.getObjectByName('Racket_Contact');
- const action=mixer.clipAction(gltf.animations.find(c=>c.name==='Swing'));action.play();action.paused=true;action.time=action.getClip().duration*.5;mixer.update(0);
- model.scale.x=1;model.updateMatrixWorld(true);const right=contact.getWorldPosition(new Vector3());
- model.scale.x=-1;model.updateMatrixWorld(true);const left=contact.getWorldPosition(new Vector3());
- assert.ok(Math.abs(left.x+right.x)<1e-6);assert.ok(Math.abs(left.y-right.y)<1e-6);assert.ok(Math.abs(left.z-right.z)<1e-6);
+test('both outfits share a right-hand racket anchor',()=>{
+ const contact=gltf.scene.getObjectByName('Racket_Contact');
+ assert.ok(contact);assert.ok(/Hand.*R/.test(contact.parent.name));
 });

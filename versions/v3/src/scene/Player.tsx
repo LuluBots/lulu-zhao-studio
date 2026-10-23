@@ -21,11 +21,11 @@ class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{f
 function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:Props){
  const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,6.5]:[-1.5,0,-6.7]);
  const swap=useRef<{from:Vector3;elapsed:number}|null>(null);
- const gltf=useGLTF('/models/lulu.glb?v=long-grip-crossstep-3');
+ const gltf=useGLTF('/models/lulu.glb?v=sculpted-materials-4');
  // Clone skeletons, not cached geometries/materials: the two players animate independently.
  const model=useMemo(()=>{const copy=clone(gltf.scene);copy.updateMatrixWorld(true);for(const name of ['FootL','FootR']){const foot=copy.getObjectByName(name);if(foot)foot.userData.flatQuaternion=foot.getWorldQuaternion(new Quaternion());}return copy},[gltf.scene]);
  const cloth=useMemo(()=>surfaceTexture('fabric',12),[]);
- useEffect(()=>{model.traverse(object=>{if(object instanceof Mesh){const source=Array.isArray(object.material)?object.material:[object.material];const materials=source.map(m=>{const copy=m.clone();if(copy instanceof MeshStandardMaterial){copy.roughness=Math.max(.4,copy.roughness);copy.bumpMap=cloth;copy.bumpScale=.006;}return copy});object.material=Array.isArray(object.material)?materials:materials[0]}});return ()=>{model.traverse(o=>{if(o instanceof Mesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())});cloth.dispose()}},[model,cloth]);
+ useEffect(()=>{model.traverse(object=>{if(object instanceof Mesh){const source=Array.isArray(object.material)?object.material:[object.material];const materials=source.map(m=>{const copy=m.clone();if(copy instanceof MeshStandardMaterial){const textile=/Cream|Linen|ScholarBlue|Sock|Silk/i.test(copy.name);copy.bumpMap=textile?cloth:null;copy.bumpScale=textile?.0006:0;copy.roughness=/Hair/i.test(copy.name)?.38:/Skin/i.test(copy.name)?.52:/Titanium|Champagne|Racket/i.test(copy.name)?.32:.72;copy.metalness=/Titanium|Champagne/i.test(copy.name)?.55:0;}return copy});object.material=Array.isArray(object.material)?materials:materials[0]}});return ()=>{model.traverse(o=>{if(o instanceof Mesh)(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())});cloth.dispose()}},[model,cloth]);
  const footstep=useRef(0);
  const mixer=useMemo(()=>new AnimationMixer(model),[model]);
  const actions=useMemo(()=>Object.fromEntries(gltf.animations.map(clip=>{
@@ -49,7 +49,7 @@ function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=fa
  useFrame((_,delta)=>{
   if(!root.current)return;
   time.current+=Math.min(delta,.05);
-  model.scale.x=visitor&&input?.current.hand==='left'?-1:1;
+  model.scale.x=1;
   if(switching&&swap.current){
    const motion=swap.current;motion.elapsed+=Math.min(delta,.05);const t=reduced?1:Math.min(1,motion.elapsed/1.8);
    const goal=new Vector3(...(visitor?[input?.current.x??.45,0,input?.current.z??6.5]:[-1.5,0,-6.7]));
@@ -114,4 +114,4 @@ export default function Player(props:Props){
  return <ModelBoundary fallback={fallback}><Suspense fallback={fallback}><Lulu {...props}/></Suspense></ModelBoundary>;
 }
 
-useGLTF.preload('/models/lulu.glb?v=long-grip-crossstep-3');
+useGLTF.preload('/models/lulu.glb?v=sculpted-materials-4');

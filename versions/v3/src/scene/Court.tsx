@@ -10,14 +10,16 @@ function Stripe({x=0,z=0,width=0.045,length=17.4}:{x?:number;z?:number;width?:nu
 function Net() {
   const geometry=useMemo(()=>{
     const vertices:number[]=[];
-    for(let x=-4.95;x<=4.96;x+=0.19) vertices.push(x,0.12,0,x,1.05,0);
-    for(let y=0.12;y<1.06;y+=0.13) vertices.push(-4.95,y,0,4.95,y,0);
+    for(let x=-4.95;x<=4.96;x+=0.19) vertices.push(x,0.12,0,x,1.05-.13*(1-(x/4.95)**2),0);
+    for(let y=0.12;y<1.06;y+=0.13) {for(let x=-4.95;x<4.95;x+=.25){const b=Math.min(x+.25,4.95);vertices.push(x,y-.13*(1-(x/4.95)**2)*(y/1.05),0,b,y-.13*(1-(b/4.95)**2)*(y/1.05),0)}};
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));return g;
   },[]);
+  const tape=useMemo(()=>{const v:number[]=[],indices:number[]=[];for(let i=0;i<=48;i++){const x=-5.025+i*10.05/48,y=1.07-.13*(1-(x/5.025)**2);v.push(x,y+.032,.018,x,y-.032,.018);if(i<48){const k=i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));g.setIndex(indices);g.computeVertexNormals();return g},[]);
+  useEffect(()=>()=>{geometry.dispose();tape.dispose()},[geometry,tape]);
   return <group name="Court_Net">
     <lineSegments geometry={geometry}><lineBasicMaterial color="#647c86" transparent opacity={0.65}/></lineSegments>
-    <mesh position={[0,1.07,0]} castShadow><boxGeometry args={[10.05,0.065,0.055]}/><meshStandardMaterial color="#fffdf3"/></mesh>
-    {[-5.05,5.05].map(x=><group key={x} position={[x,0,0]}><mesh position={[0,.6,0]} castShadow><cylinderGeometry args={[.07,.085,1.2,12]}/><meshStandardMaterial color="#51737a"/></mesh><mesh position={[0,.04,0]}><cylinderGeometry args={[.19,.22,.08,16]}/><meshStandardMaterial color="#73939a"/></mesh></group>)}
+    <mesh geometry={tape} castShadow><meshStandardMaterial color="#fffdf3" side={THREE.DoubleSide} roughness={.78}/></mesh><mesh position={[0,.48,.025]}><boxGeometry args={[.045,.96,.012]}/><meshStandardMaterial color="#f6f2e6" roughness={.8}/></mesh>
+    {[-5.05,5.05].map(x=><group key={x} position={[x,0,0]}><mesh position={[0,.6,0]} castShadow><cylinderGeometry args={[.07,.085,1.2,24]}/><meshStandardMaterial color="#51737a"/></mesh><mesh position={[0,.04,0]}><cylinderGeometry args={[.19,.22,.08,16]}/><meshStandardMaterial color="#73939a"/></mesh></group>)}
   </group>;
 }
 function GroundPrint({end,x,lines,signature=false}:{end:number;x:number;lines:string[];signature?:boolean}){
@@ -35,8 +37,8 @@ export default function Court(){
  const grit=useMemo(()=>{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;const image=ctx.createImageData(256,256);let seed=42;for(let i=0;i<image.data.length;i+=4){seed=(1664525*seed+1013904223)>>>0;const v=222+(seed%34);image.data[i]=image.data[i+1]=image.data[i+2]=v;image.data[i+3]=255}ctx.putImageData(image,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(12,24);return t},[]);
  useEffect(()=>()=>grit.dispose(),[grit]);
  return <group name="Court">
-  <RoundedBox name="Court_Platform" args={[12.4,.65,21.7]} radius={.25} smoothness={3} position={[0,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#b0d3e3" bumpMap={grit} bumpScale={.018} roughness={.95}/></RoundedBox>
-  <mesh name="Court_PlayingSurface" position={[0,.004,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[8.7,17.4]}/><meshStandardMaterial color="#c5a6cd" bumpMap={grit} bumpScale={.025} roughnessMap={grit} roughness={.88} metalness={.025}/></mesh>
+  <RoundedBox name="Court_Platform" args={[12.4,.65,21.7]} radius={.25} smoothness={3} position={[0,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#b0d3e3" bumpMap={grit} bumpScale={.001} roughness={.95}/></RoundedBox>
+  <mesh name="Court_PlayingSurface" position={[0,.004,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[8.7,17.4]}/><meshStandardMaterial color="#c5a6cd" bumpMap={grit} bumpScale={.0018} roughnessMap={grit} roughness={.83} metalness={.025}/></mesh>
   {[-4.35,-3.3,3.3,4.35].map(x=><Stripe key={x} x={x}/>)}
   {[-8.7,8.7].map(z=><Stripe key={z} z={z} width={8.73} length={.045}/>)}
   {[-4.5,4.5].map(z=><Stripe key={z} z={z} width={6.6} length={.045}/>)}

@@ -1,7 +1,7 @@
 import type { Point } from '../scene/trajectories';
 export type RallyResult={winner:'visitor'|'npc';reason:'returned'|'missed'|'out'};
-export type VisitorInput={hand:'left'|'right';racket?:Point;swing?:number;roaming:boolean;x:number;z:number;yaw:number;pitch:number;keys:Set<string>;launch:Point};
-export const createVisitorInput=():VisitorInput=>({hand:'right',roaming:false,x:-1.5,z:6.5,yaw:0,pitch:0,keys:new Set(),launch:[-1.5,1.2,6.5]});
+export type VisitorInput={racket?:Point;swing?:number;roaming:boolean;x:number;z:number;yaw:number;pitch:number;keys:Set<string>;launch:Point};
+export const createVisitorInput=():VisitorInput=>({roaming:false,x:-1.5,z:6.5,yaw:0,pitch:0,keys:new Set(),launch:[-1.5,1.2,6.5]});
 export function moveVisitor(input:VisitorInput,dt:number){
  const held=(a:string,b:string)=>input.keys.has(a)||input.keys.has(b);
  let x=Number(held('KeyD','ArrowRight'))-Number(held('KeyA','ArrowLeft')),z=Number(held('KeyS','ArrowDown'))-Number(held('KeyW','ArrowUp'));

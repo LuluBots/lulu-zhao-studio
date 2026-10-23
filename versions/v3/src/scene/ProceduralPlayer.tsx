@@ -15,7 +15,7 @@ export default function Player({input,visitor=false,clock,reduced=false,side='te
  const swing=useRef<Group>(null),body=useRef<Group>(null),legs=useRef<Group>(null);
  const {gl}=useThree();
  useFrame(()=>{
- if(visitor&&input&&body.current){body.current.position.set(input.current.x,0,input.current.z);body.current.scale.x=input.current.hand==='left'?-1:1;input.current.racket=[input.current.x+(input.current.hand==='left'?.66:-.66),1.2,input.current.z-.4]}
+ if(visitor&&input&&body.current){body.current.position.set(input.current.x,0,input.current.z);body.current.scale.x=1;input.current.racket=[input.current.x-.66,1.2,input.current.z-.4]}
  if(!visitor&&body.current){const p=playing?(clock?.current.progress??0):0;body.current.position.set(...samplePlayerPosition(p,targetPoint(target),power));if(legs.current)legs.current.rotation.x=reduced?0:Math.sin(p*Math.PI*32)*.15*(p<.6||p>.73?1:0);}
  if(swing.current){const p=clock?.current.progress??0;const t=Math.max(0,1-Math.abs(p-(clock?.current.returnAt??.5))/.08);swing.current.rotation.y=reduced?0:-Math.sin(t*Math.PI/2)*1.25;}});
  const clothing=visitor?'#dddce8':sides[side].color;

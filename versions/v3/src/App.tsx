@@ -139,8 +139,8 @@ export default function App(){
     {(state.phase==='ready'||state.phase==='playing')&&<><div className="rally-live-score" aria-label="Live score"><span>VERSE <b>{pointLabel(score,'humanities')}</b></span><span>CODE <b>{pointLabel(score,'technology')}</b></span></div><div className="rally-result" role="status">{result?result.winner==='visitor'?'RETURN IN · YOUR POINT':result.reason==='out'?'OUT · NPC POINT':'MISSED · NPC POINT':`YOU: ${otherSide(state.side)==='humanities'?'VERSE':'CODE'} · NPC: ${state.side==='humanities'?'VERSE':'CODE'}`}</div></>}
     {!started&&<CourtEntrance ready={ready} onStart={begin}/>}
     <div className="world-controls" inert={!started} onKeyDown={e=>{if(e.key==='Enter'||e.key===' ')e.stopPropagation()}} onDoubleClick={e=>e.stopPropagation()}>
-     <div className="light-modes" role="group" aria-label="Lighting mode">{(['day','night'] as const).map(m=><button key={m} aria-pressed={mode===m} onClick={()=>setMode(m)}>{m==='day'?<Sun size={15}/>:<Moon size={15}/>}<span>{m==='day'?'Day':'Night'}</span></button>)}</div>
-     <button className="sound-toggle" aria-label={sound?'Mute sound':'Enable sound'} title={sound?'Mute sound':'Enable sound'} aria-pressed={sound} onClick={()=>{setSound(!sound);setSoundEnabled(!sound)}}>{sound?<Volume2 size={16}/>:<VolumeX size={16}/>}<span>{sound?'Sound on':'Sound off'}</span></button>
+     <div className="light-modes" role="group" aria-label="Lighting mode">{(['day','night'] as const).map(m=><button key={m} aria-label={m==='day'?'Day mode':'Night mode'} title={m==='day'?'Day mode':'Night mode'} aria-pressed={mode===m} onClick={()=>setMode(m)}>{m==='day'?<Sun size={15}/>:<Moon size={15}/>}</button>)}</div>
+     <button className="sound-toggle" aria-label={sound?'Mute sound':'Enable sound'} title={sound?'Mute sound':'Enable sound'} aria-pressed={sound} onClick={()=>{setSound(!sound);setSoundEnabled(!sound)}}>{sound?<Volume2 size={16}/>:<VolumeX size={16}/>}</button>
 
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>

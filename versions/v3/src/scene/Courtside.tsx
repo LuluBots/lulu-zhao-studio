@@ -11,16 +11,19 @@ function Piping({points,color=ivory,r=.009}:{points:[number,number,number][];col
  const geometry=useMemo(()=>new TubeGeometry(new CatmullRomCurve3(points.map(p=>new Vector3(...p))),24,r,6,false),[JSON.stringify(points),r]);
  useEffect(()=>()=>geometry.dispose(),[geometry]);return <mesh geometry={geometry}><meshStandardMaterial color={color} roughness={.65}/></mesh>;
 }
-export function Bench(){return <group name="Upholstered_Tennis_Bench">
- {[-.86,.86].map(x=><group key={x}>{[-.28,.28].map(z=><RoundedBox key={z} name="Bench_Support_Leg" args={[.085,.48,.09]} radius={.018} position={[x,.24,z]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>)}<Bar a={[x,.38,-.28]} b={[x,.85,-.28]} color={wood} r={.035}/><Piping points={[[x,.80,-.29],[x,.85,-.1],[x,.85,.27]]} color={ivory} r={.04}/></group>)}
- <RoundedBox args={[1.92,.11,.77]} radius={.045} position={[0,.44,0]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>
- <RoundedBox args={[1.89,.66,.10]} radius={.04} position={[0,.84,-.32]} castShadow><meshStandardMaterial color={wood}/></RoundedBox>
- {[-.6,0,.6].map(x=><group key={x} position={[x,0,0]}>
- <RoundedBox args={[.57,.15,.66]} radius={.065} smoothness={5} position={[0,.565,.015]} castShadow receiveShadow><meshStandardMaterial color="#f2ead8" roughness={.9}/></RoundedBox>
- <RoundedBox args={[.57,.48,.16]} radius={.065} smoothness={5} position={[0,.88,-.23]} rotation={[-.1,0,0]} castShadow><meshStandardMaterial color="#f2ead8" roughness={.9}/></RoundedBox>
- <Piping points={[[-.24,.64,-.25],[-.27,.64,.25],[0,.64,.33],[.27,.64,.25],[.24,.64,-.25]]} color="#c0cbd0" r={.005}/>
+export function Bench(){return <group name="Sport_Moulded_Seats">
+ {[-.82,.82].map(x=><group key={x}>
+ <Bar a={[x,.05,-.28]} b={[x,.47,-.16]} r={.035} color="#527687"/>
+ <Bar a={[x,.05,.32]} b={[x,.47,.20]} r={.035} color="#527687"/>
+ {[-.28,.32].map(z=><RoundedBox key={z} args={[.14,.035,.13]} radius={.016} position={[x,.025,z]}><meshStandardMaterial color="#344f5b"/></RoundedBox>)}
  </group>)}
- <RoundedBox args={[.34,.33,.14]} radius={.055} position={[-.57,.83,-.10]} rotation={[0,0,-.16]} castShadow><meshStandardMaterial color="#a9c7d6" roughness={.9}/></RoundedBox>
+ <Bar a={[-.97,.40,0]} b={[.97,.40,0]} r={.045} color="#527687"/>
+ {[-.64,0,.64].map((x,i)=><group key={x} position={[x,0,0]}>
+ <RoundedBox args={[.58,.075,.61]} radius={.035} smoothness={6} position={[0,.51,.035]} rotation={[-.05,0,0]} castShadow receiveShadow><meshStandardMaterial color="#dae6e5" roughness={.4}/></RoundedBox>
+ {[-.23,.23].map(dx=><Bar key={dx} a={[dx,.42,-.19]} b={[dx,.98,-.30]} r={.022} color="#527687"/>)}
+ {[.68,.79,.90].map(y=><RoundedBox key={y} args={[.56,.085,.065]} radius={.028} smoothness={5} position={[0,y,-.21-(y-.6)*.2]} castShadow><meshStandardMaterial color={i===1?'#95b9ce':'#dae6e5'} roughness={.42}/></RoundedBox>)}
+ {[-.245,.245].map(dx=><mesh key={dx} position={[dx,.90,-.237]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.012,.012,.012,12]}/><meshStandardMaterial color="#6f8a95" metalness={.65} roughness={.28}/></mesh>)}
+ </group>)}
  </group>}
 export function Parasol(){
  const panels=useMemo(()=>Array.from({length:12},(_,i)=>{
@@ -62,8 +65,8 @@ export default function Courtside(_props:{night:boolean}){
  const root=useRef<Group>(null);const fabric=useMemo(()=>surfaceTexture('fabric',5),[]),woodGrain=useMemo(()=>surfaceTexture('wood',2),[]);
  useEffect(()=>{const materials:MeshStandardMaterial[]=[];root.current?.traverse(o=>{if(o instanceof Mesh&&o.material instanceof MeshStandardMaterial){const m=o.material.clone();const timber=m.color.getHexString()===wood.slice(1);const textile=['f2ead8','9bb5a2','e8d7ce'].includes(m.color.getHexString());m.bumpMap=timber?woodGrain:textile?fabric:null;m.bumpScale=timber?.0015:.0007;m.roughness=timber?.56:textile?.83:.42;o.material=m;materials.push(m)}});return ()=>{materials.forEach(m=>m.dispose());fabric.dispose();woodGrain.dispose()}},[fabric,woodGrain]);
  
- return <group ref={root} name="Courtside_Symmetric">
- {[-1,1].map(side=><group key={side} name="Joined_Terrace">
+ return <group ref={root} name="Courtside_Single_Rest_Terrace">
+ {[1].map(side=><group key={side} name="Joined_Terrace">
  <RoundedBox args={[2.9,.65,7.8]} radius={.02} position={[side*7.63,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#ece0c8"/></RoundedBox>
  <RoundedBox args={[2.78,.065,7.68]} radius={.025} position={[side*7.64,-.025,0]} receiveShadow><meshStandardMaterial color="#dccbb0"/></RoundedBox>
  {[-1,1].map(end=><group key={end}>
@@ -72,5 +75,6 @@ export default function Courtside(_props:{night:boolean}){
  </group>)}
  <RoundedBox args={[.10,.20,7.3]} radius={.035} position={[side*9.02,.08,0]}><meshStandardMaterial color="#f3e8d1"/></RoundedBox>
  </group>)}
+ <RoundedBox name="Umpire_Platform" args={[2.2,.65,2.8]} radius={.02} position={[-7.28,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#ece0c8"/></RoundedBox>
  <UmpireChair/>
  </group>}

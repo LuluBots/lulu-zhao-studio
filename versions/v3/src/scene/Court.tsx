@@ -51,7 +51,6 @@ function Perimeter(){
  const edge=useMemo(()=>{const shape=new THREE.Shape();const x=6.12,z=10.77,r=.55;shape.moveTo(-x+r,-z);shape.lineTo(x-r,-z);shape.quadraticCurveTo(x,-z,x,-z+r);shape.lineTo(x,z-r);shape.quadraticCurveTo(x,z,x-r,z);shape.lineTo(-x+r,z);shape.quadraticCurveTo(-x,z,-x,z-r);shape.lineTo(-x,-z+r);shape.quadraticCurveTo(-x,-z,-x+r,-z);return new THREE.CatmullRomCurve3(shape.getPoints(24).map(p=>new THREE.Vector3(p.x,-.13,p.y)),true)},[]);
  const g=useMemo(()=>new THREE.TubeGeometry(edge,180,.085,8,true),[edge]);useEffect(()=>()=>g.dispose(),[g]);
  return <group name="Ivory_Court_Binding"><mesh geometry={g} castShadow><meshStandardMaterial color="#f5ead4" roughness={.5}/></mesh><mesh geometry={g} position={[0,-.28,0]}><meshStandardMaterial color="#d2ba91" metalness={.15} roughness={.5}/></mesh>
- {[-1,1].map(end=><group key={end}>{[-5.6,-3,0,3,5.6].map(x=><RoundedBox key={x} args={[.18,.22,.18]} radius={.035} position={[x,.11,end*10.65]} castShadow><meshStandardMaterial color="#efe4cb"/></RoundedBox>)}</group>)}
  </group>
 }
 export default function Court(_props:{night:boolean}){

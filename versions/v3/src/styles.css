@@ -229,3 +229,10 @@ html, body, #root {
 [data-light=night] .world-controls .sound-toggle[aria-pressed=false]{color:#e0eadf;background:#233e52ed}
 
 .role-options button img{width:150px;height:130px;object-fit:contain;display:block;margin:-12px auto 0}.role-options button{overflow:hidden}@media(max-width:600px){.role-options button img{width:110px;height:100px}}
+
+/* Compact, icon-only utility controls retain accessible names. */
+.world-controls .light-modes button,.world-controls .sound-toggle{width:42px;height:42px;min-width:42px;padding:0;justify-content:center;gap:0}
+.world-controls svg{width:18px;height:18px;stroke-width:1.7}
+.profile-links{display:flex;gap:12px;padding-top:20px;justify-content:flex-start}
+.profile-links a{width:46px;height:46px;min-height:46px;justify-content:center;border:1px solid #b5cbc7;border-radius:50%;background:#f4f6ef;transition:background .18s,transform .18s}
+.profile-links a:hover{background:#dce9e4;transform:translateY(-2px)}

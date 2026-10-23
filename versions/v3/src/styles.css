@@ -183,3 +183,16 @@ html, body, #root {
 .education-timeline{list-style:none;margin:24px 0 16px;padding:0 0 0 18px;border-left:1px solid #abc1b8}.education-timeline li{position:relative;padding:0 0 26px 10px}.education-timeline li:last-child{padding-bottom:6px}.education-timeline li::before{content:'';position:absolute;left:-23px;top:4px;width:8px;height:8px;border-radius:50%;background:#729283;box-shadow:0 0 0 4px #edf2e8}.education-timeline .education-date{font-size:11px;letter-spacing:.04em;color:#617f80;margin:0 0 7px}.education-timeline h3{font-size:17px;font-weight:600;line-height:1.35;margin:0 0 5px}.education-timeline p{font-size:13px;line-height:1.6;margin:0;color:#45616b}.education-award{display:inline-block;margin-top:9px;padding:5px 9px;background:#e2eacc;border-radius:3px;color:#435e44;font-size:12px;font-weight:500}
 
 .hand-choice{display:flex;gap:8px;justify-content:center;margin:16px 0;pointer-events:auto}.hand-choice button,.court-watermark .hand-choice button{margin:0;padding:8px 12px;font:500 12px/1.4 inherit;min-height:40px;border:1px solid #abc0b9;border-radius:22px;background:#f4f7eb;color:#31595f;box-shadow:none}.hand-choice button[aria-pressed="true"]{background:#244d50;color:#fff}.court-watermark>button:disabled{opacity:.65;cursor:wait}.court-world[data-started="true"] .rally-wayfinding{animation:entry-controls 1.5s ease both}@keyframes entry-controls{0%,55%{opacity:0}100%{opacity:1}}@media(prefers-reduced-motion:reduce){.court-world[data-started="true"] .rally-wayfinding{animation:none}}
+/* A baseline becomes the loading track; the tennis ball travels toward the entrance. */
+.tennis-entrance .match-loading{width:min(270px,76vw);margin:26px auto 16px;text-shadow:none}
+.match-loading-caption{display:flex;justify-content:space-between;gap:16px;font:500 11px/1.5 'Avenir Next','Helvetica Neue',Arial,sans-serif;letter-spacing:.025em;opacity:.85}
+.match-loading-caption>span:last-child{font-variant-numeric:tabular-nums}
+.match-loading-track{position:relative;height:12px;margin:12px 8px 0;border:1px solid currentColor;border-radius:1px;background:#8fae9820}
+.loading-fill{position:absolute;left:0;top:0;bottom:0;background:currentColor;opacity:.3;transition:width .45s ease}
+.loading-net{position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:currentColor;opacity:.65}
+.loading-tennis-ball{position:absolute;top:50%;width:17px;height:17px;border-radius:50%;transform:translate(-50%,-50%);background:#d0df8c;border:1px solid #98ae63;box-shadow:0 2px 7px #152c3b22;overflow:hidden;transition:left .45s ease}
+.loading-tennis-ball:before,.loading-tennis-ball:after{content:'';position:absolute;top:-2px;left:-7px;width:11px;height:18px;border:1.5px solid #fffde7;border-radius:50%}.loading-tennis-ball:after{left:11px}
+.tennis-entrance .court-enter{min-width:158px;justify-content:space-between;border-radius:6px;margin-top:8px;padding:13px 20px;box-shadow:none;font-weight:600}
+.tennis-entrance .court-enter:disabled{opacity:.45;transform:none;box-shadow:none}
+.tennis-entrance .court-enter span{margin:0;font-size:19px;font-weight:400}
+@media(prefers-reduced-motion:reduce){.loading-fill,.loading-tennis-ball{transition:none}}

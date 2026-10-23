@@ -34,7 +34,7 @@ test('arbitrary court shots continue forward after bouncing and Lulu meets their
  for(const x of [-4.3,-2,0,2,4.3])for(const z of [-8.6,-6,-3,-.2]){
   const target=targetPoint([x,z]),contact=receptionPoint(target),player=samplePlayerPosition(CONTACT_AT,target);
   assert.ok(contact[2]<target[2]);assert.ok(contact[2]>=-9.4);
-  assert.ok(Math.abs((contact[0]-target[0])*(target[2]-6.5)-(contact[2]-target[2])*(target[0]-.45))<1e-8);
+  assert.ok(Math.abs((contact[0]-target[0])*(target[2]-9.35)-(contact[2]-target[2])*(target[0]+1.5))<1e-8);
   assert.ok(Math.abs(contact[0]-player[0]-.75)<1e-8);assert.ok(Math.abs(contact[2]-player[2]-.47)<1e-8);
   for(let i=0;i<=2000;i++){const p=sampleTargetFlight(i/2000,target);assert.ok(p.every(Number.isFinite));if(Math.abs(p[2])<.02)assert.ok(p[1]>1.1)}
  }

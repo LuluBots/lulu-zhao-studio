@@ -1,21 +1,21 @@
 import type { Point } from '../scene/trajectories';
 export type RallyResult={winner:'visitor'|'npc';reason:'returned'|'missed'|'out'};
 export type VisitorInput={racket?:Point;swing?:number;roaming:boolean;x:number;z:number;yaw:number;pitch:number;keys:Set<string>;launch:Point};
-export const createVisitorInput=():VisitorInput=>({roaming:false,x:-1.5,z:6.5,yaw:0,pitch:0,keys:new Set(),launch:[-1.5,1.2,6.5]});
+export const createVisitorInput=():VisitorInput=>({roaming:false,x:-1.5,z:9.35,yaw:0,pitch:0,keys:new Set(),launch:[-1.5,1.2,9.35]});
 export function moveVisitor(input:VisitorInput,dt:number){
  const held=(a:string,b:string)=>input.keys.has(a)||input.keys.has(b);
  let x=Number(held('KeyD','ArrowRight'))-Number(held('KeyA','ArrowLeft')),z=Number(held('KeyS','ArrowDown'))-Number(held('KeyW','ArrowUp'));
  const length=Math.hypot(x,z)||1,speed=5.5*Math.min(dt,.05);x/=length;z/=length;
  const edge=input.roaming?5.7:4.1;
- input.x=Math.max(-edge,Math.min(edge,input.x+x*speed));input.z=Math.max(input.roaming?-10.2:2.4,Math.min(input.roaming?10.2:8.25,input.z+z*speed));
+ input.x=Math.max(-edge,Math.min(edge,input.x+x*speed));input.z=Math.max(input.roaming?-10.2:2.4,Math.min(input.roaming?10.2:10.0,input.z+z*speed));
 
 }
 export const inBounds=(target:readonly number[])=>Math.abs(target[0])<=4.35&&target[1]<=-.15&&target[1]>=-8.7;
 export const returnLane=(x:number,shot:number)=>Math.max(-3.2,Math.min(3.2,-x*.55+(shot%2?-1.2:1.2)));
 export function sampleIncoming(t:number,contact:Point,lane:number):Point{
- const bounce:Point=[lane,.14,3.9],end:Point=[lane,.14,9.7];
+ const bounce:Point=[lane,.14,3.9],end:Point=[lane,.14,10.6];
  const first=t<.64,u=first?t/.64:(t-.64)/.36,a=first?contact:bounce,b=first?bounce:end;
- return [a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u+4*(first?1.65:1.15)*u*(1-u),a[2]+(b[2]-a[2])*u];
+ return [a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u+4*(first?1.65:1.5)*u*(1-u),a[2]+(b[2]-a[2])*u];
 }
 // Swept relative-plane intersection prevents tunneling even while the racket moves.
 export function caughtReturn(previous:Point,current:Point,before:readonly [number,number],now:readonly [number,number],height=1.2){

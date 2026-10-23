@@ -36,3 +36,6 @@ The real Cycles AO bake uses furniture proxies aligned to the benches, umpire ch
 - `assets/blender/bake_indirect.py` creates two 1024px Cycles diffuse-indirect atlases (96 samples, six bounces), with colored court/furniture proxies, linen canopies and foliage. Direct light and albedo are excluded from the bake. `filter_indirect.py` smooths Monte Carlo noise for web delivery.
 - `useIndirectLight.ts` assigns secondary UVs and the appropriate day/night light map to the playing surface, platform and courtside decks/planks. AO remains separate. No moving character is baked into the static lighting.
 - Scope: this advances static ground indirect lighting; furniture's own curved surfaces and character shading still use live lights/environment, not a complete per-object GI atlas. Those surfaces require individual unwrapped atlases in a subsequent asset pass.
+
+## October 22 — composition correction (supersedes earlier net greeting)
+See VISUAL-REDESIGN-PLAN.md. The latest requirement replaces net-side greeting with diagonal baseline preparation at z=±9.35. Pointer clouds now use a four-slot pool, ≥650ms /135px spacing, per-instance opacity, larger silhouettes and softened edges. The sky is a three-stop screen-space gradient that remains legible in the orthographic view. Rally camera is pulled back to include the serving player.

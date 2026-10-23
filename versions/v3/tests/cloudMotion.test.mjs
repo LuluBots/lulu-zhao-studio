@@ -6,7 +6,7 @@ test('responsive wake still requires both spacing and time',()=>{
  assert.equal(sampleCloud(null,p),false);
  assert.equal(sampleCloud(p,{x:200,y:0,time:100}),false);
  assert.equal(sampleCloud(p,{x:30,y:0,time:1000}),false);
- assert.equal(sampleCloud(p,{x:60,y:0,time:160}),true);
+ assert.equal(sampleCloud(p,{x:140,y:0,time:650}),true);
 });
 test('wake is visible quickly without flashing, and fully disappears',()=>{
  assert.equal(cloudEnvelope(.09),0);

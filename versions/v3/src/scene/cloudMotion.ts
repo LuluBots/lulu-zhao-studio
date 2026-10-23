@@ -1,7 +1,7 @@
 export type PointerSample={x:number;y:number;time:number};
 // A sparse wake, not a particle at every pointer event. Units are CSS pixels/ms.
 export function sampleCloud(previous:PointerSample|null,next:PointerSample){
- return previous!==null&&next.time-previous.time>=160&&Math.hypot(next.x-previous.x,next.y-previous.y)>=55;
+ return previous!==null&&next.time-previous.time>=650&&Math.hypot(next.x-previous.x,next.y-previous.y)>=135;
 }
 export function cloudEnvelope(age:number){
  if(age<.10||age>5)return 0;

@@ -1,12 +1,14 @@
 export const flightPaths = { straight: { label: 'A gentle return', bend: 0 }, crosscourt: { label: 'Across the court', bend: -.8 }, insideout: { label: 'An open angle', bend: .8 } } as const;
 export type FlightPath = keyof typeof flightPaths;
 export type Point = [number, number, number];
-export const READY_BALL: Point = [.45, 1.2, 6.5];
+export const READY_BALL: Point = [-1.5, 1.2, 9.35];
 export const RETURN_BALL: Point = [1.55, 1.2, -6.1];
 export const SHOT_SECONDS = 3.6;
 // A repeatable out-and-back exchange; both arcs clear the net. No physics or randomness.
 export function sampleFlight(progress: number, path: FlightPath = 'straight'): Point {
   const p = Math.max(0, Math.min(1, progress));
+  if(p===0||p===1)return [...READY_BALL];
+  if(p===.5)return [...RETURN_BALL];
   const returning = p > .5;
   const t = returning ? (p - .5) * 2 : p * 2;
   const start = returning ? RETURN_BALL : READY_BALL;
@@ -27,7 +29,7 @@ export function receptionPoint(target:Point,power=.5,origin:Point=READY_BALL):Po
  return [target[0]+(target[0]-origin[0])*carry,1.18,target[2]+(target[2]-origin[2])*carry];
 }
 export function samplePlayerPosition(progress:number,target:Point,power=.5,origin:Point=READY_BALL):Point {
- const contact=receptionPoint(target,power,origin), home:Point=[-1.5,0,-6.7];
+ const contact=receptionPoint(target,power,origin), home:Point=[1.5,0,-9.35];
  const destination:Point=[contact[0]-.75,0,contact[2]-.47];
  const p=Math.max(0,Math.min(1,progress));
  const t=p<.62?Math.min(1,p/.60):1-Math.min(1,Math.max(0,(p-.73)/.27));

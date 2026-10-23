@@ -1,10 +1,17 @@
 import { useMemo } from 'react';
-import { BackSide, Color } from 'three';
+import { Color } from 'three';
 export default function Atmosphere({night=false}:{night?:boolean}){
- const uniforms=useMemo(()=>({horizon:{value:new Color(night?'#61748c':'#c9e1ed')},zenith:{value:new Color(night?'#172e4d':'#86bedc')},glow:{value:new Color(night?'#aebeda':'#ffd9a1')}}),[night]);
- return <><fog attach="fog" args={[night?'#314762':'#e0e7e9',55,110]}/><group name={night?'Moonlit_Sky':'Daylight_Sky'}>
- <mesh renderOrder={-100}><sphereGeometry args={[85,32,20]}/><shaderMaterial side={BackSide} depthWrite={false} uniforms={uniforms} vertexShader={`varying vec3 vDirection;void main(){vDirection=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`} fragmentShader={`varying vec3 vDirection;uniform vec3 horizon;uniform vec3 zenith;uniform vec3 glow;void main(){vec3 d=normalize(vDirection);float h=smoothstep(-.85,.7,d.y);vec3 c=mix(horizon,zenith,h);float sun=pow(max(0.,dot(d,normalize(vec3(-.5,.58,-.65)))),140.);c+=glow*sun*.5;gl_FragColor=vec4(c,1.);}`} /></mesh>
+ // Screen-space color layering stays visible in an orthographic, freely orbiting view.
+ const uniforms=useMemo(()=>({upper:{value:new Color(night?'#111c38':'#709fc5')},middle:{value:new Color(night?'#485277':'#c8d5e5')},lower:{value:new Color(night?'#958399':'#f3ddc7')},glow:{value:new Color(night?'#8497bd':'#fff1d9')}}),[night]);
+ return <><fog attach="fog" args={[night?'#68718e':'#e1dce0',48,105]}/><group name={night?'Moonlit_Sky':'Daylight_Sky'}>
+ <mesh renderOrder={-1000} frustumCulled={false}>
+ <planeGeometry args={[2,2]}/><shaderMaterial depthWrite={false} depthTest={false} toneMapped={false} uniforms={uniforms}
+ vertexShader={`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,1.,1.);}`}
+ fragmentShader={`varying vec2 vUv;uniform vec3 upper;uniform vec3 middle;uniform vec3 lower;uniform vec3 glow;
+ void main(){float h=vUv.y;vec3 c=mix(lower,middle,smoothstep(0.,.57,h));c=mix(c,upper,smoothstep(.35,1.,h));float halo=exp(-10.*length((vUv-vec2(.19,.57))*vec2(.8,1.)));c=mix(c,glow,halo*.24);gl_FragColor=vec4(c,1.);
+ #include <colorspace_fragment>
+ }`}/></mesh>
  {night&&<><mesh position={[-14,9,-10]}><sphereGeometry args={[.85,24,16]}/><meshBasicMaterial color="#f6efdc"/></mesh>{Array.from({length:90},(_,i)=><mesh key={i} position={[Math.sin(i*2.399)*(23+i%8),-12+(i%19)*2.4,Math.cos(i*2.399)*(23+i%8)]}><sphereGeometry args={[i%7===0?.10:.055,6,4]}/><meshBasicMaterial color="#d7e2f1"/></mesh>)}</>}
- {Array.from({length:10},(_,i)=><group key={i} position={[Math.sin(i*2.3)*50,15+(i%3)*5,Math.cos(i*2.3)*50]} rotation={[0,i*.7,0]}>{[0,1,2].map(j=><mesh key={j} position={[j*4,j*.15,j*.5]} scale={[7-j,.22,1.2]}><sphereGeometry args={[1,16,8]}/><meshBasicMaterial color={night?'#8c9ab7':'#fff9eb'} transparent opacity={.13+j*.025} depthWrite={false}/></mesh>)}</group>)}
+
  </group></>;
 }

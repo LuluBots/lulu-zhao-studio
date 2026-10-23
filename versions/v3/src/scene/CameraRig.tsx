@@ -13,7 +13,7 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
   const {phase,side,returnTo}=state;
   const overview = useRef(camera as OrthographicCamera);
   const controls = useRef<Controls>(null),rallyControls=useRef<Controls>(null);
-  const rallyTarget=useMemo(()=>new Vector3(0,1.1,-3.5),[]);
+  const rallyTarget=useMemo(()=>new Vector3(0,.8,1),[]);
   const perspective = useMemo(()=>new PerspectiveCamera(52,1,.05,180),[]);
   const saved = useRef({position:new Vector3(23,25,30),target:new Vector3(),zoom:22});
   const transition = useRef<Tween|null>(null);
@@ -31,7 +31,7 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
       saved.current={position:ortho.position.clone(),target:saved.current.target.clone(),zoom:ortho.zoom};
       perspective.position.copy(ortho.position); perspective.quaternion.copy(ortho.quaternion);set({camera:perspective});
     }
-    const target=phase==='entering'?new Vector3(0,6.5,13.5):saved.current.position;
+    const target=phase==='entering'?new Vector3(0,13,22):saved.current.position;
     const look=phase==='entering'?rallyTarget.clone():saved.current.target;
     const destination=perspective.clone();destination.position.copy(target);destination.lookAt(look);
     transition.current={elapsed:0,camera:perspective,from:perspective.position.clone(),to:target.clone(),rotation:perspective.quaternion.clone(),targetRotation:destination.quaternion.clone(),look};invalidate();

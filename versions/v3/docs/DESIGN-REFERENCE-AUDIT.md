@@ -18,8 +18,14 @@ Author case study: https://jesse-zhou.medium.com/jesses-ramen-case-study-77bae77
 
 ## What has not been reproduced
 
-The restaurant assets, textures, videos, hologram, arcade, vending-machine interaction and neon signage are not copied. Full baked global illumination for the entire tennis environment remains a separate asset-production task; the changes in this release are light rigs, composition, in-world navigation and coordinated staging, not a claim of visual parity.
+The restaurant assets, textures, videos, hologram, arcade, vending-machine interaction and neon signage are not copied. Cycles contact-occlusion baking for fixed furniture is now implemented (1024px, matching scene coordinates, editable bake source). Full color global illumination for the entire tennis environment remains a separate asset-production task; the changes in this release are light rigs, composition, in-world navigation and coordinated staging, not a claim of visual parity.
 
 ## Verification
 
 Both role choices enter directly without a preliminary side swap. Players that need to cross ends travel around a net post, not through the net. Idle players and camera remain at the initial composition until role selection. Browser preview checks and reducer regression tests accompany the build.
+
+## Sculpted clouds and contact bake
+
+Four original voxel-unified cloud sculptures are stored in assets/blender/clouds.blend and exported to public/models/clouds.glb. Pointer trails select a different random library member per accepted sample; no per-frame reshuffling. Sampling is limited to one cloud per 160 ms and 55 CSS pixels, with a 100 ms delay and 380 ms fade-in. The pool holds at most 12 clouds; motion-reduction users do not receive trails.
+
+The real Cycles AO bake uses furniture proxies aligned to the benches, umpire chair, planters and net posts. It supplies contact occlusion only; moving players and day/night directional lighting stay dynamic. The independent bake source is assets/blender/court-contact-bake.blend.

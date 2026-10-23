@@ -3,6 +3,7 @@ import { ContactShadows } from '@react-three/drei';
 import { useEffect, useRef, type RefObject, type ReactNode } from 'react';
 import Court from './Court';
 import ArtLighting from './ArtLighting';
+import BakedContact from './BakedContact';
 import Player from './Player';
 import Clouds from './Clouds';
 import Courtside from './Courtside';
@@ -39,7 +40,7 @@ function Scene({atNet,started,input,night,score,onContextLost,onAnchor,onNavigat
   <ContextWatch onLost={onContextLost}/>
   <ArtLighting night={night}/><ambientLight intensity={night?.22:.25}/><hemisphereLight args={[night?'#aac6ed':'#f0faff',night?'#34334b':'#c9c2de',night?.45:.65]}/>
   <directionalLight position={[-12,25,8]} intensity={night?1.8:3.0} color={night?'#bcd4ff':'#ffe7c7'} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-18} shadow-camera-right={18} shadow-camera-top={18} shadow-camera-bottom={-18} shadow-normalBias={.035} shadow-bias={-.0002} shadow-radius={4}/>
-  <Atmosphere night={night}/><SkyVisitors visible={started&&state.phase==='overview'} night={night} reduced={reduced} onNavigate={onNavigate}/><Court/>{started&&<Arrival reduced={reduced}><Courtside/></Arrival>}<Clouds/>
+  <Atmosphere night={night}/><SkyVisitors visible={started&&state.phase==='overview'} night={night} reduced={reduced} onNavigate={onNavigate}/><Court/>{started&&<BakedContact/>}{started&&<Arrival reduced={reduced}><Courtside/></Arrival>}<Clouds/>
   {started&&<Wayfinding score={score} state={state} onPlay={onBall} onSwitch={onSwitch} onReset={onReset}/>}
   <VisitorControls input={input} roaming={state.phase==='overview'} active={started&&!atNet&&['overview','ready','playing'].includes(state.phase)}/>
   <LandingAnchor clock={clock} target={target} shot={state.shot} onAnchor={onAnchor}/>

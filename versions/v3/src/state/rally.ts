@@ -1,11 +1,12 @@
 export type Side = 'technology' | 'humanities';
 export type Phase = 'overview' | 'entering' | 'ready' | 'playing' | 'leaving' | 'switching';
 export type RallyState = { phase: Phase; shot: number; side: Side; returnTo: 'overview' | 'ready' };
-export type RallyEvent = 'enter' | 'arrived' | 'hit' | 'finished' | 'exit' | 'switch' | Side;
+export type RallyEvent = {type:'choose';visitor:Side} | 'enter' | 'arrived' | 'hit' | 'finished' | 'exit' | 'switch' | Side;
 export const initialRally: RallyState = { phase: 'overview', shot: 0, side: 'technology', returnTo: 'overview' };
 export const otherSide = (side: Side): Side => side === 'technology' ? 'humanities' : 'technology';
 export const sideSign = (side: Side) => side === 'technology' ? 1 : -1;
 export function rallyReducer(state: RallyState, event: RallyEvent): RallyState {
+  if(typeof event==='object')return state.phase==='overview'?{...state,side:otherSide(event.visitor),phase:'entering'}:state;
   if (event === 'switch' || event === 'humanities' || event === 'technology') {
     if (state.phase !== 'overview' && state.phase !== 'ready') return state;
     const side = event === 'switch' ? otherSide(state.side) : event;

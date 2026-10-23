@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { Color, Float32BufferAttribute, InstancedMesh, MeshStandardMaterial, Object3D, Plane, Raycaster, SphereGeometry, Vector2, Vector3 } from 'three';
 import { obscuresScoreboard } from './scoreboardVisibility';
 import { cloudEnvelope, sampleCloud, type PointerSample } from './cloudMotion';
-const banks=[[-6,-3.5,6,1.6],[4,-3.6,8,1.7],[-5,-3.8,-7,1.9],[5,-3.5,-5,1.65],[0,-4.1,1,2.1],[-11,-3,-2,.85],[12,-4,-14,.85],[-10,-4,-16,.75],[11,-3,5,.85],[-8,-4,15,1.15],[2,-4,-15,1.35],[-25,-8,5,2.1],[25,-9,-10,1.7],[-14,-10,-29,2.4],[18,-10,26,2.2],[-25,-9,26,1.8]];
+const banks=[[-6,-3.5,6,1.6],[4,-3.6,8,1.7],[-5,-3.8,-7,1.9],[5,-3.5,-5,1.65],[0,-4.1,1,2.1],[-11,-3,-2,.85],[12,-4,-14,.85],[-10,-4,-16,.75],[11,-3,5,.85],[-8,-4,15,1.15],[2,-4,-15,1.35],[-25,-8,5,1.3],[25,-9,-10,1.3],[-14,-10,-29,2.4],[18,-10,26,1.3],[-25,-9,26,1.2]];
 type Wake={point:Vector3;born:number};
 function Cloud({geometry,index,bank,wake,reduced}:{geometry:SphereGeometry;index:number;bank?:number[];wake?:Wake;reduced:boolean}){
  const mesh=useRef<InstancedMesh>(null),material=useRef<MeshStandardMaterial>(null),visibility=useRef(1);

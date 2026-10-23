@@ -212,3 +212,7 @@ html, body, #root {
 .tennis-entrance .court-enter:hover{background:#355f5e;color:#fffbe9;transform:skew(-5deg) translateY(-2px);box-shadow:4px 5px 0 #a7bc7b}.tennis-entrance .court-enter span{font-size:22px}
 .court-world[data-light="night"] .tennis-entrance{color:#f1f0d9;text-shadow:none}.court-world[data-light="night"] .tennis-entrance .court-enter{background:#dce7b2;color:#173b46;border-color:#dce7b2;box-shadow:3px 3px 0 #668880}
 @media(max-width:640px){.tennis-entrance{top:7%}.tennis-entrance h1>span{font-size:clamp(58px,13vw,80px)}.tennis-entrance h1 em{font-size:13px}.tennis-entrance .entrance-kicker{font-size:8px;gap:9px}.tennis-entrance .match-loading{margin-top:18px}}
+/* Navigation belongs to the airship/banner, with a consistent hover and focus cue. */
+.sky-entry{font:600 italic 27px/1 'Court Display',sans-serif!important;text-transform:uppercase!important;letter-spacing:.06em!important;min-width:175px;padding:16px 20px!important;border-radius:2px!important;border:1px solid #c2cab8!important;background:#f7f2df!important;color:#214b55!important;box-shadow:0 4px 0 #bac6b3,0 9px 18px #19384225!important;white-space:nowrap;transition:background .2s,box-shadow .2s!important}
+.sky-entry:hover,.sky-entry:focus-visible{transform:none!important;background:#e4edbf!important;box-shadow:0 4px 0 #8fa688,0 0 0 5px #e0edb744!important;outline:2px solid #8ba689;outline-offset:4px}
+.sky-entry span{font:20px 'Avenir Next',sans-serif;margin-left:12px}

@@ -12,14 +12,15 @@ import {surfaceTexture} from './surfaceTextures';
 import {courtSound} from '../state/sound';
 import ProceduralPlayer from './ProceduralPlayer';
 
-type Props={input?:RefObject<VisitorInput>;switching?:boolean;hidden?:boolean;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void};
+type Props={atNet?:boolean;entering?:boolean;input?:RefObject<VisitorInput>;switching?:boolean;hidden?:boolean;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void};
 class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{failed:boolean}>{
  state={failed:false};
  static getDerivedStateFromError(){return {failed:true}}
  render(){return this.state.failed?this.props.fallback:this.props.children}
 }
-function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:Props){
- const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,6.5]:[-1.5,0,-6.7]);
+function Lulu({atNet=false,entering=false,input,switching=false,hidden=false,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:Props){
+ const [initialPosition]=useState<[number,number,number]>(()=>visitor?[-1.5,0,.95]:[-1.5,0,-.95]);
+ const entry=useRef<{from:Vector3;elapsed:number}|null>(null);
  const swap=useRef<{from:Vector3;elapsed:number}|null>(null);
  const gltf=useGLTF('/models/lulu.glb?v=sculpted-materials-4');
  // Clone skeletons, not cached geometries/materials: the two players animate independently.
@@ -45,11 +46,26 @@ function Lulu({input,switching=false,hidden=false,visitor=false,clock,reduced=fa
   return ()=>{mixer.stopAllAction()};
  },[actions,mixer]);
  useEffect(()=>{if(playing&&root.current)start.current.copy(root.current.position)},[playing]);
+ useEffect(()=>{if(entering&&root.current)entry.current={from:root.current.position.clone(),elapsed:0}},[entering]);
  useEffect(()=>{if(switching&&root.current)swap.current={from:root.current.position.clone(),elapsed:0}},[switching]);
  useFrame((_,delta)=>{
   if(!root.current)return;
   time.current+=Math.min(delta,.05);
   model.scale.x=1;
+  if(atNet){
+   root.current.position.set(-1.5,0,visitor?.95:-.95);root.current.rotation.y=visitor?Math.PI:0;
+   for(const [name,action] of Object.entries(actions)){action.setEffectiveWeight(name==='Idle'?1:0);action.time=reduced?0:time.current%action.getClip().duration}mixer.update(0);if(!reduced)invalidate();return;
+  }
+  if(entering&&entry.current){
+   const motion=entry.current;motion.elapsed+=Math.min(delta,.05);const t=reduced?1:Math.min(1,motion.elapsed/2.4),ease=t*t*(3-2*t);
+   const previous=root.current.position.clone();const goal=new Vector3(-1.5,0,visitor?6.5:-6.7);
+   if(motion.from.z*goal.z<0){const edge=side==='humanities'?-5.7:5.7;const points=[motion.from,new Vector3(edge,0,motion.from.z),new Vector3(edge,0,goal.z),goal];const part=Math.min(2,Math.floor(ease*3));root.current.position.lerpVectors(points[part],points[part+1],Math.min(1,ease*3-part));}
+   else root.current.position.lerpVectors(motion.from,goal,ease);
+   const travel=root.current.position.clone().sub(previous);if(travel.lengthSq()>.000001)root.current.rotation.y=Math.atan2(travel.x,travel.z);
+   const moved=root.current.position.distanceTo(previous);stride.current+=moved/1.4;
+   for(const [name,action] of Object.entries(actions)){action.setEffectiveWeight(name===(t<1?'Run':'Ready')?1:0);action.time=reduced?0:stride.current%action.getClip().duration}mixer.update(0);
+   if(t===1)root.current.rotation.y=visitor?Math.PI:0;invalidate();return;
+  }
   if(switching&&swap.current){
    const motion=swap.current;motion.elapsed+=Math.min(delta,.05);const t=reduced?1:Math.min(1,motion.elapsed/1.8);
    const goal=new Vector3(...(visitor?[input?.current.x??.45,0,input?.current.z??6.5]:[-1.5,0,-6.7]));

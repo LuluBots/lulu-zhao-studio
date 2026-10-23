@@ -18,11 +18,10 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
   const saved = useRef({position:new Vector3(23,25,30),target:new Vector3(),zoom:22});
   const transition = useRef<Tween|null>(null);
   const zoom = Math.min(size.width/48,size.height/39);
-  const entrance=useRef(0);
-  useEffect(()=>{entrance.current=0;invalidate()},[started,invalidate]);
+
   useEffect(()=>{
     perspective.aspect=size.width/size.height; perspective.fov=size.width<size.height?80:52; perspective.updateProjectionMatrix();
-    overview.current.zoom=started?zoom:zoom*.64; overview.current.updateProjectionMatrix(); saved.current.zoom=zoom; invalidate();
+    overview.current.zoom=zoom*1.05; overview.current.updateProjectionMatrix(); saved.current.zoom=zoom; invalidate();
   },[size,zoom,perspective,invalidate]);
   useEffect(()=>{
     if(!['entering','leaving','switching'].includes(phase))return;
@@ -38,10 +37,10 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
     transition.current={elapsed:0,camera:perspective,from:perspective.position.clone(),to:target.clone(),rotation:perspective.quaternion.clone(),targetRotation:destination.quaternion.clone(),look};invalidate();
   },[phase,side,returnTo,perspective,set,invalidate]);
   useFrame((_,delta)=>{
-    if(started&&phase==='overview'&&entrance.current<1){entrance.current=reduced?1:Math.min(1,entrance.current+Math.min(delta,.05)/1.8);const t=entrance.current,ease=1-Math.pow(1-t,3);overview.current.zoom=zoom*(.64+.36*ease);overview.current.updateProjectionMatrix();invalidate();}
+
     const tween=transition.current;if(!tween)return;
     tween.elapsed+=Math.min(delta,.05);
-    const t=reduced?1:Math.min(tween.elapsed/.72,1),ease=t*t*(3-2*t);
+    const t=reduced?1:Math.min(tween.elapsed/(phase==='entering'?2.4:.8),1),ease=t*t*(3-2*t);
     tween.camera.position.lerpVectors(tween.from,tween.to,ease);tween.camera.quaternion.slerpQuaternions(tween.rotation,tween.targetRotation,ease);
     if(t===1){transition.current=null;if(phase==='leaving'){
       overview.current.position.copy(saved.current.position);overview.current.zoom=saved.current.zoom;overview.current.updateProjectionMatrix();overview.current.lookAt(saved.current.target);set({camera:overview.current});
@@ -50,7 +49,7 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
   useEffect(()=>{if(phase!=='overview'||!controls.current)return;controls.current.target.copy(saved.current.target);controls.current.update()},[phase]);
   useEffect(()=>{
     if(phase!=='overview')return;const c=overview.current,ctrl=controls.current;if(!ctrl)return;
-    ctrl.enableDamping=false;ctrl.update();c.position.set(23,25,30);ctrl.target.set(0,0,0);c.zoom=started?zoom:zoom*.64;ctrl.update();ctrl.enableDamping=true;
+    ctrl.enableDamping=false;ctrl.update();c.position.set(23,25,30);ctrl.target.set(0,0,0);c.zoom=zoom*1.05;ctrl.update();ctrl.enableDamping=true;
     c.updateProjectionMatrix();ctrl.update();invalidate();
   },[action,zoom,invalidate]);
   return phase==='overview'?<OrbitControls ref={controls} enabled={started} camera={overview.current} target={saved.current.target} zoomToCursor screenSpacePanning makeDefault onChange={()=>{if(controls.current){keepCameraSafe(overview.current,controls.current.target,true);saved.current.target.copy(controls.current.target)}}} enableDamping dampingFactor={.09} minPolarAngle={.2} maxPolarAngle={Math.PI/2.25} minZoom={zoom*.4} maxZoom={Math.max(180,zoom*cameraLimits.maxZoomFactor)} mouseButtons={{LEFT:MOUSE.ROTATE,MIDDLE:MOUSE.DOLLY,RIGHT:MOUSE.PAN}} touches={{ONE:TOUCH.ROTATE,TWO:TOUCH.DOLLY_PAN}}/>:(phase==='ready'||phase==='playing')?<OrbitControls key="rally-pointer-controls" ref={rallyControls} camera={perspective} target={rallyTarget} makeDefault zoomToCursor screenSpacePanning enableDamping dampingFactor={.12} minDistance={cameraLimits.minDistance} maxDistance={cameraLimits.maxDistance} minPolarAngle={.45} maxPolarAngle={1.3} mouseButtons={{LEFT:MOUSE.ROTATE,MIDDLE:MOUSE.PAN,RIGHT:MOUSE.ROTATE}} touches={{ONE:TOUCH.ROTATE,TWO:TOUCH.DOLLY_PAN}} onChange={()=>{if(rallyControls.current)keepCameraSafe(perspective,rallyControls.current.target,false);const direction=perspective.getWorldDirection(new Vector3());input.current.yaw=Math.max(-.5,Math.min(.5,Math.atan2(direction.x,-direction.z)));input.current.pitch=Math.max(-.2,Math.min(.2,direction.y));}}/>:null;

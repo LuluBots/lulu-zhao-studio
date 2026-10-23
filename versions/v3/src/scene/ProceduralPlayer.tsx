@@ -11,10 +11,11 @@ import { RoundedBox } from '@react-three/drei';
 function Limb({position,rotation=[0,0,0],length=.55,color='#eac4ab'}:{position:[number,number,number];rotation?:[number,number,number];length?:number;color?:string}){
  return <mesh position={position} rotation={rotation} castShadow><capsuleGeometry args={[.095,length,4,8]}/><meshStandardMaterial color={color} roughness={1}/></mesh>;
 }
-export default function Player({input,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:{input?:RefObject<VisitorInput>;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void}){
+export default function Player({atNet=false,input,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:{atNet?:boolean;input?:RefObject<VisitorInput>;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void}){
  const swing=useRef<Group>(null),body=useRef<Group>(null),legs=useRef<Group>(null);
  const {gl}=useThree();
  useFrame(()=>{
+ if(atNet&&body.current){body.current.position.set(-1.5,0,visitor?.95:-.95);return;}
  if(visitor&&input&&body.current){body.current.position.set(input.current.x,0,input.current.z);body.current.scale.x=1;input.current.racket=[input.current.x-.66,1.2,input.current.z-.4]}
  if(!visitor&&body.current){const p=playing?(clock?.current.progress??0):0;body.current.position.set(...samplePlayerPosition(p,targetPoint(target),power));if(legs.current)legs.current.rotation.x=reduced?0:Math.sin(p*Math.PI*32)*.15*(p<.6||p>.73?1:0);}
  if(swing.current){const p=clock?.current.progress??0;const t=Math.max(0,1-Math.abs(p-(clock?.current.returnAt??.5))/.08);swing.current.rotation.y=reduced?0:-Math.sin(t*Math.PI/2)*1.25;}});

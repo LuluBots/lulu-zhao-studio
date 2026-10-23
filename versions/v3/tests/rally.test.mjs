@@ -39,3 +39,12 @@ test('no switching while a shot or camera move is active; explicit side selectio
  assert.equal(rallyReducer(initialRally,'technology'),initialRally);
  const s=rallyReducer(initialRally,'humanities');assert.equal(s.side,'humanities');
 });
+
+test('role selection starts one coordinated entrance, choosing either identity without a preliminary swap',()=>{
+ for(const visitor of ['humanities','technology']){
+  const next=rallyReducer(initialRally,{type:'choose',visitor});
+  assert.equal(next.phase,'entering');assert.notEqual(next.side,visitor);
+  assert.equal(rallyReducer(next,'arrived').phase,'ready');
+  assert.deepEqual(rallyReducer(next,{type:'choose',visitor}),next);
+ }
+});

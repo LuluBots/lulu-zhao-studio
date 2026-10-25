@@ -339,3 +339,11 @@ html, body, #root {
  .movement-pad{right:12px;left:auto;bottom:190px;grid-template-columns:repeat(3,32px);grid-template-rows:32px 32px auto}.movement-pad button{min-height:32px;padding:4px}
 }
 @media(max-height:540px) and (min-width:641px){.player-ident{bottom:76px;width:190px}}
+
+/* Name remains the leading element; navigation stays in the scene. */
+.player-ident-name{margin:0;padding:10px 14px 9px;background:#294f56;color:#fff5dc;border-bottom:2px solid #b8c78f;font:italic 24px/1.1 'Court Display',sans-serif;letter-spacing:.025em}
+.player-ident-degree{background:transparent;color:#294f56;border-bottom:0;padding:10px 14px 0;font-size:13px}
+.player-ident-degree span{color:#82966c}
+.player-ident-interest{padding-top:6px}
+@media(max-width:1000px){.player-ident-name{padding:9px 11px;font-size:22px}.player-ident-degree{padding:9px 11px 0;font-size:12px}}
+@media(max-width:640px){.player-ident-name{padding:8px 11px;font-size:20px}.player-ident-degree{padding:8px 11px 0;font-size:12px}.player-ident-interest{padding-top:5px}}

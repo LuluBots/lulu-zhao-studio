@@ -14,3 +14,5 @@ Rollback from repository root:
 Validation: production build, 56 tests, local visual inspection in night mode and navigation to About. GitHub profile README separately updated in LuluBots/LuluBots commit 213bf5ce825e49a5caacaa774bd9c6aa670d89f8.
 
 Published version: `82e20c64-f384-4f2d-9180-a08c97277287`. Production HTML, CSS, application bundle and history page verified against the release build.
+
+Simplified follow-up: degree and research interests only; name strap and duplicate section buttons removed. Published version `05dd1645-6c86-45dd-b1ed-f8c25f05267e`, source `73a6c18`. To restore the preceding full identity panel, use the rollback command above with version `82e20c64-f384-4f2d-9180-a08c97277287`. Live HTML, JS and CSS verified against build.

@@ -31,7 +31,7 @@ Run `npm ci`, `npm run dev`, or `npm run deploy:v2` at the repository root. All 
 ## Preservation and rollback
 
 Original V1 version: `505254d0-92a0-45d1-bb2d-d04299882ab1` on `lulu-zhao-personal-website`.
-Current V3 production version: `82e20c64-f384-4f2d-9180-a08c97277287` on `lulu-zhao-rally-v3`.
+Current V3 production version: `05dd1645-6c86-45dd-b1ed-f8c25f05267e` on `lulu-zhao-rally-v3`.
 For the previous V3 release and its exact rollback command, see [latest release notes](versions/v3/docs/player-identity-release.md).
 
 To restore the original V1 homepage, reassign only the `luluzhao.me` custom domain to the original worker; keep both archive domains. Avoid deploying V2 over the original worker.

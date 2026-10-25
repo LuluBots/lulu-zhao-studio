@@ -145,7 +145,7 @@ export default function App(){
 
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>
-    <PlayerIdentity active={destination} onNavigate={d=>{setDirectoryAnchor(null);setDestination(d)}}/>
+    <PlayerIdentity/>
     <p className="sr-only" aria-live="polite">Verse: {pointLabel(score,'humanities')}, {score.games.humanities} games. Code: {pointLabel(score,'technology')}, {score.games.technology} games.</p>
     <ControlsHelp open={helpOpen} onClose={()=>setHelpOpen(false)}/>
     <RolePicker open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>

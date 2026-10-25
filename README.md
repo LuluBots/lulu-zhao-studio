@@ -42,7 +42,7 @@ Full backup archives are saved with the task's `outputs/site-versions/` delivera
 
 # Lulu Zhao Studio
 
-Personal research website for Lulu Zhao (赵璐璐), a Robotics PhD student in
+Personal research website for Lulu Zhao (赵璐璐), a Computer Science PhD student in
 Cornell Computer Science working at the intersection of human–AI interaction,
 design, and embodied intelligence.
 

@@ -12,6 +12,7 @@ import RolePicker from './components/RolePicker';
 import ControlsHelp from './components/ControlsHelp';
 import {Volume2,VolumeX,Sun,Moon,CircleHelp} from 'lucide-react';
 import CourtEntrance from './components/CourtEntrance';
+import PlayerIdentity from './components/PlayerIdentity';
 import ContentCard from './components/ContentCard';
 import {unlockSound,courtSound,setSoundEnabled} from './state/sound';
 import {recordVisit} from './state/visits';
@@ -144,7 +145,7 @@ export default function App(){
 
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>
-    {started&&<a href="/credits.html" target="_blank" rel="noreferrer" style={{position:'fixed',bottom:12,left:14,zIndex:20,fontSize:10,color:night?'#dce5ef':'#41645f'}} onKeyDown={e=>e.stopPropagation()}>Asset credits ↗</a>}
+    <PlayerIdentity active={destination} onNavigate={d=>{setDirectoryAnchor(null);setDestination(d)}}/>
     <p className="sr-only" aria-live="polite">Verse: {pointLabel(score,'humanities')}, {score.games.humanities} games. Code: {pointLabel(score,'technology')}, {score.games.technology} games.</p>
     <ControlsHelp open={helpOpen} onClose={()=>setHelpOpen(false)}/>
     <RolePicker open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>

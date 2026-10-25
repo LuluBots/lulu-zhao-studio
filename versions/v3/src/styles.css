@@ -294,3 +294,32 @@ html, body, #root {
 /* The signature belongs to the wordmark; only the entrance is a raised action. */
 .tennis-entrance h1 em{display:block;width:auto;margin:14px auto 0;padding:0;background:none;border:0;box-shadow:none;transform:none;color:inherit;font:600 italic 22px/1.2 'Court Display',sans-serif;letter-spacing:.15em}
 @media(max-width:640px){.tennis-entrance h1 em{font-size:17px;margin-top:12px;padding:0}}
+
+/* Only keyboard focus reveals the physical radio's accessible hit target. */
+.radio-focus-target{display:block;width:32px;height:32px;padding:0;border:0;border-radius:6px;background:transparent;cursor:pointer;opacity:0}
+.radio-focus-target:focus-visible{opacity:1;outline:2px solid #e3d7ac;outline-offset:3px;background:#f6f0e220}
+.radio-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+.bag-focus-target{width:38px;height:30px;padding:0;border:0;border-radius:6px;background:transparent;opacity:0;cursor:pointer}
+.bag-focus-target:focus-visible{opacity:1;outline:2px solid #e3d7ac;outline-offset:3px;background:#f6f0e220}
+.hobby-dialog{box-sizing:border-box;width:min(420px,calc(100vw - 32px));max-height:calc(100dvh - 40px);overflow-y:auto;margin:auto;padding:25px;border:1px solid #adc1b0;border-radius:16px;background:#f6f1e4;color:#315851;box-shadow:0 15px 55px #203e4526;font:14px/1.6 'Court UI',sans-serif}
+.hobby-dialog::backdrop{background:#173c4626;backdrop-filter:blur(3px)}
+.hobby-dialog header{display:flex;justify-content:space-between;align-items:flex-start}.hobby-dialog header span{font-size:9px;letter-spacing:.14em;opacity:.6}
+.hobby-dialog h2{font-size:27px;font-weight:500;line-height:1.2;margin:6px 0 20px;outline:none}.hobby-close{border:0;background:transparent;color:inherit;font-size:27px;width:32px;height:32px;cursor:pointer}
+.hobby-objects{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.hobby-objects button{display:flex;align-items:center;flex-direction:column;gap:7px;padding:13px 4px;border:1px solid transparent;border-radius:9px;background:#e8eadd88;color:inherit;font:11px 'Court UI',sans-serif;cursor:pointer}
+.hobby-objects button[aria-pressed=true]{border-color:#8eac98;background:#dce5d6}
+.hobby-dialog :is(button,a):focus-visible{outline:2px solid #527d76;outline-offset:3px}
+.hobby-detail{min-height:260px}.hobby-detail img{display:block;width:100%;height:160px;object-fit:cover;border-radius:6px}.hobby-detail h3{font-size:17px;font-weight:500;margin:14px 0 5px}.hobby-detail p{margin:0 0 12px}.hobby-detail a{color:inherit;text-underline-offset:4px;font-size:12px}.hobby-footnote{font-size:12px;opacity:.7}
+.hobby-notebook,.hobby-record{height:140px;display:grid;place-items:center;border-radius:6px;background:#e7e4d3}.hobby-notebook{background:repeating-linear-gradient(#eee8d8 0px,#eee8d8 23px,#cbd2bd 24px);font:italic 26px Georgia,serif}.hobby-record{color:#6f897d}
+
+/* Court cursor family: warm paper, teal outlines, sage detail. Native fallbacks. */
+@media (hover:hover) and (pointer:fine){
+ :root{--cursor-point:url('/cursors/point.svg') 14 4,pointer;--cursor-grab:url('/cursors/grab.svg') 16 16,grab;--cursor-grabbing:url('/cursors/grabbing.svg') 16 16,grabbing;--cursor-aim:url('/cursors/aim.svg') 16 16,crosshair}
+ .court-world canvas{cursor:var(--cursor-grab)}
+ .court-world canvas:active,.court-world canvas[data-cursor="grabbing"]{cursor:var(--cursor-grabbing)}
+ .court-world canvas[data-cursor="point"]{cursor:var(--cursor-point)}
+ .court-world canvas[data-cursor="aim"]{cursor:var(--cursor-aim)}
+ body a[href],body button:not(:disabled),body summary,body [role="button"]:not([aria-disabled="true"]){cursor:var(--cursor-point)}
+ body button:disabled{cursor:default}
+}

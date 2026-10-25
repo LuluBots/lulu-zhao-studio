@@ -1,0 +1,23 @@
+{
+  "author": "Kevin MacLeod (incompetech.com)",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "changes": "Normalized to -19 LUFS, transcoded to 96 kbps MP3. No excerpting.",
+  "tracks": [
+    {
+      "file": "court-bossa.mp3",
+      "title": "Bossa Antigua",
+      "isrc": "USUAN1700069"
+    },
+    {
+      "file": "court-riley.mp3",
+      "title": "Life of Riley",
+      "isrc": "USUAN1400054"
+    },
+    {
+      "file": "court-wallpaper.mp3",
+      "title": "Wallpaper",
+      "isrc": "USUAN1100843"
+    }
+  ]
+}

@@ -40,6 +40,7 @@ export const socialLinks = [
   { label: 'Email', href: 'mailto:lz625@cornell.edu' },
   { label: 'GitHub', href: 'https://github.com/LuluBots' },
   { label: 'Google Scholar', href: 'https://scholar.google.com/citations?user=9eMU41cAAAAJ&hl=en' },
+  { label: 'Instagram', href: 'https://www.instagram.com/lulu.coco25/' },
   { label: 'LinkedIn', href: 'https://www.linkedin.com/in/lulubotszhao/' },
 ] as const;
 

@@ -13,9 +13,8 @@ export default function Rally({phase,shot,clock,input,onBall,onFinished,onAnchor
  const audioStage=useRef(0);
  const elapsed=useRef(0),complete=useRef(false),last=useRef<Point|null>(null),before=useRef<[number,number]>([.45,6.5]);
  const returned=useRef<{time:number;start:Point;landing:[number,number]}|null>(null);
- const {invalidate,gl,camera,size}=useThree();
+ const {invalidate,camera,size}=useThree();
  useEffect(()=>{elapsed.current=0;audioStage.current=0;if(phase==='playing')courtSound('hit');complete.current=false;returned.current=null;last.current=null;before.current=[input.current.x,input.current.z];clock.current.progress=0;clock.current.returnAt=.68;invalidate()},[phase,shot,clock,input,invalidate]);
- useEffect(()=>()=>{gl.domElement.style.cursor=''},[gl]);
  useFrame((_,delta)=>{
   if(!ball.current)return;
   const v=input.current,hand=v.racket??[v.x-.75,1.18,v.z-.47];
@@ -48,7 +47,7 @@ export default function Rally({phase,shot,clock,input,onBall,onFinished,onAnchor
  const activate=(event:ThreeEvent<MouseEvent>)=>{event.stopPropagation();if(event.delta<=5)onBall()};
  const active=phase==='overview'||phase==='ready';
  return <>
-  <group ref={ball} name="Interactive_TennisBall" onClick={activate} onPointerOver={e=>{e.stopPropagation();if(active)gl.domElement.style.cursor='pointer'}} onPointerOut={()=>{gl.domElement.style.cursor=''}}>
+  <group ref={ball} name="Interactive_TennisBall" onClick={activate} userData={{cursor:active?'pointer':undefined}}>
    <mesh castShadow><sphereGeometry args={[.13,24,16]}/><meshStandardMaterial color="#dce976" roughness={.8}/></mesh>
    <mesh rotation={[.3,0,.6]}><torusGeometry args={[.13,.007,6,32]}/><meshStandardMaterial color="#fffde9"/></mesh>
    {active&&<mesh><sphereGeometry args={[phase==='overview'?.65:.4,12,8]}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/></mesh>}

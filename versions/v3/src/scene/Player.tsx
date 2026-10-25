@@ -33,7 +33,7 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
   const action=mixer.clipAction(clip);action.play();action.paused=true;action.setEffectiveWeight(0);return [clip.name,action];
  })),[gltf.animations,mixer]);
  const root=useRef<Group>(null),time=useRef(0),stride=useRef(0),start=useRef(new Vector3(-1.5,0,-6.7));
- const {gl,invalidate}=useThree();
+ const {invalidate}=useThree();
  useEffect(()=>{
   model.traverse(object=>{if(object instanceof Mesh){object.castShadow=true;object.receiveShadow=true;object.frustumCulled=false;}});
   const outfit=side==='humanities'?'Humanities':'Technology';
@@ -125,7 +125,7 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
  });
  return <group ref={root} name={visitor?'Visitor_Lulu_Model':'Lulu_Animated_Model'} visible={!hidden} position={initialPosition} rotation={[0,visitor?Math.PI:0,0]}
   onClick={e=>{if(onSwitch){e.stopPropagation();if(e.delta<=5)onSwitch()}}}
-  onPointerOver={e=>{if(onSwitch){e.stopPropagation();gl.domElement.style.cursor='pointer'}}} onPointerOut={()=>{gl.domElement.style.cursor=''}}>
+  userData={{cursor:onSwitch?'pointer':undefined}}>
   <primitive object={model} dispose={null}/>
  </group>;
 }

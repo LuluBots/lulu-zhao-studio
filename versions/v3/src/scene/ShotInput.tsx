@@ -10,14 +10,14 @@ export default function ShotInput({onHit}:{side:Side;overview:boolean;onHit:(poi
  const held=useRef<{id:number;start:number;x:number;y:number;point:[number,number]|null}|null>(null);
  const [charging,setCharging]=useState(false);
  const marker=useRef<Group>(null),label=useRef<HTMLSpanElement>(null),fill=useRef<HTMLSpanElement>(null);
- const {invalidate,gl}=useThree();
- const cancel=()=>{held.current=null;setCharging(false);gl.domElement.style.cursor='';invalidate()};
+ const {invalidate}=useThree();
+ const cancel=()=>{held.current=null;setCharging(false);invalidate()};
  useEffect(()=>{
   const key=(e:KeyboardEvent)=>{if(e.key==='Escape')cancel()};
   const up=()=>{if(held.current)cancel()};
   window.addEventListener('blur',up);window.addEventListener('pointerup',up);window.addEventListener('pointercancel',up);window.addEventListener('keydown',key);
-  return ()=>{window.removeEventListener('blur',up);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);window.removeEventListener('keydown',key);gl.domElement.style.cursor=''};
- },[gl,invalidate]);
+  return ()=>{window.removeEventListener('blur',up);window.removeEventListener('pointerup',up);window.removeEventListener('pointercancel',up);window.removeEventListener('keydown',key)};
+ },[invalidate]);
  const point=(e:ThreeEvent<PointerEvent>):[number,number]|null=>{
   const p=e.ray.intersectPlane(surface,new Vector3());if(!p)return null;
   const x=p.x,z=p.z;
@@ -37,7 +37,7 @@ export default function ShotInput({onHit}:{side:Side;overview:boolean;onHit:(poi
    onPointerMove={e=>{const h=held.current;if(!h||h.id!==e.pointerId)return;if(Math.hypot(e.clientX-h.x,e.clientY-h.y)>8){cancel();return}h.point=point(e);invalidate()}}
    onPointerUp={e=>{const h=held.current;if(!h||h.id!==e.pointerId)return;e.stopPropagation();const target=point(e),power=chargePower(performance.now()-h.start);cancel();(e.target as HTMLElement).releasePointerCapture(e.pointerId);if(target)onHit(target,power)}}
    onPointerCancel={cancel} onLostPointerCapture={cancel}
-   onPointerOver={()=>{gl.domElement.style.cursor='crosshair'}} onPointerOut={()=>{if(!held.current)gl.domElement.style.cursor=''}}>
+>
    <planeGeometry args={[11.4,10]}/><meshBasicMaterial transparent opacity={0} depthWrite={false}/>
   </mesh>
   {charging&&<group ref={marker}>

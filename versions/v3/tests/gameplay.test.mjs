@@ -43,3 +43,5 @@ test('idle exploration crosses the net and reaches both full-court ends',()=>{
 test('new visitor starts on the left with no handedness setting',()=>{const v=createVisitorInput();assert.equal(v.x,-1.5);assert.equal('hand' in v,false)});
 
 test("serve setup stands behind opposite baselines in diagonal halves",()=>{const v=createVisitorInput();assert.ok(v.z>8.7);assert.ok(v.x<0);const npc=samplePlayerPosition(0,targetPoint());assert.ok(npc[2]<-8.7);assert.ok(npc[0]>0);moveVisitor(v,.01);assert.equal(v.z,9.35)});
+
+test("section anchors stay fixed as time passes",()=>{for(let i=0;i<4;i++)for(const night of [false,true])assert.deepEqual(airRoute(i,120,night),airRoute(i,0,night))});

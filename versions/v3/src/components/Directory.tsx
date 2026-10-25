@@ -1,4 +1,4 @@
-import { Mail, Github, GraduationCap, Linkedin } from 'lucide-react';
+import { Mail, Github, GraduationCap, Linkedin, Instagram } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useAnchoredDialog } from './useAnchoredDialog';
 import type { ScreenAnchor } from '../scene/SkyVisitors';
@@ -17,7 +17,7 @@ export default function Directory({destination,onClose}:{destination:Destination
      <section aria-labelledby="about-research"><h3 id="about-research">Research</h3><p>I study human–AI interaction and embodied intelligence, exploring how multimodal AI can support the co-design of physical inventions.</p></section>
      <section aria-labelledby="about-background"><h3 id="about-background">Background</h3><p>I moved from Politics, Philosophy, and Economics into AI. My earlier research spans robot learning, manipulation, and generative models.</p></section>
    </div>
-   <nav className="profile-links" aria-label="Contact and profiles">{socialLinks.map(link=><a key={link.label} aria-label={link.label} title={link.label} href={link.href} target={link.href.startsWith('https:')?'_blank':undefined} rel={link.href.startsWith('https:')?'noopener noreferrer':undefined}>{link.label==='Email'?<Mail aria-hidden size={22}/>:link.label==='GitHub'?<Github aria-hidden size={22}/>:link.label==='Google Scholar'?<GraduationCap aria-hidden size={24}/>:<Linkedin aria-hidden size={22}/>}</a>)}</nav>
+   <nav className="profile-links" aria-label="Contact and profiles">{socialLinks.map(link=><a key={link.label} aria-label={link.label} title={link.label} href={link.href} target={link.href.startsWith('https:')?'_blank':undefined} rel={link.href.startsWith('https:')?'noopener noreferrer':undefined}>{link.label==='Email'?<Mail aria-hidden size={22}/>:link.label==='GitHub'?<Github aria-hidden size={22}/>:link.label==='Google Scholar'?<GraduationCap aria-hidden size={24}/>:link.label==='Instagram'?<Instagram aria-hidden size={22}/>:<Linkedin aria-hidden size={22}/>}</a>)}</nav>
  </>:destination==='trajectory'?<ol className="education-timeline">{education.map(item=><li key={item.school}><p className="education-date">{item.dates}</p><h3>{item.school}</h3><p>{item.program}</p>{item.distinction&&<strong className="education-award">{item.distinction}</strong>}</li>)}</ol>:(destination==='research'?projects:articles).map(entry=><article className="directory-entry" key={entry.id}><p className="card-status">{entry.status??entry.year}</p><h3>{entry.title}</h3><p>{entry.summary}</p>{entry.note&&<details className="courtside-detail"><summary>Details <span aria-hidden="true">＋</span></summary><p>{entry.note??entry.summary}</p></details>}</article>)}
  <button className="card-secondary" onClick={onClose}>Back to court</button>
  </dialog>;

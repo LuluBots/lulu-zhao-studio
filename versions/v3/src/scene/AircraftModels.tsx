@@ -1,20 +1,41 @@
 import {RoundedBox} from '@react-three/drei';
 import {useMemo,useEffect} from 'react';
-import {LatheGeometry,Vector2,Shape,ExtrudeGeometry} from 'three';
+import {LatheGeometry,Vector2,Vector3,CatmullRomCurve3,TubeGeometry,Shape,ExtrudeGeometry} from 'three';
 export function Balloon({index}:{index:number}){
- const panels=useMemo(()=>{
- const profile=[ [.20,-1.50],[.32,-1.26],[.65,-.88],[.99,-.38],[1.18,.2],[1.17,.65],[.94,1.12],[.56,1.43],[0,1.55] ].map(p=>new Vector2(...p as [number,number]));
- return Array.from({length:12},(_,i)=>new LatheGeometry(profile,12,i*Math.PI/6,Math.PI/6));
+ const {panels,seams}=useMemo(()=>{
+  const curve=new CatmullRomCurve3([[.20,-1.50],[.35,-1.16],[.76,-.66],[1.12,-.05],[1.23,.55],[1.06,1.05],[.65,1.48],[.05,1.66]].map(([x,y])=>new Vector3(x,y,0)));
+  const profile=curve.getPoints(48).map(p=>new Vector2(p.x,p.y));
+  const panels=Array.from({length:12},(_,i)=>{
+   const g=new LatheGeometry(profile,8,i*Math.PI/6,Math.PI/6);
+   const pos=g.attributes.position;
+   for(let j=0;j<pos.count;j++){
+    const x=pos.getX(j),z=pos.getZ(j),angle=Math.atan2(x,z);
+    const bulge=1+.035*Math.pow(Math.sin(angle*6),2);
+    pos.setX(j,x*bulge);pos.setZ(j,z*bulge);
+   }
+   g.computeVertexNormals();return g;
+  });
+  const seams=Array.from({length:12},(_,i)=>{
+   const angle=i*Math.PI/6;
+   return new TubeGeometry(new CatmullRomCurve3(profile.map(p=>new Vector3(p.x*Math.sin(angle),p.y,p.x*Math.cos(angle)))),48,.009,4,false);
+  });
+  return {panels,seams};
  },[]);
- useEffect(()=>()=>panels.forEach(p=>p.dispose()),[panels]);
- const color=['#b999b5','#d8b987','#8eb6af','#93accb'][index];
+ useEffect(()=>()=>[...panels,...seams].forEach(p=>p.dispose()),[panels,seams]);
+ const color=['#b999b5','#d8b987','#8eb6af','#8da8b6'][index];
  return <group name="Tailored_Balloon">
- {panels.map((g,i)=><mesh key={i} geometry={g} castShadow><meshStandardMaterial color={i%3===0?'#f7edd9':color} roughness={.82}/></mesh>)}
- <mesh position={[0,-1.46,0]}><torusGeometry args={[.21,.028,8,32]}/><meshStandardMaterial color="#b99b72"/></mesh>
- {[-.22,.22].flatMap(x=>[-.20,.20].map(z=><mesh key={`${x}-${z}`} position={[x,-1.72,z]}><cylinderGeometry args={[.014,.014,.62,8]}/><meshStandardMaterial color="#b69a75"/></mesh>))}
- <RoundedBox args={[.64,.36,.56]} radius={.06} smoothness={5} position={[0,-2.08,0]} castShadow><meshStandardMaterial color="#b7956c" roughness={.92}/></RoundedBox>
- {[-2.20,-2.12,-2.04,-1.96].map(y=><RoundedBox key={y} args={[.66,.025,.58]} radius={.012} position={[0,y,0]}><meshStandardMaterial color="#d0b38d" roughness={.85}/></RoundedBox>)}
- <RoundedBox args={[.69,.065,.61]} radius={.03} position={[0,-1.9,0]}><meshStandardMaterial color="#e1c49c"/></RoundedBox>
+ {panels.map((g,i)=><mesh key={i} geometry={g} castShadow><meshStandardMaterial color={i%2===0?'#f2e7d0':color} roughness={.9}/></mesh>)}
+ {seams.map((g,i)=><mesh key={i} geometry={g}><meshStandardMaterial color="#d7cfb9" roughness={.95}/></mesh>)}
+ <mesh position={[0,1.66,0]} scale={[1,.35,1]}><sphereGeometry args={[.075,16,8]}/><meshStandardMaterial color="#d7cfb9"/></mesh>
+ <mesh position={[0,-1.44,0]}><cylinderGeometry args={[.23,.19,.21,24]}/><meshStandardMaterial color="#718d99" roughness={.85}/></mesh>
+ <mesh position={[0,-1.55,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[.19,.025,8,32]}/><meshStandardMaterial color="#b99b72"/></mesh>
+ {[-.23,.23].flatMap(x=>[-.20,.20].map(z=><mesh key={`${x}-${z}`} position={[x,-1.79,z]}><cylinderGeometry args={[.014,.014,.66,8]}/><meshStandardMaterial color="#b69a75"/></mesh>))}
+ <mesh position={[0,-1.77,0]}><cylinderGeometry args={[.065,.075,.13,12]}/><meshStandardMaterial color="#73695b" metalness={.25} roughness={.6}/></mesh>
+ <RoundedBox args={[.64,.40,.56]} radius={.055} smoothness={5} position={[0,-2.15,0]} castShadow><meshStandardMaterial color="#a98d69" roughness={.96}/></RoundedBox>
+ {[-2.30,-2.23,-2.16,-2.09,-2.02].map(y=><RoundedBox key={y} args={[.66,.022,.58]} radius={.01} position={[0,y,0]}><meshStandardMaterial color="#c5a67c" roughness={.95}/></RoundedBox>)}
+ {[-.24,-.12,0,.12,.24].map(x=><group key={x}>{[-.292,.292].map(z=><mesh key={z} position={[x,-2.15,z]}><boxGeometry args={[.012,.36,.008]}/><meshStandardMaterial color="#dcc099" roughness={.95}/></mesh>)}</group>)}
+ <RoundedBox args={[.69,.065,.61]} radius={.025} position={[0,-1.94,0]}><meshStandardMaterial color="#dfc29b" roughness={.9}/></RoundedBox>
+ <RoundedBox args={[.55,.014,.46]} radius={.02} position={[0,-1.902,0]}><meshStandardMaterial color="#6b604d" roughness={1}/></RoundedBox>
  </group>
 }
 function Wing({tail=false}:{tail?:boolean}){

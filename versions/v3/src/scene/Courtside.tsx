@@ -1,3 +1,5 @@
+import BenchBag from './BenchBag';
+import CourtRadio from './CourtRadio';
 import { RoundedBox } from '@react-three/drei';
 import { useMemo, useEffect, useRef } from 'react';
 import { Group, Mesh, MeshStandardMaterial, Vector3, Quaternion, BufferGeometry, Float32BufferAttribute, CatmullRomCurve3, TubeGeometry } from 'three';
@@ -61,7 +63,7 @@ function UmpireChair(){return <group name="Umpire_Chair" position={[-7.25,0,0]} 
  <RoundedBox args={[1.6,.09,1.42]} radius={.04} smoothness={4} position={[0,3.13,-.1]} rotation={[.09,0,0]} castShadow><meshStandardMaterial color="#e8dfcb"/></RoundedBox>
  {[-.55,.55].map(x=><Bar key={x} a={[x,2.1,-.5]} b={[x,3.1,-.5]} color={ivory}/>)}
  </group>}
-export default function Courtside(_props:{night:boolean}){
+export default function Courtside({soundEnabled=false,interactive=false}:{night:boolean;soundEnabled?:boolean;interactive?:boolean}){
  const root=useRef<Group>(null);const fabric=useMemo(()=>surfaceTexture('fabric',5),[]),woodGrain=useMemo(()=>surfaceTexture('wood',2),[]);
  useEffect(()=>{const materials:MeshStandardMaterial[]=[];root.current?.traverse(o=>{if(o instanceof Mesh&&o.material instanceof MeshStandardMaterial){const m=o.material.clone();const timber=m.color.getHexString()===wood.slice(1);const textile=['f2ead8','9bb5a2','e8d7ce'].includes(m.color.getHexString());m.bumpMap=timber?woodGrain:textile?fabric:null;m.bumpScale=timber?.0015:.0007;m.roughness=timber?.56:textile?.83:.42;o.material=m;materials.push(m)}});return ()=>{materials.forEach(m=>m.dispose());fabric.dispose();woodGrain.dispose()}},[fabric,woodGrain]);
  
@@ -76,5 +78,5 @@ export default function Courtside(_props:{night:boolean}){
  <RoundedBox args={[.10,.20,7.3]} radius={.035} position={[side*9.02,.08,0]}><meshStandardMaterial color="#f3e8d1"/></RoundedBox>
  </group>)}
  <RoundedBox name="Umpire_Platform" args={[2.2,.65,2.8]} radius={.02} position={[-7.28,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#ece0c8"/></RoundedBox>
- <UmpireChair/>
+ <UmpireChair/><BenchBag interactive={interactive}/><CourtRadio soundEnabled={soundEnabled} interactive={interactive}/>
  </group>}

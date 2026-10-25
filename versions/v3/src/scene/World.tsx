@@ -2,6 +2,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
 import { useEffect, useRef, type RefObject, type ReactNode } from 'react';
 import Court from './Court';
+import CourtCursor from './CourtCursor';
 import ArtLighting from './ArtLighting';
 import Player from './Player';
 import Clouds from './Clouds';
@@ -24,7 +25,7 @@ import type { Destination } from '../components/Directory';
 
 import type { FlightPath } from './trajectories';
 export type { ViewAction } from './CameraRig';
-type Props={preMatch:boolean;started:boolean;input:RefObject<VisitorInput>;night:boolean;score:Score;onAnchor:(a:ScreenAnchor)=>void;onNavigate:(destination:Destination,a?:ScreenAnchor)=>void;onReset:()=>void;onExit:()=>void;power:number;target:[number,number];onCourtHit:(point:[number,number],power?:number)=>void;onBrowse:()=>void;path:FlightPath;action:ViewAction;state:RallyState;reduced:boolean;onReady:()=>void;onContextLost:()=>void;onArrived:()=>void;onBall:()=>void;onFinished:(r:RallyResult)=>void;onSwitch:()=>void;onSelect:(side:Side)=>void};
+type Props={soundEnabled:boolean;preMatch:boolean;started:boolean;input:RefObject<VisitorInput>;night:boolean;score:Score;onAnchor:(a:ScreenAnchor)=>void;onNavigate:(destination:Destination,a?:ScreenAnchor)=>void;onReset:()=>void;onExit:()=>void;power:number;target:[number,number];onCourtHit:(point:[number,number],power?:number)=>void;onBrowse:()=>void;path:FlightPath;action:ViewAction;state:RallyState;reduced:boolean;onReady:()=>void;onContextLost:()=>void;onArrived:()=>void;onBall:()=>void;onFinished:(r:RallyResult)=>void;onSwitch:()=>void;onSelect:(side:Side)=>void};
 function ContextWatch({onLost}:{onLost:()=>void}){
  const {gl}=useThree();useEffect(()=>{const canvas=gl.domElement;const lost=(event:Event)=>{event.preventDefault();onLost()};canvas.addEventListener('webglcontextlost',lost);return ()=>canvas.removeEventListener('webglcontextlost',lost)},[gl,onLost]);return null;
 }
@@ -32,14 +33,14 @@ function LandingAnchor({clock,target,shot,onAnchor}:{clock:React.RefObject<{prog
  const last=useRef(-1);const {camera,size}=useThree();
  useFrame(()=>{if(clock.current.progress>=.48&&last.current!==shot){last.current=shot;const p=new Vector3(target[0],.15,target[1]).project(camera);onAnchor({x:(p.x+1)*size.width/2,y:(1-p.y)*size.height/2})}});return null;
 }
-function Scene({preMatch,started,input,night,score,onContextLost,onAnchor,onNavigate,onReset,power,target,onCourtHit,action,state,reduced,onReady,onArrived,onBall,onFinished,onSwitch}:Props){
+function Scene({soundEnabled,preMatch,started,input,night,score,onContextLost,onAnchor,onNavigate,onReset,power,target,onCourtHit,action,state,reduced,onReady,onArrived,onBall,onFinished,onSwitch}:Props){
  const clock=useRef({progress:0});
  useEffect(()=>{onReady()},[onReady]);
  return <>
-  <ContextWatch onLost={onContextLost}/>
+  <ContextWatch onLost={onContextLost}/><CourtCursor/>
   <ArtLighting night={night}/><ambientLight intensity={night?.22:.25}/><hemisphereLight args={[night?'#aac6ed':'#f0faff',night?'#34334b':'#c9c2de',night?.45:.65]}/>
   <directionalLight position={[-12,25,8]} intensity={night?1.8:2.5} color={night?'#bcd4ff':'#ffe7c7'} castShadow shadow-mapSize={[2048,2048]} shadow-camera-left={-18} shadow-camera-right={18} shadow-camera-top={18} shadow-camera-bottom={-18} shadow-normalBias={.035} shadow-bias={-.0002} shadow-radius={4}/>
-  <Atmosphere night={night}/><SkyVisitors visible={started&&state.phase==='overview'} night={night} reduced={reduced} onNavigate={onNavigate}/><Court night={night}/>{started&&<Arrival reduced={reduced}><Courtside night={night}/></Arrival>}<Clouds night={night}/>
+  <Atmosphere night={night}/><SkyVisitors visible={started&&state.phase==='overview'} night={night} reduced={reduced} onNavigate={onNavigate}/><Court night={night}/>{started&&<Arrival reduced={reduced}><Courtside night={night} soundEnabled={soundEnabled} interactive={state.phase==='overview'}/></Arrival>}<Clouds night={night}/>
   {started&&<Wayfinding score={score} state={state} onPlay={onBall} onSwitch={onSwitch} onReset={onReset}/>}
   <VisitorControls input={input} roaming={state.phase==='overview'} active={started&&!preMatch&&['overview','ready','playing'].includes(state.phase)}/>
   <LandingAnchor clock={clock} target={target} shot={state.shot} onAnchor={onAnchor}/>

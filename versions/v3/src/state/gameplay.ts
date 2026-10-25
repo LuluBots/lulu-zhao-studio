@@ -25,8 +25,10 @@ export function caughtReturn(previous:Point,current:Point,before:readonly [numbe
 }
 export function returnLanding(target:readonly [number,number],input:Pick<VisitorInput,'yaw'|'pitch'>):[number,number]{return [target[0]+Math.tan(input.yaw)*10,target[1]+input.pitch*5]}
 // Craft centers stay at least a full wingspan outside the entire court platform.
-export function airRoute(index:number,t:number,night:boolean):Point{
- const bases:Point[]=[[-13,8,-1],[-14,5,8],[14,7,5],[12,7,-10]],b=bases[index];
- return [b[0]+Math.sin(t*(night?.09:.045)+index)*1.2,b[1]+Math.sin(t*.3+index)*.4,b[2]+Math.cos(t*.09+index)*.8];
+export function airRoute(index:number,_t:number,_night:boolean):Point{
+ // Fixed perimeter anchors. Object clicks play a short local animation only.
+ const anchors:Point[]=[[-14,6,-4],[-14,5,8],[22,8,4],[12,8,-10]];
+ return [...anchors[index]] as Point;
 }
+
 export const baselineRotation=(end:number)=>end>0?0:Math.PI;

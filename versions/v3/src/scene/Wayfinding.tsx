@@ -28,7 +28,7 @@ function Board({end,state,score,onPlay,onSwitch,onReset}:Props&{end:number}){
  return <group name={`Scoreboard_${end<0?'North':'South'}`} position={[end*4.1,0,end*10.52]} rotation={[0,end<0?0:Math.PI,0]}>
   {[-1.15,1.15].map(x=><RoundedBox key={x} args={[.18,.04,.24]} radius={.02} position={[x,.025,0]} receiveShadow><meshStandardMaterial color="#567783"/></RoundedBox>)}
   {[-1.15,1.15].map(x=><mesh key={x} position={[x,.67,0]} castShadow><boxGeometry args={[.055,1.34,.075]}/><meshStandardMaterial color="#567783" metalness={.6} roughness={.35}/></mesh>)}
-  <group position={[0,1.4,0]} onClick={e=>{e.stopPropagation();if(e.delta<5)setExpanded(true)}} onPointerOver={e=>{e.stopPropagation();document.body.style.cursor='pointer'}} onPointerOut={()=>{document.body.style.cursor=''}}>
+  <group position={[0,1.4,0]} onClick={e=>{e.stopPropagation();if(e.delta<5)setExpanded(true)}} userData={{cursor:'pointer'}}>
    <RoundedBox args={[2.9,1.47,.10]} radius={.035} castShadow><meshStandardMaterial color="#c2d7d5" metalness={.35} roughness={.4}/></RoundedBox>
    {[-1,1].map(face=><mesh key={face} position={[0,0,face*.056]} rotation={[0,face<0?Math.PI:0,0]}><planeGeometry args={[2.79,1.37]}/><meshBasicMaterial map={texture} depthTest depthWrite/></mesh>)}
   </group>

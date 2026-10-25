@@ -1,5 +1,5 @@
 import { useRef, type RefObject } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useFrame } from '@react-three/fiber';
 import { Group } from 'three';
 import type { VisitorInput } from '../state/gameplay';
 import type { RallyClock } from './Rally';
@@ -13,14 +13,13 @@ function Limb({position,rotation=[0,0,0],length=.55,color='#eac4ab'}:{position:[
 }
 export default function Player({preMatch=false,input,visitor=false,clock,reduced=false,side='technology',onSwitch,target=[0,-3.3],playing=false,power=.5}:{preMatch?:boolean;input?:RefObject<VisitorInput>;power?:number;target?:[number,number];playing?:boolean;visitor?:boolean;clock?:RefObject<RallyClock>;reduced?:boolean;side?:Side;onSwitch?:()=>void}){
  const swing=useRef<Group>(null),body=useRef<Group>(null),legs=useRef<Group>(null);
- const {gl}=useThree();
  useFrame(()=>{
  if(preMatch&&body.current){body.current.position.set(visitor?-1.5:1.5,0,visitor?9.35:-9.35);return;}
  if(visitor&&input&&body.current){body.current.position.set(input.current.x,0,input.current.z);body.current.scale.x=1;input.current.racket=[input.current.x-.66,1.2,input.current.z-.4]}
  if(!visitor&&body.current){const p=playing?(clock?.current.progress??0):0;body.current.position.set(...samplePlayerPosition(p,targetPoint(target),power));if(legs.current)legs.current.rotation.x=reduced?0:Math.sin(p*Math.PI*32)*.15*(p<.6||p>.73?1:0);}
  if(swing.current){const p=clock?.current.progress??0;const t=Math.max(0,1-Math.abs(p-(clock?.current.returnAt??.5))/.08);swing.current.rotation.y=reduced?0:-Math.sin(t*Math.PI/2)*1.25;}});
  const clothing=visitor?'#dddce8':sides[side].color;
- return <group ref={body} onClick={e=>{if(onSwitch){e.stopPropagation();if(e.delta<=5)onSwitch()}}} onPointerOver={e=>{if(onSwitch){e.stopPropagation();gl.domElement.style.cursor='pointer'}}} onPointerOut={()=>{gl.domElement.style.cursor=''}} name={visitor?'Visitor_Placeholder':'Lulu_Placeholder'} position={visitor?[-1.5,0,9.35]:[1.5,0,-9.35]} rotation={[0,visitor?Math.PI:0,0]}>
+ return <group ref={body} onClick={e=>{if(onSwitch){e.stopPropagation();if(e.delta<=5)onSwitch()}}} userData={{cursor:onSwitch?'pointer':undefined}} name={visitor?'Visitor_Placeholder':'Lulu_Placeholder'} position={visitor?[-1.5,0,9.35]:[1.5,0,-9.35]} rotation={[0,visitor?Math.PI:0,0]}>
   <group ref={legs}><Limb position={[-.17,.46,0]} length={.5}/><Limb position={[.17,.46,0]} length={.5}/>
   {[-.17,.17].map(x=><RoundedBox key={x} args={[.24,.19,.4]} radius={.065} smoothness={2} position={[x,.12,.065]} castShadow><meshStandardMaterial color="#fffdf3"/></RoundedBox>)}
   </group><mesh position={[0,1.14,0]} castShadow><cylinderGeometry args={[.25,.34,.66,12]}/><meshStandardMaterial color={clothing}/></mesh>

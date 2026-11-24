@@ -4,7 +4,7 @@ import { OrbitControls } from '@react-three/drei';
 import type { OrbitControls as Controls } from 'three-stdlib';
 import { MOUSE, TOUCH, OrthographicCamera, Vector3, Quaternion } from 'three';
 import type { VisitorInput } from '../state/gameplay';
-import { createMatchCamera, frameMatchCamera } from './matchCamera';
+import { createMatchCamera, frameMatchCamera, viewDuration } from './matchCamera';
 import { cameraLimits, keepCameraSafe } from './cameraBounds';
 import { type RallyState } from '../state/rally';
 export type ViewAction = { kind: 'reset'; id: number };
@@ -27,7 +27,7 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
   useEffect(()=>{
     if(!['entering','leaving','switching'].includes(phase))return;
     const ortho=overview.current;
-    if(phase==='switching'){transition.current=null;const timer=window.setTimeout(onArrived,reduced?0:1800);return ()=>window.clearTimeout(timer);}
+    if(phase==='switching'){transition.current=null;const timer=window.setTimeout(onArrived,reduced?0:viewDuration.switching*1000);return ()=>window.clearTimeout(timer);}
     if(phase==='entering'){
       saved.current={position:ortho.position.clone(),target:saved.current.target.clone(),zoom:ortho.zoom};
       rallyCamera.zoom=ortho.zoom;rallyCamera.updateProjectionMatrix();rallyCamera.position.copy(ortho.position); rallyCamera.quaternion.copy(ortho.quaternion);set({camera:rallyCamera});
@@ -40,8 +40,8 @@ export default function CameraRig({started,input,state,action,reduced,onArrived}
   useFrame((_,delta)=>{
 
     const tween=transition.current;if(!tween)return;
-    tween.elapsed+=Math.min(delta,.05);
-    const t=reduced?1:Math.min(tween.elapsed/(phase==='entering'?2.4:.8),1),ease=t*t*(3-2*t);
+    tween.elapsed+=delta;
+    const t=reduced?1:Math.min(tween.elapsed/(phase==='entering'?viewDuration.entering:viewDuration.leaving),1),ease=t*t*(3-2*t);
     tween.camera.zoom=tween.fromZoom+(tween.toZoom-tween.fromZoom)*ease;tween.camera.updateProjectionMatrix();
     tween.camera.position.lerpVectors(tween.from,tween.to,ease);tween.camera.quaternion.slerpQuaternions(tween.rotation,tween.targetRotation,ease);
     if(t===1){transition.current=null;if(phase==='leaving'){

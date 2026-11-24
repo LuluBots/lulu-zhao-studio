@@ -1,23 +1,20 @@
 {
-  "author": "Kevin MacLeod (incompetech.com)",
-  "license": "CC BY 4.0",
-  "license_url": "https://creativecommons.org/licenses/by/4.0/",
-  "changes": "Normalized to -19 LUFS, transcoded to 96 kbps MP3. No excerpting.",
+  "recordings": "Piano arrangements rendered for this website.",
   "tracks": [
     {
-      "file": "court-bossa.mp3",
-      "title": "Bossa Antigua",
-      "isrc": "USUAN1700069"
+      "file": "bach.mp3",
+      "title": "Prelude in C major, BWV 846",
+      "composer": "J. S. Bach"
     },
     {
-      "file": "court-riley.mp3",
-      "title": "Life of Riley",
-      "isrc": "USUAN1400054"
+      "file": "beethoven.mp3",
+      "title": "Für Elise, WoO 59",
+      "composer": "Ludwig van Beethoven"
     },
     {
-      "file": "court-wallpaper.mp3",
-      "title": "Wallpaper",
-      "isrc": "USUAN1100843"
+      "file": "pachelbel.mp3",
+      "title": "Canon in D",
+      "composer": "Johann Pachelbel"
     }
   ]
 }

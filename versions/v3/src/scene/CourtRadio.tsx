@@ -20,7 +20,8 @@ export default function CourtRadio({soundEnabled,interactive}:{soundEnabled:bool
  const next=()=>{
   const a=audio.current;if(!a)return;
   request.current++;a.pause();current.current=nextRadioTrack(current.current,radioTracks.length);
-  a.src=radioTracks[current.current];setMessage('');play();
+  const track=radioTracks[current.current];
+  a.src=track.src;setMessage(enabled.current ? track.title+' by '+track.composer : 'Sound is muted.');play();
  };
  useEffect(()=>{
   const a=new Audio();a.preload='none';a.volume=.22;a.dataset.courtBgm='true';

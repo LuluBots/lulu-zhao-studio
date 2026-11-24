@@ -8,7 +8,7 @@ test('preview locks exact entry through the flight and only its completion opens
  assert.equal(reduce(state,{type:'preview',entry:projects[2]}),state);
  assert.equal(reduce(state,{type:'launch',shot:9}),state);
  assert.equal(reduce(state,{type:'complete',shot:7}),state);
- state=reduce(state,{type:'complete',shot:8});assert.equal(state.panel,'detail');assert.equal(state.entry.id,'movebot');
+ state=reduce(state,{type:'complete',shot:8});assert.equal(state.panel,'detail');assert.equal(state.entry.id,'kinogen');
 });
 test('cancellation discards flight; stale completion cannot reopen a card',()=>{
  let state=reduce(initial,{type:'preview',entry:projects[0]});state=reduce(state,{type:'launch',shot:3});state=reduce(state,{type:'close'});
@@ -17,7 +17,7 @@ test('cancellation discards flight; stale completion cannot reopen a card',()=>{
 test('Read now bypasses flight and each side resolves only its own entries',()=>{
  const state=reduce(reduce(initial,{type:'preview',entry:articles[0]}),{type:'read'});
  assert.equal(state.panel,'detail');assert.equal(state.shot,null);
- assert.equal(selectedEntry(articles,'movebot').side,'humanities');assert.equal(selectedEntry([], 'missing'),undefined);
+ assert.equal(selectedEntry(articles,'kinogen').side,'humanities');assert.equal(selectedEntry([], 'missing'),undefined);
 });
 test('configured IDs and links are safe and unique; every flight clears the net',()=>{
  const entries=[...projects,...articles];assert.equal(new Set(entries.map(e=>e.id)).size,entries.length);

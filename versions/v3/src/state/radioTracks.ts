@@ -1,4 +1,8 @@
-export const radioTracks=['/audio/court-bossa.mp3','/audio/court-riley.mp3','/audio/court-wallpaper.mp3'];
+export const radioTracks = [
+  { src: '/audio/bach.mp3', title: 'Prelude in C major, BWV 846', composer: 'J. S. Bach' },
+  { src: '/audio/beethoven.mp3', title: 'Für Elise, WoO 59', composer: 'Ludwig van Beethoven' },
+  { src: '/audio/pachelbel.mp3', title: 'Canon in D', composer: 'Johann Pachelbel' },
+];
 /** Uniform choice among all tracks except the current one. */
 export function nextRadioTrack(current:number,count:number,random=Math.random){
  if(count<1)return -1;if(count===1)return 0;

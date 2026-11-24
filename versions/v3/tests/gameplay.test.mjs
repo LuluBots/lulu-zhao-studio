@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createVisitorInput,moveVisitor,caughtReturn,inBounds,returnLane,sampleIncoming,returnLanding,airRoute,baselineRotation } from '../src/state/gameplay.ts';
-import { receptionPoint,sampleTargetFlight,targetPoint,samplePlayerPosition } from '../src/scene/trajectories.ts';
+import { createVisitorInput,moveVisitor,racketIntersection,inBounds,returnLane,returnDepth,returnLanding,automaticTarget,airRoute,baselineRotation } from '../src/state/gameplay.ts';
+import { receptionPoint,sampleTargetFlight,targetPoint,samplePlayerPosition,sampleIncoming,incomingX,incomingBounceAt } from '../src/scene/trajectories.ts';
 test('WASD moves both court axes, normalizes diagonals and clamps movement without changing the view',()=>{
  const a=createVisitorInput(),b=createVisitorInput();a.keys.add('KeyD');b.keys.add('KeyD');b.keys.add('KeyW');moveVisitor(a,.05);moveVisitor(b,.05);
  assert.ok(Math.abs(Math.hypot(b.x+1.5,b.z-9.35)-(a.x+1.5))<1e-8);
@@ -9,22 +9,35 @@ test('WASD moves both court axes, normalizes diagonals and clamps movement witho
  b.keys.clear();b.keys.add('KeyS');moveVisitor(b,.05);assert.ok(b.z>2.4);
 });
 test('swept reception catches the real racket intersection, not a distant or high ball',()=>{
- assert.equal(caughtReturn([-1.2,1.2,6],[-1.2,1.2,7],[-1.2,6.5],[-1.2,6.5]),true);
- assert.equal(caughtReturn([-1.2,1.2,6],[-1.2,1.2,7],[.45,6.5],[.45,6.5]),false);
- assert.equal(caughtReturn([-1.2,3,6],[-1.2,3,7],[-1.2,6.5],[-1.2,6.5]),false);
- assert.equal(caughtReturn([0,1.2,6],[0,1.2,7],[-.5,6.5],[.5,6.5]),true);
+ const from=[-1.2,1.2,6],to=[-1.2,1.2,7],hand=[-1.2,1.2,6.5];
+ assert.deepEqual(racketIntersection(from,to,hand,hand),[-1.2,1.2,6.5]);
+ assert.equal(racketIntersection(from,to,[.45,1.2,6.5],[.45,1.2,6.5]),null);
+ assert.equal(racketIntersection([-1.2,3,6],[-1.2,3,7],hand,hand),null);
+ assert.deepEqual(racketIntersection([0,1.2,6],[0,1.2,7],[-.5,1.2,6.5],[.5,1.2,6.5]),[0,1.2,6.5]);
 });
-test('NPC return requires movement and a positioned visitor can catch it',()=>{
- for(const shot of [1,2,3]){
-  const contact=receptionPoint(targetPoint([0,-3.3]),.5),lane=returnLane(0,shot);let previous=contact,caught=false,stationary=false;
-  for(let i=1;i<=200;i++){const p=sampleIncoming(i/200,contact,lane);caught ||= caughtReturn(previous,p,[lane,6.5],[lane,6.5]);stationary ||= caughtReturn(previous,p,[.45,6.5],[.45,6.5]);if(Math.abs(p[2])<.1)assert.ok(p[1]>1.1);previous=p}
-  assert.equal(caught,true);assert.equal(stationary,false);
+test('each incoming shot keeps its heading at the bounce, clears the net and can be intercepted',()=>{
+ for(let shot=1;shot<=4;shot++){
+  const contact=receptionPoint(targetPoint(automaticTarget(shot)),.5),lane=returnLane(contact[0],shot),depth=returnDepth(shot);
+  const bounceAt=incomingBounceAt(contact,depth),bounce=sampleIncoming(bounceAt,contact,lane,depth);
+  assert.ok(Math.abs(bounce[2]-depth)<1e-8 && Math.abs(bounce[1]-.14)<1e-8);
+  const hand=[incomingX(8.5,contact,lane),1.2,8.5];let previous=contact,impact=null;
+  for(let i=1;i<=200;i++){
+   const p=sampleIncoming(i/200,contact,lane,depth);
+   assert.ok(Math.abs((p[0]-contact[0])*(bounce[2]-contact[2])-(p[2]-contact[2])*(bounce[0]-contact[0]))<1e-8);
+   if(Math.abs(p[2])<.1)assert.ok(p[1]>1.1);
+   impact ||= racketIntersection(previous,p,hand,hand);previous=p;
+  }
+  assert.ok(impact);
  }
 });
-test('launch follows the moved racket; launch and return out-balls are rejected',()=>{
+test('shots use distinct targets and returns leave from the actual contact',()=>{
  const origin=[-2,1.2,4],target=targetPoint([1,-5]);assert.deepEqual(sampleTargetFlight(0,target,.5,origin),origin);
+ assert.equal(new Set([1,2,3,4].map(n=>automaticTarget(n).join(','))).size,4);
  assert.equal(inBounds([4.35,-8.7]),true);assert.equal(inBounds([4.36,-4]),false);assert.equal(inBounds([0,-9]),false);
- assert.equal(inBounds(returnLanding([0,-4],{yaw:.5,pitch:0})),false);assert.equal(inBounds(returnLanding([0,-4],{yaw:0,pitch:0})),true);
+ const contact=[-2,1.3,7];
+ assert.equal(inBounds(returnLanding(contact,{yaw:.5,pitch:0},1)),false);
+ const landing=returnLanding(contact,{yaw:0,pitch:0},1);
+ assert.ok(inBounds(landing));assert.ok(landing[0]>0);assert.notDeepEqual(landing,automaticTarget(1));
 });
 test('full craft footprint stays outside court airspace through entire day/night routes',()=>{
  for(const night of [false,true])for(let i=0;i<4;i++)for(let t=0;t<160;t+=.1){const [x,,z]=airRoute(i,t,night);assert.ok(Math.abs(x)-3>6.2||Math.abs(z)-3>11.85)}

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { initialRally, rallyReducer } from '../src/state/rally.ts';
-import { sampleFlight, READY_BALL, RETURN_BALL } from '../src/scene/trajectories.ts';
+import { sampleFlight, READY_BALL } from '../src/scene/trajectories.ts';
 test('one complete exchange, ignores repeated input and returns ready',()=>{
  let s=rallyReducer(initialRally,'enter');
  assert.equal(rallyReducer(s,'hit'),s);
@@ -17,8 +17,8 @@ test('exit cancels every active phase and stale completion cannot restart play',
   s=rallyReducer(s,'arrived');assert.equal(s.phase,'overview');
  }
 });
-test('deterministic out-and-back, continuous at turnaround, clears the net both ways',()=>{
- assert.deepEqual(sampleFlight(0),READY_BALL);assert.deepEqual(sampleFlight(.5),RETURN_BALL);sampleFlight(1).forEach((v,i)=>assert.ok(Math.abs(v-READY_BALL[i])<1e-9));
+test('exchange reaches a different endpoint, is continuous at contact, and clears the net both ways',()=>{
+ assert.deepEqual(sampleFlight(0),READY_BALL);assert.notDeepEqual(sampleFlight(1),READY_BALL);
  for(const t of [0,.1,.25,.5,.75,.9,1])assert.deepEqual(sampleFlight(t),sampleFlight(t));
  for(let i=0;i<=1000;i++){const p=sampleFlight(i/1000);assert.ok(p.every(Number.isFinite));if(Math.abs(p[2])<.1)assert.ok(p[1]>1.1)}
  const a=sampleFlight(.5-1e-6),b=sampleFlight(.5+1e-6);assert.ok(Math.hypot(...a.map((n,i)=>n-b[i]))<.001);

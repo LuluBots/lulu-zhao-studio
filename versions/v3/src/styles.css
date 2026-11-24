@@ -182,7 +182,7 @@ html, body, #root {
 
 .education-timeline{list-style:none;margin:24px 0 16px;padding:0 0 0 18px;border-left:1px solid #abc1b8}.education-timeline li{position:relative;padding:0 0 26px 10px}.education-timeline li:last-child{padding-bottom:6px}.education-timeline li::before{content:'';position:absolute;left:-23px;top:4px;width:8px;height:8px;border-radius:50%;background:#729283;box-shadow:0 0 0 4px #edf2e8}.education-timeline .education-date{font-size:11px;letter-spacing:.04em;color:#617f80;margin:0 0 7px}.education-timeline h3{font-size:17px;font-weight:600;line-height:1.35;margin:0 0 5px}.education-timeline p{font-size:13px;line-height:1.6;margin:0;color:#45616b}.education-award{display:inline-block;margin-top:9px;padding:5px 9px;background:#e2eacc;border-radius:3px;color:#435e44;font-size:12px;font-weight:500}
 
-.hand-choice{display:flex;gap:8px;justify-content:center;margin:16px 0;pointer-events:auto}.hand-choice button,.court-watermark .hand-choice button{margin:0;padding:8px 12px;font:500 12px/1.4 inherit;min-height:40px;border:1px solid #abc0b9;border-radius:22px;background:#f4f7eb;color:#31595f;box-shadow:none}.hand-choice button[aria-pressed="true"]{background:#244d50;color:#fff}.court-watermark>button:disabled{opacity:.65;cursor:wait}.court-world[data-started="true"] .rally-wayfinding{animation:entry-controls 1.5s ease both}@keyframes entry-controls{0%,55%{opacity:0}100%{opacity:1}}@media(prefers-reduced-motion:reduce){.court-world[data-started="true"] .rally-wayfinding{animation:none}}
+.hand-choice{display:flex;gap:8px;justify-content:center;margin:16px 0;pointer-events:auto}.hand-choice button,.court-watermark .hand-choice button{margin:0;padding:8px 12px;font:500 12px/1.4 inherit;min-height:40px;border:1px solid #abc0b9;border-radius:22px;background:#f4f7eb;color:#31595f;box-shadow:none}.hand-choice button[aria-pressed="true"]{background:#244d50;color:#fff}.court-watermark>button:disabled{opacity:.65;cursor:wait}.court-world[data-started="true"] .rally-wayfinding{animation:entry-controls .25s ease both}@keyframes entry-controls{0%,55%{opacity:0}100%{opacity:1}}@media(prefers-reduced-motion:reduce){.court-world[data-started="true"] .rally-wayfinding{animation:none}}
 /* A baseline becomes the loading track; the tennis ball travels toward the entrance. */
 .tennis-entrance .match-loading{width:min(270px,76vw);margin:26px auto 16px;text-shadow:none}
 .match-loading-caption{display:flex;justify-content:space-between;gap:16px;font:500 11px/1.5 'Avenir Next','Helvetica Neue',Arial,sans-serif;letter-spacing:.025em;opacity:.85}
@@ -240,7 +240,7 @@ html, body, #root {
 /* The invitation unfolds in order; scene loading does not freeze the presentation. */
 .court-world{background:linear-gradient(180deg,#a6bfd1 0%,#d8dcdd 55%,#f3e5d1 100%)}
 .court-world[data-light="night"]{background:linear-gradient(180deg,#172039,#414c6c 55%,#95889d 100%)}
-.court-canvas{opacity:0;transition:opacity 1.4s ease}
+.court-canvas{opacity:0;transition:opacity .28s ease}
 .court-world[data-scene-ready="true"] .court-canvas{opacity:1}
 .tennis-entrance{animation:none;transition:opacity .4s ease,filter .4s ease}
 .tennis-entrance .entrance-kicker{animation:invitation-reveal .55s ease both}
@@ -347,3 +347,19 @@ html, body, #root {
 .player-ident-interest{padding-top:6px}
 @media(max-width:1000px){.player-ident-name{padding:9px 11px;font-size:22px}.player-ident-degree{padding:9px 11px 0;font-size:12px}}
 @media(max-width:640px){.player-ident-name{padding:8px 11px;font-size:20px}.player-ident-degree{padding:8px 11px 0;font-size:12px}.player-ident-interest{padding-top:5px}}
+
+.portfolio-entry {
+  position: absolute; z-index: 20; top: clamp(24px, 7vh, 96px); left: 50%; transform: translateX(-50%);
+  width: max-content; max-width: calc(100vw - 32px); padding: 20px 34px 22px; text-align: center;
+  border: 1px solid #e2ebd8; border-radius: 16px; color: #244b50; background: #f6f6eaf2;
+  box-shadow: 0 8px 30px #172d4019; font-family: 'Court UI', system-ui, sans-serif;
+}
+.portfolio-entry h1 { margin: 0; font: 500 clamp(36px,6vw,64px)/1.07 Georgia,serif; letter-spacing: -.055em }
+.portfolio-entry p { margin: 7px 0 16px; font-size: 15px }
+.portfolio-entry button { min-height: 40px; padding: 8px 24px; color: #fffced; background: #234b50; border: 0; border-radius: 24px; cursor: pointer; font: inherit }
+.portfolio-entry button:focus-visible { outline: 3px solid #689580; outline-offset: 3px }
+.entry-progress { height: 40px; display: grid; place-content: center; gap: 5px; font-size: 14px }
+.entry-progress progress { height: 4px; width: 110px; accent-color: #416f63 }
+.entry-links { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 }
+.entry-links a { color: #275d5d; font-size: 15px; text-underline-offset: 3px }
+.court-world[data-started="false"] .world-controls { visibility: hidden }

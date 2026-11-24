@@ -12,14 +12,14 @@ function Board({end,state,score,onPlay,onSwitch,onReset}:Props&{end:number}){
  const texture=useMemo(()=>{
   const c=document.createElement('canvas');c.width=1440;c.height=720;const ctx=c.getContext('2d')!;ctx.scale(2,2);
   ctx.fillStyle='#143d53';ctx.fillRect(0,0,720,360);ctx.strokeStyle='#83afb3';ctx.lineWidth=2;ctx.strokeRect(12,12,696,336);
-  ctx.fillStyle='#f2f2df';ctx.font='italic 700 36px Impact, sans-serif';ctx.fillText('GRAND SLAM',38,66);ctx.font='italic 26px Georgia';ctx.fillText('luluzhao',545,60);
+  ctx.fillStyle='#f2f2df';ctx.font='italic 700 36px Impact, sans-serif';ctx.fillText('SCOREBOARD',38,66);ctx.font='italic 26px Georgia';ctx.fillText('luluzhao',545,60);
   ctx.font='15px sans-serif';ctx.fillStyle='#b4cfcf';ctx.fillText('PLAYER',38,108);ctx.fillText('GAMES',440,108);ctx.fillText('POINTS',575,108);
   (['humanities','technology'] as const).forEach((side,i)=>{const y=166+i*96;ctx.fillStyle='#f0f2dd';ctx.font='italic 700 40px Impact, sans-serif';ctx.fillText(side==='humanities'?'VERSE':'CODE',38,y);ctx.font='16px sans-serif';ctx.fillStyle='#a9c4c5';ctx.fillText(`${side==='humanities'?'HUMANITY':'TECH'} · ${side===state.side?'NPC':'YOU'}`,38,y+26);ctx.font='36px monospace';ctx.fillStyle='#e1e6cb';ctx.fillText(String(score.games[side]),460,y);ctx.fillStyle='#deebbb';ctx.fillRect(558,y-40,124,62);ctx.fillStyle='#1b4452';ctx.textAlign='center';ctx.fillText(pointLabel(score,side),620,y+5);ctx.textAlign='left';ctx.strokeStyle='#456b79';ctx.beginPath();ctx.moveTo(38,y+40);ctx.lineTo(682,y+40);ctx.stroke()});
   const map=new CanvasTexture(c);map.colorSpace=SRGBColorSpace;map.anisotropy=gl.capabilities.getMaxAnisotropy();return map;
  },[score,state.side]);
  useEffect(()=>()=>texture.dispose(),[texture]);
  const content=<div className="match-board">
-  <header><strong className="rally-wordmark">Grand Slam with Lulu</strong><img className="lulu-logo" src="/brand/lulu-zhao.svg" alt="luluzhao · Grand Slam with Lulu"/></header>
+  <header><strong className="rally-wordmark">Lulu Zhao</strong><img className="lulu-logo" src="/brand/lulu-zhao.svg" alt="Lulu Zhao"/></header>
   <div className="match-columns"><span>PLAYER / SIDE</span><span>GAMES</span><span>POINTS</span></div>
   {(['humanities','technology'] as const).map(side=><div className="match-row" key={side}><div><strong>{side==='humanities'?'Verse':'Code'}</strong><small>{side==='humanities'?'Humanity':'Tech'} · {side===state.side?'NPC':'YOU'}</small></div><span>{score.games[side]}</span><b>{pointLabel(score,side)}</b></div>)}
   <div className="match-caption">RETURN IN = YOUR POINT · MISS / OUT = NPC POINT</div>

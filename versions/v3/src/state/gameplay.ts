@@ -11,19 +11,35 @@ export function moveVisitor(input:VisitorInput,dt:number){
 
 }
 export const inBounds=(target:readonly number[])=>Math.abs(target[0])<=4.35&&target[1]<=-.15&&target[1]>=-8.7;
-export const returnLane=(x:number,shot:number)=>Math.max(-3.2,Math.min(3.2,-x*.55+(shot%2?-1.2:1.2)));
-export function sampleIncoming(t:number,contact:Point,lane:number):Point{
- const bounce:Point=[lane,.14,3.9],end:Point=[lane,.14,10.6];
- const first=t<.64,u=first?t/.64:(t-.64)/.36,a=first?contact:bounce,b=first?bounce:end;
- return [a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u+4*(first?1.65:1.5)*u*(1-u),a[2]+(b[2]-a[2])*u];
+// Alternate wings while varying width and depth independently of the serve.
+const patterns = [
+  [-2.0, 3.7, 2.45, -6.7],
+  [2.6, 4.4, -2.15, -5.35],
+  [-2.8, 4.8, 1.65, -7.35],
+  [1.85, 3.5, -2.75, -6.1],
+] as const;
+const pattern = (shot: number) => patterns[Math.abs(shot - 1) % patterns.length];
+export const returnLane = (opponentX: number, shot: number) =>
+  Math.max(-3.1, Math.min(3.1, pattern(shot)[0] - opponentX * .12));
+export const returnDepth = (shot: number) => pattern(shot)[1];
+export const automaticTarget = (shot: number): [number, number] =>
+  [pattern(shot)[2], pattern(shot)[3]];
+
+// Interpolate the impact on the moving racket plane to prevent a position jump at contact.
+export function racketIntersection(previous:Point,current:Point,before:Point,now:Point):Point | null {
+  const a = previous[2] - before[2], b = current[2] - now[2];
+  if (a > 0 || b < 0 || b-a < 1e-8) return null;
+  const t = -a / (b-a);
+  const lerp = (start:number,end:number) => start + (end-start)*t;
+  const hit:Point = [lerp(previous[0],current[0]),lerp(previous[1],current[1]),lerp(previous[2],current[2])];
+  const dx = hit[0] - lerp(before[0],now[0]), dy = hit[1] - lerp(before[1],now[1]);
+  return (dx/.64)**2 + (dy/.72)**2 <= 1 ? hit : null;
 }
-// Swept relative-plane intersection prevents tunneling even while the racket moves.
-export function caughtReturn(previous:Point,current:Point,before:readonly [number,number],now:readonly [number,number],height=1.2){
- const a=previous[2]-before[1],b=current[2]-now[1];if(a>0||b<0||b-a<1e-8)return false;
- const t=-a/(b-a),x=previous[0]+(current[0]-previous[0])*t,y=previous[1]+(current[1]-previous[1])*t,racketX=before[0]+(now[0]-before[0])*t;
- return ((x-racketX)/.64)**2+((y-height)/.72)**2<=1;
+export function returnLanding(contact:Point, input:Pick<VisitorInput,'yaw'|'pitch'>, shot:number):[number,number] {
+  const width = 1.4 + Math.abs(pattern(shot)[0]) * .45;
+  const direction = Math.abs(contact[0]) > .3 ? -Math.sign(contact[0]) : Math.sign(pattern(shot)[0]);
+  return [direction * width + Math.tan(input.yaw)*10, pattern(shot+1)[3] + input.pitch*5];
 }
-export function returnLanding(target:readonly [number,number],input:Pick<VisitorInput,'yaw'|'pitch'>):[number,number]{return [target[0]+Math.tan(input.yaw)*10,target[1]+input.pitch*5]}
 // Craft centers stay at least a full wingspan outside the entire court platform.
 export function airRoute(index:number,_t:number,_night:boolean):Point{
  // Fixed perimeter anchors. Object clicks play a short local animation only.

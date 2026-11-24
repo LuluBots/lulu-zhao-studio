@@ -9,6 +9,7 @@ import { samplePlayerPosition, targetPoint } from './trajectories';
 
 import type { VisitorInput } from '../state/gameplay';
 import {surfaceTexture} from './surfaceTextures';
+import {viewDuration} from './matchCamera';
 import {courtSound} from '../state/sound';
 
 
@@ -57,7 +58,7 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
    for(const [name,action] of Object.entries(actions)){action.setEffectiveWeight(name==='Idle'?1:0);action.time=reduced?0:time.current%action.getClip().duration}mixer.update(0);if(!reduced)invalidate();return;
   }
   if(entering&&entry.current){
-   const motion=entry.current;motion.elapsed+=Math.min(delta,.05);const t=reduced?1:Math.min(1,motion.elapsed/2.4),ease=t*t*(3-2*t);
+   const motion=entry.current;motion.elapsed+=delta;const t=reduced?1:Math.min(1,motion.elapsed/viewDuration.entering),ease=t*t*(3-2*t);
    const previous=root.current.position.clone();const goal=new Vector3(visitor?-1.5:1.5,0,visitor?9.35:-9.35);
    if(motion.from.z*goal.z<0){const edge=side==='humanities'?-5.7:5.7;const points=[motion.from,new Vector3(edge,0,motion.from.z),new Vector3(edge,0,goal.z),goal];const part=Math.min(2,Math.floor(ease*3));root.current.position.lerpVectors(points[part],points[part+1],Math.min(1,ease*3-part));}
    else root.current.position.lerpVectors(motion.from,goal,ease);
@@ -67,7 +68,7 @@ function Lulu({preMatch=false,entering=false,input,switching=false,hidden=false,
    if(t===1)root.current.rotation.y=visitor?Math.PI:0;invalidate();return;
   }
   if(switching&&swap.current){
-   const motion=swap.current;motion.elapsed+=Math.min(delta,.05);const t=reduced?1:Math.min(1,motion.elapsed/1.8);
+   const motion=swap.current;motion.elapsed+=delta;const t=reduced?1:Math.min(1,motion.elapsed/viewDuration.switching);
    const goal=new Vector3(...(visitor?[input?.current.x??-1.5,0,input?.current.z??9.35]:[1.5,0,-9.35]));
    const edge=side==='humanities'?-5.7:5.7;
    const waypoints=[motion.from,new Vector3(edge,0,motion.from.z),new Vector3(edge,0,goal.z),goal];

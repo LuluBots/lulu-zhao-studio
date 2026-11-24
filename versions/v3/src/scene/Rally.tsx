@@ -3,21 +3,21 @@ import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import {courtSound} from '../state/sound';
 import { Group, Vector3 } from 'three';
 import type { Phase } from '../state/rally';
-import { shotDuration, sampleTargetFlight, targetPoint, receptionPoint, type Point } from './trajectories';
-import { caughtReturn,inBounds,returnLane,returnLanding,sampleIncoming,type RallyResult,type VisitorInput } from '../state/gameplay';
+import { shotDuration, sampleTargetFlight, targetPoint, receptionPoint, incomingBounceAt, incomingX, sampleIncoming, type Point } from './trajectories';
+import { racketIntersection,inBounds,returnLane,returnDepth,returnLanding,type RallyResult,type VisitorInput } from '../state/gameplay';
 import type { ScreenAnchor } from './SkyVisitors';
 export type RallyClock = { progress: number; returnAt?:number };
 type Props={phase:Phase;shot:number;reduced:boolean;clock:RefObject<RallyClock>;input:RefObject<VisitorInput>;onBall:()=>void;onFinished:(r:RallyResult)=>void;onAnchor:(a:ScreenAnchor)=>void;target:[number,number];power:number};
 export default function Rally({phase,shot,clock,input,onBall,onFinished,onAnchor,target,power}:Props){
  const ball=useRef<Group>(null),marker=useRef<Group>(null);
  const audioStage=useRef(0);
- const elapsed=useRef(0),complete=useRef(false),last=useRef<Point|null>(null),before=useRef<[number,number]>([.45,6.5]);
+ const elapsed=useRef(0),complete=useRef(false),last=useRef<Point|null>(null),before=useRef<Point>([.45,1.2,6.5]);
  const returned=useRef<{time:number;start:Point;landing:[number,number]}|null>(null);
  const {invalidate,camera,size}=useThree();
- useEffect(()=>{elapsed.current=0;audioStage.current=0;if(phase==='playing')courtSound('hit');complete.current=false;returned.current=null;last.current=null;before.current=[input.current.x,input.current.z];clock.current.progress=0;clock.current.returnAt=.68;invalidate()},[phase,shot,clock,input,invalidate]);
+ useEffect(()=>{elapsed.current=0;audioStage.current=0;if(phase==='playing')courtSound('hit');complete.current=false;returned.current=null;last.current=null;before.current=[...input.current.launch];clock.current.progress=0;clock.current.returnAt=.68;invalidate()},[phase,shot,clock,input,invalidate]);
  useFrame((_,delta)=>{
   if(!ball.current)return;
-  const v=input.current,hand=v.racket??[v.x-.75,1.18,v.z-.47];
+  const v=input.current,hand:Point=v.racket??[v.x-.75,1.18,v.z-.47];
   if(document.querySelector('dialog[open]'))return;
   if(phase!=='playing'){v.swing=0;ball.current.position.set(...(phase==='overview'?[1.75,.14,4.3] as Point:hand as Point));if(marker.current)marker.current.visible=false;return}
   if(complete.current)return;
@@ -35,14 +35,15 @@ export default function Rally({phase,shot,clock,input,onBall,onFinished,onAnchor
    if(!inBounds(target)&&p>=.48)finish({winner:'npc',reason:'out'});
   }else{
    if(audioStage.current<2){courtSound('hit',.7);audioStage.current=2;}
-   const t=Math.min(1,(elapsed.current-outTime)/backTime);if(t>=.64&&audioStage.current===2){courtSound('bounce',.7);audioStage.current=3;}clock.current.progress=.68+t*.32;point=sampleIncoming(t,contact,lane);
+   const t=Math.min(1,(elapsed.current-outTime)/backTime);if(t>=incomingBounceAt(contact,returnDepth(shot))&&audioStage.current===2){courtSound('bounce',.7);audioStage.current=3;}clock.current.progress=.68+t*.32;point=sampleIncoming(t,contact,lane,returnDepth(shot));
    v.swing=Math.abs(point[2]-hand[2])<1.4?.5:0;
-   if(last.current&&caughtReturn(last.current,point,before.current,[hand[0],hand[2]],hand[1])){courtSound('hit');returned.current={time:elapsed.current,start:[...hand],landing:returnLanding(target,v)};}
+   const impact=last.current && racketIntersection(last.current,point,before.current,hand);
+   if(impact){courtSound('hit');point=impact;returned.current={time:elapsed.current,start:impact,landing:returnLanding(impact,v,shot)};}
    else if(t===1)finish({winner:'npc',reason:'missed'});
   }
-  if(marker.current){marker.current.visible=!returned.current;marker.current.position.set(lane,.055,v.z);}
+  if(marker.current){marker.current.visible=!returned.current;marker.current.position.set(incomingX(hand[2],contact,lane),.055,hand[2]);}
   ball.current.position.set(...point);ball.current.rotation.x=elapsed.current*10;
-  last.current=point;before.current=[hand[0],hand[2]];invalidate();
+  last.current=point;before.current=[...hand];invalidate();
  });
  const activate=(event:ThreeEvent<MouseEvent>)=>{event.stopPropagation();if(event.delta<=5)onBall()};
  const active=phase==='overview'||phase==='ready';

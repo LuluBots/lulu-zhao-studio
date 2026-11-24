@@ -5,8 +5,60 @@ import { useMemo, useEffect, useState, useRef } from 'react';
 import { baselineRotation } from '../state/gameplay';
 import * as THREE from 'three';
 
-function Stripe({x=0,z=0,width=0.045,length=17.4}:{x?:number;z?:number;width?:number;length?:number}) {
-  return <mesh position={[x,0.035,z]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[width,length]}/><meshStandardMaterial color="#fffdf8" roughness={1}/></mesh>;
+/** A single painted layer keeps intersections flush and all eleven lines in one draw. */
+function CourtLines() {
+  const geometry = useMemo(() => {
+    const rectangles: [number, number, number, number][] = [];
+    for (const x of [-4.35, -3.3, 3.3, 4.35]) rectangles.push([x, 0, .045, 17.4]);
+    for (const end of [-1, 1]) {
+      rectangles.push([0, end * 8.7, 8.74, .072], [0, end * 4.5, 6.6, .045], [0, end * 8.6, .045, .18]);
+    }
+    rectangles.push([0, 0, .045, 9]);
+    const pieces = rectangles.map(([x, z, w, h]) =>
+      new THREE.PlaneGeometry(w, h).rotateX(-Math.PI / 2).translate(x, .019, z)
+    );
+    const merged = mergeGeometries(pieces);
+    pieces.forEach(piece => piece.dispose());
+    return merged;
+  }, []);
+  useEffect(() => () => geometry.dispose(), [geometry]);
+  return <mesh name="Painted_Court_Markings" geometry={geometry} receiveShadow>
+    <meshStandardMaterial color="#fffaf0" roughness={.91}/>
+  </mesh>;
+}
+
+/** The two recessed drainage channels use a single texture so their slots mipmap at a distance. */
+function SidelineDrainage() {
+  const texture = useMemo(() => {
+    const tile = document.createElement('canvas');
+    tile.width = 128;
+    tile.height = 256;
+    const ctx = tile.getContext('2d')!;
+    ctx.fillStyle = '#a9b5ad';
+    ctx.fillRect(0, 0, 128, 256);
+    ctx.fillStyle = '#d9d6bc';
+    ctx.fillRect(0, 0, 9, 256);
+    ctx.fillRect(119, 0, 9, 256);
+    for (let y = 16; y < 256; y += 32) {
+      ctx.fillStyle = '#536865';
+      ctx.beginPath();
+      ctx.roundRect(24, y, 80, 10, 5);
+      ctx.fill();
+    }
+    const map = new THREE.CanvasTexture(tile);
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.wrapT = THREE.RepeatWrapping;
+    map.repeat.y = 30;
+    map.anisotropy = 4;
+    return map;
+  }, []);
+  useEffect(() => () => texture.dispose(), [texture]);
+  return <group name="Inset_Sideline_Drains">
+    {[-5.82, 5.82].map(x => <mesh key={x} position={[x, -.013, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
+      <planeGeometry args={[.12, 20.6]}/>
+      <meshStandardMaterial map={texture} roughness={.55} metalness={.24}/>
+    </mesh>)}
+  </group>;
 }
 export function Net() {
   const geometry=useMemo(()=>{
@@ -53,24 +105,23 @@ function Perimeter(){
  return <group name="Ivory_Court_Binding"><mesh geometry={g} castShadow><meshStandardMaterial color="#f5ead4" roughness={.5}/></mesh><mesh geometry={g} position={[0,-.28,0]}><meshStandardMaterial color="#d2ba91" metalness={.15} roughness={.5}/></mesh>
  </group>
 }
-export default function Court(_props:{night:boolean}){
+export default function Court({night}:{night:boolean}){
  const root=useRef<THREE.Group>(null);
  const grit=useMemo(()=>{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;const image=ctx.createImageData(256,256);let seed=42;for(let i=0;i<image.data.length;i+=4){seed=(1664525*seed+1013904223)>>>0;const v=222+(seed%34);image.data[i]=image.data[i+1]=image.data[i+2]=v;image.data[i+3]=255}ctx.putImageData(image,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(12,24);return t},[]);
  useEffect(()=>()=>grit.dispose(),[grit]);
  return <group ref={root} name="Court">
   <RoundedBox name="Court_Platform" args={[12.4,.65,21.7]} radius={.25} smoothness={3} position={[0,-.36,0]} receiveShadow castShadow><meshStandardMaterial color="#ede2cb" bumpMap={grit} bumpScale={.001} roughness={.95}/></RoundedBox>
-  <RoundedBox name="Sky_Blue_Runoff" args={[12.08,.065,21.38]} radius={.025} smoothness={6} position={[0,-.05,0]} receiveShadow><meshStandardMaterial color="#a8cbde" roughness={.87} bumpMap={grit} bumpScale={.0012}/></RoundedBox>
+  <RoundedBox name="Sky_Blue_Runoff" args={[12.08,.065,21.38]} radius={.025} smoothness={6} position={[0,-.05,0]} receiveShadow><meshStandardMaterial color={night?'#7099a7':'#9fc8c5'} roughness={.87} bumpMap={grit} bumpScale={.0012}/></RoundedBox>
   <Perimeter/>
-  <mesh name="Court_PlayingSurface" position={[0,.004,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[8.7,17.4]}/><meshStandardMaterial color="#c0afd2" bumpMap={grit} bumpScale={.0018} roughnessMap={grit} roughness={.83} metalness={.025}/></mesh>
-  {[-4.35,-3.3,3.3,4.35].map(x=><Stripe key={x} x={x}/>)}
-  {[-8.7,8.7].map(z=><Stripe key={z} z={z} width={8.73} length={.045}/>)}
-  {[-4.5,4.5].map(z=><Stripe key={z} z={z} width={6.6} length={.045}/>)}
-  <Stripe length={9}/>
-  {[-8.6,8.6].map(z=><Stripe key={z} z={z} length={.18}/>)}
+  <mesh name="Court_PlayingSurface" position={[0,.004,0]} rotation={[-Math.PI/2,0,0]} receiveShadow><planeGeometry args={[8.7,17.4]}/><meshStandardMaterial color={night?'#7783ac':'#adaacb'} bumpMap={grit} bumpScale={.0018} roughnessMap={grit} roughness={.83} metalness={.025}/></mesh>
+  <mesh name="Service_Box_Inlay" position={[0,.009,0]} rotation={[-Math.PI/2,0,0]} receiveShadow>
+    <planeGeometry args={[6.6,9]}/><meshStandardMaterial color={night?'#697eaa':'#abb5d0'} bumpMap={grit} bumpScale={.0018} roughness={.86}/>
+  </mesh>
+  <CourtLines/>
   <Net/><BaselineDeclaration/>
   {[-1,1].map(x=><mesh key={x} position={[x*6.13,-.30,0]}><boxGeometry args={[.06,.13,21]}/><meshStandardMaterial color="#f1e7cc" metalness={.3} roughness={.5}/></mesh>)}
   <RoundedBox args={[12.15,.10,21.45]} radius={.22} position={[0,-.66,0]}><meshStandardMaterial color="#d5c5a9"/></RoundedBox>
-  {[-5.65,5.65].map(x=><mesh key={x} position={[x,.008,0]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[.025,20.6]}/><meshStandardMaterial color="#dce9e6"/></mesh>)}
+  <SidelineDrainage/>
 
  </group>;
 }

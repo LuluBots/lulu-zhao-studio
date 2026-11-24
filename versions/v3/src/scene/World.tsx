@@ -15,7 +15,7 @@ import { inBounds, type VisitorInput, type RallyResult } from '../state/gameplay
 import type { ViewAction } from './CameraRig';
 import { type RallyState, type Side } from '../state/rally';
 import { Vector3,Group } from 'three';
-function Arrival({children,reduced}:{children:ReactNode;reduced:boolean}){const group=useRef<Group>(null),time=useRef(0);const invalidate=useThree(s=>s.invalidate);useFrame((_,dt)=>{if(time.current>=1)return;time.current=reduced?1:Math.min(1,time.current+Math.min(dt,.05)/1.4);const t=1-Math.pow(1-time.current,3);if(group.current){group.current.position.y=-.8*(1-t);group.current.scale.setScalar(.82+.18*t)}invalidate()});return <group ref={group}>{children}</group>}
+function Arrival({children,reduced}:{children:ReactNode;reduced:boolean}){const group=useRef<Group>(null),time=useRef(0);const invalidate=useThree(s=>s.invalidate);useFrame((_,dt)=>{if(time.current>=1)return;time.current=reduced?1:Math.min(1,time.current+dt/.52);const t=1-Math.pow(1-time.current,3);if(group.current){group.current.position.y=-.8*(1-t);group.current.scale.setScalar(.82+.18*t)}invalidate()});return <group ref={group}>{children}</group>}
 import SkyVisitors, { type ScreenAnchor } from './SkyVisitors';
 import type { Score } from '../state/score';
 import ShotInput from './ShotInput';
@@ -56,5 +56,5 @@ function Scene({soundEnabled,preMatch,started,input,night,score,onContextLost,on
 }
 export default function World(props:Props){
  const initialPosition=useRef<[number,number,number]>([23,25,30]);
- return <Canvas className="court-canvas" orthographic shadows dpr={[1,2]} frameloop="demand" camera={{position:initialPosition.current,zoom:22,near:.1,far:180}} gl={{antialias:true,alpha:true,powerPreference:'low-power'}} fallback={<div className="scene-error" role="alert"><p>This device cannot display the 3D court.</p><button onClick={props.onBrowse}>Explore the collection</button></div>}><Scene {...props}/></Canvas>;
+ return <Canvas className="court-canvas" orthographic shadows dpr={[1,1.5]} frameloop="demand" camera={{position:initialPosition.current,zoom:22,near:.1,far:180}} gl={{antialias:true,alpha:true,powerPreference:'high-performance'}} fallback={<div className="scene-error" role="alert"><p>This device cannot display the 3D court.</p><button onClick={props.onBrowse}>Explore the collection</button></div>}><Scene {...props}/></Canvas>;
 }

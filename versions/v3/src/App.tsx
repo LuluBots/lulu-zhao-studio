@@ -7,7 +7,7 @@ import Directory, { type Destination } from './components/Directory';
 import { awardPoint, daylightAt, initialScore, pointLabel } from './state/score';
 import type { ScreenAnchor } from './scene/SkyVisitors';
 import MovementPad from './components/MovementPad';
-import { createVisitorInput, type RallyResult } from './state/gameplay';
+import { automaticTarget, createVisitorInput, type RallyResult } from './state/gameplay';
 import RolePicker from './components/RolePicker';
 import ControlsHelp from './components/ControlsHelp';
 import {Volume2,VolumeX,Sun,Moon,CircleHelp} from 'lucide-react';
@@ -73,6 +73,7 @@ export default function App(){
     if(state.phase!=='overview'&&state.phase!=='ready')return;
     if(state.phase==='overview'){explore({type:'close'});setChoosingRole(true);return;}
     setStarted(true);input.current.roaming=false;input.current.z=Math.max(2.4,input.current.z);input.current.x=Math.max(-4.1,Math.min(4.1,input.current.x));setResult(null);input.current.launch=input.current.racket?[...input.current.racket]:[input.current.x-.75,1.18,input.current.z-.47];
+    setTarget(automaticTarget(state.shot+1));setPower(.5);
     explore({type:'launch',shot:state.shot+1});dispatch('hit');
     requestAnimationFrame(()=>main.current?.focus({preventScroll:true}));
   },[exploration,state]);
@@ -90,8 +91,8 @@ export default function App(){
   },[state.phase,state.shot,state.side]);
   const onBall=useCallback(()=>{
     if(state.phase==='overview'){explore({type:'close'});setChoosingRole(true)}
-    else if(state.phase==='ready')onCourtHit([0,-3.3]);
-  },[state.phase,onCourtHit]);
+    else if(state.phase==='ready')onCourtHit(automaticTarget(state.shot+1));
+  },[state.phase,state.shot,onCourtHit]);
   const chooseRole=(visitor:Side)=>{
     if(!choosingRole||state.phase!=='overview')return;
     setChoosingRole(false);setHasChosenRole(true);setStarted(true);setResult(null);input.current.keys.clear();input.current.roaming=false;input.current.x=-1.5;input.current.z=9.35;
@@ -114,7 +115,6 @@ export default function App(){
     window.addEventListener('popstate',sync);window.addEventListener('hashchange',sync);
     return ()=>{window.removeEventListener('popstate',sync);window.removeEventListener('hashchange',sync)};
   },[state.phase,state.side]);
-  useEffect(()=>{document.title="Grand Slam with Lulu"},[activeProfile.title]);
   useEffect(()=>{
     const query=matchMedia('(prefers-reduced-motion: reduce)');const update=()=>setReduced(query.matches);
     query.addEventListener('change',update);return ()=>query.removeEventListener('change',update);
@@ -122,7 +122,7 @@ export default function App(){
   const onReady=useCallback(()=>setReady(true),[]);
   const onContextLost=useCallback(()=>{setLost(true);explore({type:'close'})},[]);
   const command=(kind:ViewAction['kind'])=>setAction(previous=>({kind,id:previous.id+1}));
-  return <main ref={main} className="court-world" data-started={started} data-scene-ready={ready} aria-label="Grand Slam with Lulu — cloud tennis court" aria-describedby="court-instructions" aria-busy={!ready&&!lost} data-light={night?'night':'day'} data-mode={state.phase} data-side={state.side} data-content={exploration.panel} data-shot-power={power.toFixed(3)} data-shot-target={target.join(",")} tabIndex={0}
+  return <main ref={main} className="court-world" data-started={started} data-scene-ready={ready} aria-label="Lulu Zhao’s research portfolio and tennis court" aria-describedby="court-instructions" aria-busy={!ready&&!lost} data-light={night?'night':'day'} data-mode={state.phase} data-side={state.side} data-content={exploration.panel} data-shot-power={power.toFixed(3)} data-shot-target={target.join(",")} tabIndex={0}
     onDoubleClick={()=>state.phase==='overview'?command('reset'):onExit()}
     onKeyDown={event=>{
       if(event.target!==event.currentTarget)return;
@@ -145,7 +145,7 @@ export default function App(){
 
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>
-    <PlayerIdentity/>
+    {started&&<PlayerIdentity/>}
     <p className="sr-only" aria-live="polite">Verse: {pointLabel(score,'humanities')}, {score.games.humanities} games. Code: {pointLabel(score,'technology')}, {score.games.technology} games.</p>
     <ControlsHelp open={helpOpen} onClose={()=>setHelpOpen(false)}/>
     <RolePicker open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>

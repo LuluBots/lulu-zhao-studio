@@ -13,6 +13,37 @@ function Piping({points,color=ivory,r=.009}:{points:[number,number,number][];col
  const geometry=useMemo(()=>new TubeGeometry(new CatmullRomCurve3(points.map(p=>new Vector3(...p))),24,r,6,false),[JSON.stringify(points),r]);
  useEffect(()=>()=>geometry.dispose(),[geometry]);return <mesh geometry={geometry}><meshStandardMaterial color={color} roughness={.65}/></mesh>;
 }
+// A pressed shell curves continuously from the rolled front lip into the backrest.
+function MouldedSeat({accent}:{accent:boolean}){
+ const shell=useMemo(()=>{
+   const profile=new CatmullRomCurve3([
+     new Vector3(0,.48,.33), new Vector3(0,.52,.29), new Vector3(0,.49,-.08),
+     new Vector3(0,.53,-.19), new Vector3(0,.70,-.25), new Vector3(0,.94,-.31),
+     new Vector3(0,.965,-.345)
+   ]);
+   const positions:number[]=[],indices:number[]=[];
+   for(let row=0;row<=24;row++){
+     const t=row/24,point=profile.getPoint(t);
+     for(let col=0;col<=12;col++){
+       const across=col/6-1;
+       const curl=across*across;
+       positions.push(across*(.279-.02*Math.pow(2*t-1,6)),point.y+.03*curl*(1-t),point.z+.044*curl*t);
+       if(row<24&&col<12){
+         const n=row*13+col;
+         indices.push(n,n+1,n+13,n+1,n+14,n+13);
+       }
+     }
+   }
+   const geometry=new BufferGeometry();
+   geometry.setAttribute('position',new Float32BufferAttribute(positions,3));
+   geometry.setIndex(indices);geometry.computeVertexNormals();
+   return geometry;
+ },[]);
+ useEffect(()=>()=>shell.dispose(),[shell]);
+ return <mesh name="Contoured_Seat_Shell" geometry={shell} castShadow receiveShadow>
+   <meshStandardMaterial color={accent?'#92b5be':'#d6e4df'} side={2} roughness={.47}/>
+ </mesh>;
+}
 export function Bench(){return <group name="Sport_Moulded_Seats">
  {[-.82,.82].map(x=><group key={x}>
  <Bar a={[x,.05,-.28]} b={[x,.47,-.16]} r={.035} color="#527687"/>
@@ -21,9 +52,9 @@ export function Bench(){return <group name="Sport_Moulded_Seats">
  </group>)}
  <Bar a={[-.97,.40,0]} b={[.97,.40,0]} r={.045} color="#527687"/>
  {[-.64,0,.64].map((x,i)=><group key={x} position={[x,0,0]}>
- <RoundedBox args={[.58,.075,.61]} radius={.035} smoothness={6} position={[0,.51,.035]} rotation={[-.05,0,0]} castShadow receiveShadow><meshStandardMaterial color="#dae6e5" roughness={.4}/></RoundedBox>
+ <MouldedSeat accent={i===1}/>
  {[-.23,.23].map(dx=><Bar key={dx} a={[dx,.42,-.19]} b={[dx,.98,-.30]} r={.022} color="#527687"/>)}
- {[.68,.79,.90].map(y=><RoundedBox key={y} args={[.56,.085,.065]} radius={.028} smoothness={5} position={[0,y,-.21-(y-.6)*.2]} castShadow><meshStandardMaterial color={i===1?'#95b9ce':'#dae6e5'} roughness={.42}/></RoundedBox>)}
+
  {[-.245,.245].map(dx=><mesh key={dx} position={[dx,.90,-.237]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.012,.012,.012,12]}/><meshStandardMaterial color="#6f8a95" metalness={.65} roughness={.28}/></mesh>)}
  </group>)}
  </group>}

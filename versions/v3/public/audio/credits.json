@@ -15,6 +15,31 @@
       "file": "pachelbel.mp3",
       "title": "Canon in D",
       "composer": "Johann Pachelbel"
+    },
+    {
+      "file": "mozart.mp3",
+      "title": "Ah, vous dirai-je, maman, K. 265 (theme)",
+      "composer": "Wolfgang Amadeus Mozart"
+    },
+    {
+      "file": "grieg.mp3",
+      "title": "In the Hall of the Mountain King",
+      "composer": "Edvard Grieg"
+    },
+    {
+      "file": "brahms.mp3",
+      "title": "Wiegenlied, Op. 49, No. 4",
+      "composer": "Johannes Brahms"
+    },
+    {
+      "file": "ode-to-joy.mp3",
+      "title": "Ode to Joy (Symphony No. 9)",
+      "composer": "Ludwig van Beethoven"
+    },
+    {
+      "file": "dvorak.mp3",
+      "title": "Largo (Symphony No. 9, From the New World)",
+      "composer": "Antonín Dvořák"
     }
   ]
 }

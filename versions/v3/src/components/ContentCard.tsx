@@ -1,3 +1,4 @@
+import { dismissOnBackdrop } from './dismissOnBackdrop';
 import EntryLinks from './EntryLinks';
 import { useEffect, useRef } from 'react';
 import type { Entry } from '../content/profile';
@@ -23,7 +24,7 @@ export default function ContentCard({anchor,panel,entry,entries,onChoose,onHit,o
   return <dialog ref={dialog} className="content-card" data-side={entry?.side} aria-labelledby="card-title" aria-describedby="card-summary"
     onCancel={event=>{event.preventDefault();event.stopPropagation();onClose()}}
     onKeyDown={event=>event.stopPropagation()} onDoubleClick={event=>event.stopPropagation()}
-    onClick={event=>{event.stopPropagation();if(event.target===event.currentTarget){const r=event.currentTarget.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)onClose()}}}>
+    onClick={e=>dismissOnBackdrop(e,onClose)}>
     {!entry&&<article><div className="card-top"><span className="card-eyebrow">LULU ZHAO</span><button className="card-close" type="button" onClick={onClose} aria-label="Close card">×</button></div><h2 id="card-title" ref={heading} tabIndex={-1}>No entries yet</h2><p id="card-summary" className="card-summary">There are no entries on this side yet.</p><button className="card-secondary" type="button" onClick={onClose}>Back to court</button></article>}
     {entry&&<article>
       <div className="card-top"><span className="card-eyebrow">{isWriting?'Writing':'Research'}</span><button className="card-close" type="button" onClick={onClose} aria-label="Close card">×</button></div>

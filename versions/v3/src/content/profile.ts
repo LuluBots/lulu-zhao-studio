@@ -1,10 +1,10 @@
 import type { FlightPath } from '../scene/trajectories';
 import type { Side } from '../state/rally';
 export type Entry = { id: string; title: string; summary: string; url?: string; paper?: string; side: Side; year?: number; status?: string; source: string; trajectory?: FlightPath; note?: string };
-export const profile = { name: 'Lulu Zhao', affiliation: 'CS PhD Cornell', focus: 'Human–AI Interaction · Design · Embodied Intelligence' };
+export const profile = { name: 'Lulu Zhao', affiliation: 'CS PhD Cornell', focus: 'Human–AI Interaction · Design · AI for Scientific Inquiry' };
 const cv = 'CV, September 2026, my CV';
 export const projects: Entry[] = [
-  { id: 'physical-invention', trajectory: 'straight', title: 'AI-Assisted Co-Design for Physical Invention', summary: 'A new textile can call for a new machine, and trying a mechanism can change what a maker wants to knit. With Qian Yang, I study how AI can help makers reason through those choices.', side: 'technology', year: 2026, status: 'August 2026–present', source: cv },
+  { id: 'physical-invention', trajectory: 'straight', title: 'AI-Assisted Co-Design for Physical Invention', summary: 'A new textile can call for a new machine, and trying a mechanism can change what a maker wants to knit. I study how AI can help makers reason through those choices.', side: 'technology', year: 2026, status: 'August 2026–present', source: cv },
   { id: 'kinogen', trajectory: 'crosscourt', note: 'At Cornell, I worked on learning humanoid policies from generated motion references. KinoGen grounds the video in the geometry of the actual robot and object, so a policy can learn from a motion expressed in the robot’s own joints.', title: 'KinoGen', summary: 'How can a generated video show a humanoid a movement it can actually perform? We generate two views of a task and fit the robot and object to both views to recover a 3D motion reference.', url: 'https://kinogen-humanoid.github.io/', paper: 'https://arxiv.org/abs/2610.20552', side: 'technology', year: 2026, status: 'October 2025–July 2026', source: cv },
   { id: 'anchorit', trajectory: 'insideout', note: 'Research at Beijing Normal University, advised by Ting Zhang.', title: 'AnchorIT', summary: 'Given an image and a requested change, how do you find a matching image? AnchorIT uses a language model to interpret the edit and a diffusion model to visualize it, without additional training.', url: 'https://luluzhao.me/research/anchorit', side: 'technology', year: 2025, source: cv },
   { id: 'elastoplastic', trajectory: 'straight', note: 'Research at The Chinese University of Hong Kong, advised by K. W. Samuel Au and Xiangyu Chu.', title: 'Manipulating Elasto-Plastic Objects', summary: 'When a robot presses a piece of dough, its shape changes and part of that change persists. We represented its evolving shape as occupied 3D space so a controller could predict the effect of its next action.', url: 'https://luluzhao.me/research/elastoplastic-manipulation', side: 'technology', year: 2025, status: 'RA-L 2025 / ICRA 2026', source: cv },
@@ -20,9 +20,9 @@ export const articles: Entry[] = [
 export const sides = {
   technology: {
     title: 'Code', color: '#536b85', mark: 'geometry',
-    focus: 'Human–AI Interaction · Design · Embodied Intelligence',
-    biography: 'I’m a Cornell Computer Science PhD student advised by Qian Yang. I study how AI can help people design physical artifacts and the machines that make them. My earlier work spans robot learning, manipulation, and generative models.',
-    interests: ['Human–AI Interaction', 'AI-assisted co-design', 'Embodied intelligence', 'Robot learning'],
+    focus: 'Human–AI Interaction · Design · AI for Scientific Inquiry',
+    biography: 'I’m a Cornell CS PhD student advised by Qian Yang. I study how people think with AI in design and scientific inquiry, especially when new evidence changes the question they want to ask. My earlier work spans robot learning, manipulation, and generative models.',
+    interests: ['Human–AI Interaction', 'AI-assisted co-design', 'AI for Scientific Inquiry', 'Robot learning'],
     source: 'https://luluzhao.me/research', entries: projects,
   },
   humanities: {
@@ -47,6 +47,6 @@ export const socialLinks = [
 export const education = [
  { school: 'Cornell University', dates: '2025–present', program: 'PhD · Computer Science', distinction: 'Cornell Fellowship · 2025' },
  { school: 'The Chinese University of Hong Kong', dates: '2024–2025', program: 'Exchange · International Asian Studies Program' },
- { school: 'Carnegie Mellon University', dates: 'Summer 2024', program: 'Summer research · Robotics Institute' },
- { school: 'Beijing Normal University', dates: '2021–2025', program: 'Bachelor of Engineering · Artificial Intelligence' },
+ { school: 'Carnegie Mellon University', dates: 'Summer 2024', program: 'Summer Research · Robotics Institute' },
+ { school: 'Beijing Normal University', dates: '2021–2025', program: 'BEng · Artificial Intelligence' },
 ];

@@ -12,12 +12,21 @@ import RolePicker from './components/RolePicker';
 import ControlsHelp from './components/ControlsHelp';
 import {Volume2,VolumeX,Sun,Moon,CircleHelp} from 'lucide-react';
 import CourtEntrance from './components/CourtEntrance';
+import CourtFactDialog from './components/CourtFactDialog';
+import type { CourtFact } from './content/courtFacts';
 import PlayerIdentity from './components/PlayerIdentity';
 import ContentCard from './components/ContentCard';
 import {unlockSound,courtSound,setSoundEnabled} from './state/sound';
 import {recordVisit} from './state/visits';
 
-const World = lazy(() => import('./scene/World'));
+const World = lazy(async () => {
+  // Ground lettering and the scoreboard bake text into canvas textures on mount.
+  const [world] = await Promise.all([
+    import('./scene/World'),
+    document.fonts.load('36px Acme').catch(()=>undefined),
+  ]);
+  return world;
+});
 class SceneBoundary extends Component<{children:ReactNode;onBrowse:()=>void},{failed:boolean}> {
   state={failed:false};
   static getDerivedStateFromError(){return {failed:true}}
@@ -25,6 +34,7 @@ class SceneBoundary extends Component<{children:ReactNode;onBrowse:()=>void},{fa
 }
 export default function App(){
   const main=useRef<HTMLElement>(null);
+  const [fact,setFact]=useState<CourtFact|null>(null);
   const [started,setStarted]=useState(false);
   const [choosingRole,setChoosingRole]=useState(false);
   const [hasChosenRole,setHasChosenRole]=useState(false);
@@ -131,10 +141,10 @@ export default function App(){
       if(event.key.toLowerCase()==='b'){event.preventDefault();if(!event.repeat)openPreview();return}
       if(event.key==='Enter'||event.key===' '){event.preventDefault();if(!event.repeat)onBall();return}
     }}>
-    <p id="court-instructions" className="sr-only">Use the mouse or trackpad to adjust the view. Scroll to zoom toward your cursor. Drag to orbit; Shift-drag to pan. WASD and arrow keys both move your player. Hold on the opposite court to build power, then release to hit. Move your player to meet the return with the racket to score. Misses and out balls score for the NPC. Press B to browse without playing, Enter to enter Rally, and Escape to leave Rally. Use Switch Ends to exchange player positions. Hover over baseline facts for a gentle highlight. Explore the full court with WASD or arrows before entering Rally.</p>
+    <p id="court-instructions" className="sr-only">Use the mouse or trackpad to adjust the view. Scroll to zoom toward your cursor. Drag to orbit; Shift-drag to pan. WASD and arrow keys both move your player. Hold on the opposite court to build power, then release to hit. Move your player to meet the return with the racket to score. Misses and out balls score for the NPC. Press B to browse without playing, Enter to enter Rally, and Escape to leave Rally. Use Switch Ends to exchange player positions. Select a corner note to read it. Explore the full court with WASD or arrows before entering Rally.</p>
     <section className="sr-only" aria-label={`${activeProfile.title} profile`}><h1>{activeProfile.title} — Lulu Zhao</h1><p>{activeProfile.focus}</p><p>{activeProfile.biography}</p><ul>{activeProfile.entries.map(entry=><li key={entry.id}>{entry.title}</li>)}</ul></section>
     <p className="sr-only" role="status" aria-live="polite">{activeProfile.title}. {state.phase==='overview'?'Overview. Click the opposite court to hit.':state.phase==='ready'?'Rally ready. Click the opposite court to hit; Enter hits toward the center.':state.phase==='playing'?`Rally in progress. Meet the return with WASD to score and discover ${exploration.entry?.title??'the selected entry'}.`:'Changing view.'}</p>
-    {lost?<div className="scene-error" role="alert"><p>The 3D view was interrupted.</p><button onClick={()=>location.reload()}>Reload court</button><button onClick={openPreview}>Browse</button></div>:<SceneBoundary onBrowse={openPreview}><Suspense fallback={null}><World soundEnabled={sound} preMatch={!hasChosenRole} started={started} input={input} night={night} score={score} onAnchor={setAnchor} onNavigate={(d,a)=>{setDirectoryAnchor(a??null);setDestination(d)}} onReset={()=>command('reset')} onExit={onExit} power={power} target={target} onCourtHit={onCourtHit} onBrowse={openPreview} action={action} state={state} path={exploration.entry?.trajectory??'straight'} reduced={reduced} onReady={onReady} onContextLost={onContextLost} onArrived={onArrived} onBall={onBall} onFinished={onFinished} onSwitch={onSwitch} onSelect={onSelect}/></Suspense></SceneBoundary>}
+    {lost?<div className="scene-error" role="alert"><p>The 3D view was interrupted.</p><button onClick={()=>location.reload()}>Reload court</button><button onClick={openPreview}>Browse</button></div>:<SceneBoundary onBrowse={openPreview}><Suspense fallback={null}><World onFact={setFact} soundEnabled={sound} preMatch={!hasChosenRole} started={started} input={input} night={night} score={score} onAnchor={setAnchor} onNavigate={(d,a)=>{setDirectoryAnchor(a??null);setDestination(d)}} onReset={()=>command('reset')} onExit={onExit} power={power} target={target} onCourtHit={onCourtHit} onBrowse={openPreview} action={action} state={state} path={exploration.entry?.trajectory??'straight'} reduced={reduced} onReady={onReady} onContextLost={onContextLost} onArrived={onArrived} onBall={onBall} onFinished={onFinished} onSwitch={onSwitch} onSelect={onSelect}/></Suspense></SceneBoundary>}
     {started&&<nav aria-label="Court navigation" className="rally-wayfinding" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}><button onClick={state.phase==='overview'?onBall:onExit}>{state.phase==='overview'?'Play Rally':'Back to Court'}</button><button disabled={!hasChosenRole||!['overview','ready'].includes(state.phase)} onClick={onSwitch}>Switch Ends</button><button onClick={openPreview}>Browse</button>{state.phase==='overview'&&<button onClick={()=>command('reset')}>Reset View</button>}<button className="help-trigger" aria-label="How to play" aria-haspopup="dialog" aria-expanded={helpOpen} onClick={()=>setHelpOpen(true)}><CircleHelp size={18}/></button></nav>}
     {started&&hasChosenRole&&['overview','ready','playing'].includes(state.phase)&&<MovementPad input={input}/>}
     {(state.phase==='ready'||state.phase==='playing')&&<><div className="rally-live-score" aria-label="Live score"><span>VERSE <b>{pointLabel(score,'humanities')}</b></span><span>CODE <b>{pointLabel(score,'technology')}</b></span></div><div className="rally-result" role="status">{result?result.winner==='visitor'?'RETURN IN · YOUR POINT':result.reason==='out'?'OUT · NPC POINT':'MISSED · NPC POINT':`YOU: ${otherSide(state.side)==='humanities'?'VERSE':'CODE'} · NPC: ${state.side==='humanities'?'VERSE':'CODE'}`}</div></>}
@@ -145,7 +155,8 @@ export default function App(){
 
     </div>
     <a className="version-history-link" href="/versions/" onKeyDown={e=>e.stopPropagation()} onDoubleClick={e=>e.stopPropagation()}>V3 · Version history ↗</a>
-    {started&&<PlayerIdentity/>}
+    <PlayerIdentity/>
+    <CourtFactDialog fact={fact} onClose={()=>setFact(null)}/>
     <p className="sr-only" aria-live="polite">Verse: {pointLabel(score,'humanities')}, {score.games.humanities} games. Code: {pointLabel(score,'technology')}, {score.games.technology} games.</p>
     <ControlsHelp open={helpOpen} onClose={()=>setHelpOpen(false)}/>
     <RolePicker open={choosingRole} onChoose={chooseRole} onClose={()=>{setChoosingRole(false);requestAnimationFrame(()=>main.current?.focus({preventScroll:true}))}}/>

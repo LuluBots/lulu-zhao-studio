@@ -1,6 +1,7 @@
 import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useThree } from '@react-three/fiber';
-import { RoundedBox } from '@react-three/drei';
+import { courtFacts, type CourtFact } from '../content/courtFacts';
+import { Html, RoundedBox } from '@react-three/drei';
 import { useMemo, useEffect, useState, useRef } from 'react';
 import { baselineRotation } from '../state/gameplay';
 import * as THREE from 'three';
@@ -88,24 +89,34 @@ export function Net() {
 
   </group>;
 }
-function GroundPrint({end,x,lines,signature=false}:{end:number;x:number;lines:string[];signature?:boolean}){
+function GroundPrint({end,x,lines,signature=false,onOpen}:{onOpen?:()=>void;end:number;x:number;lines:string[];signature?:boolean}){
  const gl=useThree(s=>s.gl),[hover,setHover]=useState(false);
 
- const texture=useMemo(()=>{const c=document.createElement('canvas');c.width=2048;c.height=512;const ctx=c.getContext('2d')!;ctx.scale(2,2);ctx.fillStyle=signature?'#3e6674':'#527785';ctx.textAlign='center';ctx.font=signature?'italic 100px Georgia,serif':'italic 700 37px Arial,sans-serif';lines.forEach((line,i)=>ctx.fillText(line,512,signature?147:100+i*58));if(signature){ctx.strokeStyle='#3e6674';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(235,183);ctx.quadraticCurveTo(510,148,792,174);ctx.stroke()}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=gl.capabilities.getMaxAnisotropy();return t},[signature,lines.join('|')]);
+ const texture=useMemo(()=>{const c=document.createElement('canvas');c.width=2048;c.height=512;const ctx=c.getContext('2d')!;ctx.scale(2,2);ctx.fillStyle=signature?'#3e6674':'#527785';ctx.textAlign='center';ctx.font=signature?'100px Acme,sans-serif':'500 37px Optima,Candara,sans-serif';lines.forEach((line,i)=>ctx.fillText(line,512,signature?147:100+i*58));if(signature){ctx.strokeStyle='#3e6674';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(235,183);ctx.quadraticCurveTo(510,148,792,174);ctx.stroke()}const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=gl.capabilities.getMaxAnisotropy();return t},[signature,lines.join('|')]);
  useEffect(()=>()=>texture.dispose(),[texture]);
- return <group position={[x,.025,end*9.8]}>
+ return <group position={[x,.025,end*9.8]} userData={{cursor:onOpen?'pointer':undefined}}
+    onClick={e=>{if(onOpen && e.delta<=5){e.stopPropagation();onOpen()}}}>
+ {onOpen&&<Html center position={[0,.22,0]} zIndexRange={[10,0]}>
+   <button type="button" className="corner-open" aria-haspopup="dialog" aria-label={'Read '+lines[0]}
+     onDoubleClick={e=>e.stopPropagation()} onPointerDown={e=>e.stopPropagation()}
+     onClick={e=>{e.stopPropagation();onOpen()}}>{lines[0]}</button>
+ </Html>}
  <mesh name={signature?'Baseline_luluzhao_signature':'Baseline_fun_fact'} rotation={[-Math.PI/2,0,baselineRotation(end)]} onPointerOver={e=>{if(signature)return;e.stopPropagation();setHover(true)}} onPointerOut={()=>{setHover(false)}}><planeGeometry args={[signature?3.7:2.8,signature?.92:1.0]}/><meshBasicMaterial map={texture} color={hover?'#c28235':'#ffffff'} transparent depthWrite={false}/></mesh>
  {!signature&&<><mesh position={[0,-.008,0]} rotation={[-Math.PI/2,0,0]}><planeGeometry args={[2.9,1.08]}/><meshBasicMaterial color={hover?'#f3eac9':'#dce8e4'} transparent opacity={hover?.95:.6}/></mesh></>}
  </group>;
 }
-function BaselineDeclaration(){return <>{[-1,1].map(end=><group key={end}><GroundPrint end={end} x={0} signature lines={['luluzhao']}/><GroundPrint end={end} x={-4.1} lines={end>0?["🛹 I'm into plenty of",'other sports too!']:["🏠 I literally live right",'next to the tennis courts.']}/><GroundPrint end={end} x={4.1} lines={end>0?['🐐 Team Djokovic','all the way. GOAT!']:["🎾 Want to hit sometime?","Let's rally!"]}/></group>)}</>}
+function BaselineDeclaration({onFact}:{onFact?:(fact:CourtFact)=>void}){
+ return <>{[-1,1].map(end=><GroundPrint key={end} end={end} x={0} signature lines={['luluzhao']}/>)}
+  {courtFacts.map(fact=><GroundPrint key={fact.title} end={fact.end} x={fact.x} lines={[fact.title]}
+    onOpen={onFact?()=>onFact(fact):undefined}/>)}</>;
+}
 function Perimeter(){
  const edge=useMemo(()=>{const shape=new THREE.Shape();const x=6.12,z=10.77,r=.55;shape.moveTo(-x+r,-z);shape.lineTo(x-r,-z);shape.quadraticCurveTo(x,-z,x,-z+r);shape.lineTo(x,z-r);shape.quadraticCurveTo(x,z,x-r,z);shape.lineTo(-x+r,z);shape.quadraticCurveTo(-x,z,-x,z-r);shape.lineTo(-x,-z+r);shape.quadraticCurveTo(-x,-z,-x+r,-z);return new THREE.CatmullRomCurve3(shape.getPoints(24).map(p=>new THREE.Vector3(p.x,-.13,p.y)),true)},[]);
  const g=useMemo(()=>new THREE.TubeGeometry(edge,180,.085,8,true),[edge]);useEffect(()=>()=>g.dispose(),[g]);
  return <group name="Ivory_Court_Binding"><mesh geometry={g} castShadow><meshStandardMaterial color="#f5ead4" roughness={.5}/></mesh><mesh geometry={g} position={[0,-.28,0]}><meshStandardMaterial color="#d2ba91" metalness={.15} roughness={.5}/></mesh>
  </group>
 }
-export default function Court({night}:{night:boolean}){
+export default function Court({night,onFact}:{night:boolean;onFact?:(fact:CourtFact)=>void}){
  const root=useRef<THREE.Group>(null);
  const grit=useMemo(()=>{const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;const image=ctx.createImageData(256,256);let seed=42;for(let i=0;i<image.data.length;i+=4){seed=(1664525*seed+1013904223)>>>0;const v=222+(seed%34);image.data[i]=image.data[i+1]=image.data[i+2]=v;image.data[i+3]=255}ctx.putImageData(image,0,0);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(12,24);return t},[]);
  useEffect(()=>()=>grit.dispose(),[grit]);
@@ -118,7 +129,7 @@ export default function Court({night}:{night:boolean}){
     <planeGeometry args={[6.6,9]}/><meshStandardMaterial color={night?'#697eaa':'#abb5d0'} bumpMap={grit} bumpScale={.0018} roughness={.86}/>
   </mesh>
   <CourtLines/>
-  <Net/><BaselineDeclaration/>
+  <Net/><BaselineDeclaration onFact={onFact}/>
   {[-1,1].map(x=><mesh key={x} position={[x*6.13,-.30,0]}><boxGeometry args={[.06,.13,21]}/><meshStandardMaterial color="#f1e7cc" metalness={.3} roughness={.5}/></mesh>)}
   <RoundedBox args={[12.15,.10,21.45]} radius={.22} position={[0,-.66,0]}><meshStandardMaterial color="#d5c5a9"/></RoundedBox>
   <SidelineDrainage/>

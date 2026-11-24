@@ -1,3 +1,4 @@
+import { dismissOnBackdrop } from './dismissOnBackdrop';
 import { Camera, BookOpen, Guitar } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -5,7 +6,7 @@ const objects=[{name:'Camera',Icon:Camera},{name:'Notebook',Icon:BookOpen},{name
 export default function HobbyDialog({onClose}:{onClose:()=>void}){
  const dialog=useRef<HTMLDialogElement>(null),heading=useRef<HTMLHeadingElement>(null),[item,setItem]=useState(0);
  useEffect(()=>{dialog.current?.showModal();heading.current?.focus();return ()=>dialog.current?.close()},[]);
- return createPortal(<dialog ref={dialog} className="hobby-dialog" aria-labelledby="hobby-title" onCancel={e=>{e.preventDefault();onClose()}} onKeyDown={e=>e.stopPropagation()} onClick={e=>{if(e.target===e.currentTarget){const r=e.currentTarget.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)onClose()}}}>
+ return createPortal(<dialog ref={dialog} className="hobby-dialog" aria-labelledby="hobby-title" onCancel={e=>{e.preventDefault();onClose()}} onKeyDown={e=>e.stopPropagation()} onClick={e=>dismissOnBackdrop(e,onClose)}>
   <header><div><span>IN MY TENNIS BAG</span><h2 id="hobby-title" tabIndex={-1} ref={heading}>Off court</h2></div><button className="hobby-close" aria-label="Close tennis bag" onClick={onClose}>×</button></header>
   <div className="hobby-objects" role="group" aria-label="Explore the bag">{objects.map(({name,Icon},i)=><button key={name} aria-pressed={item===i} onClick={()=>setItem(i)}><Icon size={24} strokeWidth={1.3} aria-hidden/><span>{name}</span></button>)}</div>
   <section className="hobby-detail" aria-live="polite">

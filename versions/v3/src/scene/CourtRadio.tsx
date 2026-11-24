@@ -40,6 +40,6 @@ export default function CourtRadio({soundEnabled,interactive}:{soundEnabled:bool
    <SceneAsset><Model/></SceneAsset>
    <mesh position={[-.275,.15,.01]}><sphereGeometry args={[.012,8,6]}/><meshBasicMaterial color={playing?'#e6da88':'#6c756b'}/></mesh>
   </group>
-  {interactive&&<Html position={[0,.95,0]} center zIndexRange={[12,0]}><button className="radio-focus-target" aria-label="Radio: play or randomly change background music" onPointerDown={e=>e.stopPropagation()} onKeyDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();next()}}/><span className="radio-status" role="status">{message}</span></Html>}
+  {interactive&&<Html position={[0,.95,0]} center zIndexRange={[12,0]}><button className="radio-focus-target" aria-label={current.current < 0 ? 'Play the courtside radio' : 'Play next radio track'} onPointerDown={e=>e.stopPropagation()} onKeyDown={e=>e.stopPropagation()} onClick={e=>{e.stopPropagation();next()}}/><span className="radio-status" role="status">{message}</span></Html>}
  </group>;
 }

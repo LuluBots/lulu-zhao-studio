@@ -1,7 +1,8 @@
-export default function PlayerIdentity(){
- return <aside className="player-ident" aria-label="Lulu Zhao — academic identity and research interests">
-  <p className="player-ident-name">LULU ZHAO</p>
-  <p className="player-ident-degree">CS PhD <span>·</span> Cornell</p>
-  <p className="player-ident-interest">Human–AI Interaction<br/><span>Embodied Intelligence · Design</span></p>
- </aside>;
+export default function PlayerIdentity() {
+  return <aside className="player-ident" aria-label="Lulu Zhao’s academic profile">
+    <strong>Lulu Zhao</strong>
+    <a href="https://designai.cis.cornell.edu/" target="_blank" rel="noreferrer">DesignAI Group</a>
+    <span>CS PhD · Cornell</span>
+    <span>AI for Scientific Inquiry</span>
+  </aside>;
 }
